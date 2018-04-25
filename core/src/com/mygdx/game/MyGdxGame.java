@@ -16,15 +16,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class MyGdxGame extends ApplicationAdapter {
-	ModelBatch modelBatch;
-	Camera cam;
-	public CameraInputController camController;
+	private ModelBatch modelBatch;
+	private Camera cam;
+	private CameraInputController camController;
 
-	public Model model;
-	public ModelInstance ballInstance;
+	private Model model;
+	private ModelInstance ballInstance;
 	private Vector3 pos;
 
-	public Environment environment;
+	private Environment environment;
 
 	private BitmapFont font;
 	private SpriteBatch batch;

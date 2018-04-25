@@ -8,6 +8,12 @@ public class Helper {
 
     final static float EPSILON = 1e-12f;
 
+    /**
+     * round a float value to a certain decimal places
+     * @param value
+     * @param places
+     * @return rounded value
+     */
     public static float round(float value, int places) {
         if (places < 0) throw new IllegalArgumentException();
 
