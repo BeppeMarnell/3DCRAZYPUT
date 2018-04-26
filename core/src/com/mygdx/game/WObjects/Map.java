@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -41,6 +41,8 @@ public class Map {
     public HeightField field;
     public Texture texture;
 
+    private float magnitude;
+
     /**
      * main constructor to load the map
      * @param paths
@@ -76,6 +78,9 @@ public class Map {
 
         //load the map with the .txt file info
         load(paths[2]);
+
+        //set magnitude
+        this.magnitude = magnitude;
     }
 
     /**
@@ -165,7 +170,7 @@ public class Map {
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        return Helper.map(valueH,0,1,0,MyGdxGame.magnitude) + 2.5f;
+        return Helper.map(valueH,0,1,0, magnitude) + 2.5f;
     }
 
     public void dispose(){

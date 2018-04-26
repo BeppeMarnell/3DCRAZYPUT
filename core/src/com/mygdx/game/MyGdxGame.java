@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.WObjects.Ball;
+import com.mygdx.game.WObjects.Map;
 
 public class MyGdxGame extends ApplicationAdapter {
 	private ModelBatch modelBatch;
