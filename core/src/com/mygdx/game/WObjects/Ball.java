@@ -45,7 +45,7 @@ public class Ball {
         ballInstance = new ModelInstance(model);
         ballInstance.transform.translate(initPos);
 
-        pos = new Vector3(initPos.x, initPos.y, initPos.z + RAD);
+        pos = new Vector3(initPos.x, initPos.y, initPos.z);
 
         this.map = map;
     }

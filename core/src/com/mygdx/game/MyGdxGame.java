@@ -2,23 +2,22 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
+import com.mygdx.game.WObjects.Tree;
 
 public class MyGdxGame extends ApplicationAdapter {
 	private ModelBatch modelBatch;
@@ -33,7 +32,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private Map map;
 	private Ball ball;
-	private ModelInstance tree;
+	private Tree tree;
+
 
 	private Environment environment;
 
@@ -60,6 +60,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		//create the ball and send a copy of the map
 		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5), Ball.RAD), -5), map);
 
+		//create the tree
+		tree = new Tree(new Vector3(0,0,0), map);
+
 		//manage some camera controls
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
@@ -68,14 +71,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		font = new BitmapFont();
 		batch = new SpriteBatch();
 
-		//tree
-		ModelLoader loader = new ObjLoader();
-		Model model = loader.loadModel(Gdx.files.internal("tree/Tree low.obj"));// set material color to white
-		model.materials.get(0).set(ColorAttribute.createDiffuse(Color.OLIVE));
-		model.materials.get(1).set(ColorAttribute.createDiffuse(Color.BROWN));
-		tree = new ModelInstance(model);
-		tree.transform.translate(0,map.getHeight(new Vector2(0,0), -0.5f),0) ;
-		tree.transform.scl(0.1f);
+
 	}
 
 	@Override
@@ -90,13 +86,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		ball.update(Gdx.graphics.getDeltaTime());
 
 		modelBatch.begin(cam);
+
 		//render the ball
 		ball.render(modelBatch, environment);
 		//render the map
 		map.render(modelBatch);
-
 		//render the tree
-		modelBatch.render(tree, environment);
+		tree.render(modelBatch,environment);
+
 		modelBatch.end();
 
 
