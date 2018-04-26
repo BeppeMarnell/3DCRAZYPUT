@@ -12,8 +12,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Math.BiCubicSplineFast;
-import com.mygdx.game.Math.Helper;
+import com.mygdx.game.Utils.BiCubicSplineFast;
+import com.mygdx.game.Utils.HeightField;
+import com.mygdx.game.Utils.Helper;
 
 public class Map {
 

@@ -1,4 +1,4 @@
-package com.mygdx.game.Math;
+package com.mygdx.game.Utils;
 
 public class CubicSplineFast {
     private int nPoints = 0;
