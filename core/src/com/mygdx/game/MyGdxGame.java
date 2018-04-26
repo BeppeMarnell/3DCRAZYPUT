@@ -20,12 +20,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Camera cam;
 	private CameraInputController camController;
 
-	private Model model;
-	private ModelInstance ballInstance;
-	private Vector3 pos;
-
-	private Environment environment;
-
 	private BitmapFont font;
 	private SpriteBatch batch;
 
@@ -33,7 +27,9 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	private Map map;
+	private Ball ball;
 
+	private Environment environment;
 
 	@Override
 	public void create () {
@@ -44,25 +40,19 @@ public class MyGdxGame extends ApplicationAdapter {
 		cam.position.set(0, 100f, 0);
 		cam.lookAt(0,0,0);
 		cam.near = 1f;
-		cam.far = 300f;
+		cam.far = 200f;
 		cam.update();
 
-		ModelBuilder modelBuilder = new ModelBuilder();
-		model = modelBuilder.createSphere(5f, 5f, 5f,15,15,
-				new Material(ColorAttribute.createDiffuse(Color.WHITE)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
-						VertexAttributes.Usage.TextureCoordinates);
-		ballInstance = new ModelInstance(model);
-		ballInstance.transform.translate(5, map.getHeigth(new Vector2(5,-5)),-5);
-
-		pos = ballInstance.transform.getTranslation(new Vector3());
-
+		//create the environment lights
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -2f, -1.8f, -1.2f));
 
 		//create the map and load it
 		map = new Map(paths, environment, magnitude);
+
+		//create the ball and send a copy of the map
+		ball = new Ball(new Vector3(5, map.getHeigth(new Vector2(5,-5)), -5), map);
 
 		//manage some camera controls
 		camController = new CameraInputController(cam);
@@ -78,16 +68,15 @@ public class MyGdxGame extends ApplicationAdapter {
 		camController.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClearColor(0, 0,	 0, 0);
+		Gdx.gl.glClearColor(0,0,0,0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-
-		pos = ballInstance.transform.getTranslation(new Vector3());
-		move();
+		//update the ball
+		ball.update(Gdx.graphics.getDeltaTime());
 
 		modelBatch.begin(cam);
 		//render the ball
-		modelBatch.render(ballInstance, environment);
+		ball.render(modelBatch, environment);
 		//render the map
 		map.render(modelBatch);
 		modelBatch.end();
@@ -103,7 +92,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		modelBatch.dispose();
-		model.dispose();
+		ball.dispose();
 		map.dispose();
 	}
 
@@ -124,50 +113,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 
 		return ret;
-	}
-
-	private void move(){
-
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-
-			ballInstance.transform.translate(-1, 0,0);
-			ballInstance.calculateTransforms();
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			ballInstance.transform.translate(1f, 0, 0);
-			ballInstance.calculateTransforms();
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			ballInstance.transform.translate(0, 0, 1f);
-			ballInstance.calculateTransforms();
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			ballInstance.transform.translate(0, 0, -1f);
-			ballInstance.calculateTransforms();
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.T)) {
-			ballInstance.transform.translate(0, -1, 0);
-			ballInstance.calculateTransforms();
-		}
-
-
-		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
-			ballInstance.transform.translate(0, 1, 0);
-			ballInstance.calculateTransforms();
-		}
-
-		Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
-
-		float translH = map.getHeigth(new Vector2(newPos.x, newPos.z)) - map.getHeigth(new Vector2(pos.x, pos.z));
-		ballInstance.transform.translate(0, translH, 0);
-		ballInstance.calculateTransforms();
-
-
-		System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
 	}
 
 }
