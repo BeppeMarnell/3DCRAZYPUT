@@ -156,7 +156,7 @@ public class Map {
      * @param pos
      * @return height of the terrain in that position
      */
-    public float getHeigth(Vector2 pos){
+    public float getHeight(Vector2 pos){
 
         Vector2 translPos = new Vector2();
         translPos.x = Helper.map(pos.x, -80, 80, 0, 20);

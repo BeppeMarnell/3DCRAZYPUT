@@ -53,7 +53,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		map = new Map(paths, environment, magnitude);
 
 		//create the ball and send a copy of the map
-		ball = new Ball(new Vector3(5, map.getHeigth(new Vector2(5,-5)), -5), map);
+		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5)), -5), map);
 
 		//manage some camera controls
 		camController = new CameraInputController(cam);

@@ -71,11 +71,11 @@ public class Ball {
 
         //calculate the ball height in which the ball is
         Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
-        float translH = map.getHeigth(new Vector2(newPos.x, newPos.z)) - map.getHeigth(new Vector2(pos.x, pos.z));
+        float translH = map.getHeight(new Vector2(newPos.x, newPos.z)) - map.getHeight(new Vector2(pos.x, pos.z));
         ballInstance.transform.translate(0, translH, 0);
         ballInstance.calculateTransforms();
 
-        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
+        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeight(new Vector2(pos.x, pos.z)));
     }
 
     /**
