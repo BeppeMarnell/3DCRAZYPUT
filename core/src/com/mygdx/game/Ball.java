@@ -63,8 +63,25 @@ public class Ball {
      */
     public void update(float deltaTime){
 
+        //get the position of the ball
         pos = ballInstance.transform.getTranslation(new Vector3());
 
+        //move the ball with keys
+        moveByKeys();
+
+        //calculate the ball height in which the ball is
+        Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
+        float translH = map.getHeigth(new Vector2(newPos.x, newPos.z)) - map.getHeigth(new Vector2(pos.x, pos.z));
+        ballInstance.transform.translate(0, translH, 0);
+        ballInstance.calculateTransforms();
+
+        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
+    }
+
+    /**
+     * Move the ball by using the keyboards
+     */
+    private void moveByKeys(){
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 
             ballInstance.transform.translate(-1, 0,0);
@@ -96,14 +113,6 @@ public class Ball {
             ballInstance.transform.translate(0, 1, 0);
             ballInstance.calculateTransforms();
         }
-
-        Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
-
-        float translH = map.getHeigth(new Vector2(newPos.x, newPos.z)) - map.getHeigth(new Vector2(pos.x, pos.z));
-        ballInstance.transform.translate(0, translH, 0);
-        ballInstance.calculateTransforms();
-
-        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
     }
 
     public void dispose(){
