@@ -35,6 +35,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Ball ball;
 	private Tree tree;
 	private Wall wall;
+	private Wall boxWall;
 
 
 	private Environment environment;
@@ -63,10 +64,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5), Ball.RAD), -5), map);
 
 		//create the tree
-		tree = new Tree(new Vector3(0,0,0), map);
+		tree = new Tree(new Vector2(0,0), map);
 
 		//create a wall
-		wall = new Wall(new Vector3(50, 0,5), map);
+		wall = new Wall(new Vector2(0, 0));
+		boxWall = new Wall();
 
 		//manage some camera controls
 		camController = new CameraInputController(cam);
@@ -98,6 +100,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		tree.render(modelBatch,environment);
 
 		wall.render(modelBatch, environment);
+		boxWall.render(modelBatch,environment);
 
 		modelBatch.end();
 
@@ -112,6 +115,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		modelBatch.dispose();
 		ball.dispose();
 		map.dispose();
+		wall.dispose();
+		tree.dispose();
 	}
 
 	public float readSettings(){
