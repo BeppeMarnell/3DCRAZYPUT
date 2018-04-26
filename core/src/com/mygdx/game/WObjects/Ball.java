@@ -20,6 +20,9 @@ public class Ball {
      * z axis = y
      */
 
+    //radius
+    public static final float RAD = 2.5f;
+
     private Model model;
     private ModelInstance ballInstance;
     private Vector3 pos;
@@ -42,7 +45,7 @@ public class Ball {
         ballInstance = new ModelInstance(model);
         ballInstance.transform.translate(initPos);
 
-        pos = new Vector3(initPos.cpy());
+        pos = new Vector3(initPos.x, initPos.y, initPos.z + RAD);
 
         this.map = map;
     }
@@ -71,7 +74,7 @@ public class Ball {
 
         //calculate the ball height in which the ball is
         Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
-        float translH = map.getHeight(new Vector2(newPos.x, newPos.z)) - map.getHeight(new Vector2(pos.x, pos.z));
+        float translH = map.getHeight(new Vector2(newPos.x, newPos.z), RAD) - map.getHeight(new Vector2(pos.x, pos.z), RAD);
         ballInstance.transform.translate(0, translH, 0);
         ballInstance.calculateTransforms();
 

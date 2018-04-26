@@ -162,7 +162,7 @@ public class Map {
      * @param pos
      * @return height of the terrain in that position
      */
-    public float getHeight(Vector2 pos){
+    public float getHeight(Vector2 pos, float toAdd){
 
         Vector2 translPos = new Vector2();
         translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
@@ -170,7 +170,7 @@ public class Map {
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        return Helper.map(valueH,0,1,0, magnitude) + 2.5f;
+        return Helper.map(valueH,0,1,0, magnitude) + toAdd;
     }
 
     public void dispose(){

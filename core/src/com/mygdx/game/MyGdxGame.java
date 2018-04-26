@@ -2,16 +2,18 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -31,6 +33,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private Map map;
 	private Ball ball;
+	private ModelInstance tree;
 
 	private Environment environment;
 
@@ -43,7 +46,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		cam.position.set(0, 100f, 0);
 		cam.lookAt(0,0,0);
 		cam.near = 1f;
-		cam.far = 200f;
+		cam.far = 300f;
 		cam.update();
 
 		//create the environment lights
@@ -55,7 +58,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		map = new Map(paths, environment, magnitude);
 
 		//create the ball and send a copy of the map
-		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5)), -5), map);
+		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5), Ball.RAD), -5), map);
 
 		//manage some camera controls
 		camController = new CameraInputController(cam);
@@ -64,6 +67,15 @@ public class MyGdxGame extends ApplicationAdapter {
 		//for the FPS
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+
+		//tree
+		ModelLoader loader = new ObjLoader();
+		Model model = loader.loadModel(Gdx.files.internal("tree/Tree low.obj"));// set material color to white
+		model.materials.get(0).set(ColorAttribute.createDiffuse(Color.OLIVE));
+		model.materials.get(1).set(ColorAttribute.createDiffuse(Color.BROWN));
+		tree = new ModelInstance(model);
+		tree.transform.translate(0,map.getHeight(new Vector2(0,0), -0.5f),0) ;
+		tree.transform.scl(0.1f);
 	}
 
 	@Override
@@ -71,7 +83,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		camController.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClearColor(0,0,0,0);
+		Gdx.gl.glClearColor(1,1,1,0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		//update the ball
@@ -82,6 +94,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		ball.render(modelBatch, environment);
 		//render the map
 		map.render(modelBatch);
+
+		//render the tree
+		modelBatch.render(tree, environment);
 		modelBatch.end();
 
 
