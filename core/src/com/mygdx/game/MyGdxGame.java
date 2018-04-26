@@ -13,12 +13,8 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
-import com.mygdx.game.WObjects.Tree;
-import com.mygdx.game.WObjects.Wall;
+import com.mygdx.game.WObjects.World;
 
 public class MyGdxGame extends ApplicationAdapter {
 	private ModelBatch modelBatch;
@@ -32,11 +28,12 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	private Map map;
-	private Ball ball;
-	private Tree tree;
-	private Wall wall;
-	private Wall boxWall;
+	//private Ball ball;
+	//private Tree tree;
+	//private Wall wall;
+	//private Wall boxWall;
 
+	World world;
 
 	private Environment environment;
 
@@ -60,15 +57,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		//create the map and load it
 		map = new Map(paths, environment, magnitude);
 
-		//create the ball and send a copy of the map
-		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5), Ball.RAD), -5), map);
-
-		//create the tree
-		tree = new Tree(new Vector2(1,6), map);
-
-		//create a wall
-		wall = new Wall(new Vector2(10, 10));
-		boxWall = new Wall();
+		//create the world instance
+		world = new World(map);
 
 		//manage some camera controls
 		camController = new CameraInputController(cam);
@@ -83,24 +73,22 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void render () {
 		camController.update();
 
+		//cam.lookAt(ball.getPos().x, 0, ball.getPos().z ); //look at the ball
+		cam.update();
+
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(1,1,1,0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		//update the ball
-		ball.update(Gdx.graphics.getDeltaTime());
+		//update the world
+		world.update(Gdx.graphics.getDeltaTime());
 
 		modelBatch.begin(cam);
 
-		//render the ball
-		ball.render(modelBatch, environment);
 		//render the map
 		map.render(modelBatch);
-		//render the tree
-		tree.render(modelBatch,environment);
 
-		wall.render(modelBatch, environment);
-		boxWall.render(modelBatch,environment);
+		world.render(modelBatch, environment);
 
 		modelBatch.end();
 
@@ -113,10 +101,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		modelBatch.dispose();
-		ball.dispose();
 		map.dispose();
-		wall.dispose();
-		tree.dispose();
+		world.dispose();
 	}
 
 	public float readSettings(){

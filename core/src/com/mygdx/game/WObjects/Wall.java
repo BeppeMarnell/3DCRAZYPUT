@@ -22,7 +22,7 @@ public class Wall {
     public Wall(Vector2 pos){
 
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createBox(8f, 15f, 8f,
+        model = modelBuilder.createBox(8f, 18f, 8f,
                 new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
@@ -34,7 +34,7 @@ public class Wall {
         translPos.x = Helper.map(pos.x, 0, 20,-80, 80);
         translPos.y = Helper.map(pos.y, 0, 14,-56, 56);
 
-        wall.transform.translate(translPos.x +4f, 0,translPos.y +4f);
+        wall.transform.translate(translPos.x +4f, 5,translPos.y +4f);
     }
 
     /**
@@ -51,28 +51,28 @@ public class Wall {
                 new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         boxWalls.add(new ModelInstance(model1));
-        boxWalls.get(0).transform.translate(0,0,(56-4));
+        boxWalls.get(0).transform.translate(0,3,(56-4));
 
         //first wall up
         Model model2 = modelBuilder.createBox(8f, 15f, 96f,
                 new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         boxWalls.add(new ModelInstance(model2));
-        boxWalls.get(1).transform.translate(-(80-4),0,0);
+        boxWalls.get(1).transform.translate(-(80-4),3,0);
 
         //first wall up
         Model model3 = modelBuilder.createBox(8f, 15f, 96f,
                 new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         boxWalls.add(new ModelInstance(model3));
-        boxWalls.get(2).transform.translate((80-4),0,0);
+        boxWalls.get(2).transform.translate((80-4),3,0);
 
         //first wall up
         Model model4 = modelBuilder.createBox(160f, 15f, 8f,
                 new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         boxWalls.add(new ModelInstance(model4));
-        boxWalls.get(3).transform.translate(0,0,-(56-4));
+        boxWalls.get(3).transform.translate(0,3,-(56-4));
 
         boxMode = true;
     }
@@ -83,6 +83,6 @@ public class Wall {
     }
 
     public void dispose(){
-        model.dispose();
+        if(!boxMode) model.dispose();
     }
 }

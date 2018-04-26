@@ -34,7 +34,7 @@ public class Ball {
      * Initialize the ball 3d and add the position to it
      * @param initPos
      */
-    public Ball(Vector3 initPos, Map map){
+    public Ball(Vector2 initPos, Map map){
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -43,9 +43,9 @@ public class Ball {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                         VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
-        ballInstance.transform.translate(initPos);
 
-        pos = new Vector3(initPos.x, initPos.y, initPos.z);
+        pos = new Vector3(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), initPos.y);
+        ballInstance.transform.translate(pos);
 
         this.map = map;
     }
@@ -122,4 +122,7 @@ public class Ball {
         model.dispose();
     }
 
+    public Vector3 getPos() {
+        return pos;
+    }
 }

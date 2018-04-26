@@ -14,6 +14,10 @@ import com.mygdx.game.Utils.Helper;
 
 public class Tree {
 
+    /**
+     * Interpret the tree as a rectangle ( box ), and not as the little tree
+     */
+
     private ModelInstance tree;
     private Model model;
 

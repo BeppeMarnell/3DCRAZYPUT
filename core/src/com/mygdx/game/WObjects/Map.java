@@ -37,11 +37,19 @@ public class Map {
     private BiCubicSplineFast bSpline;
 
     //rendering 3d objects
-    public Renderable ground;
-    public HeightField field;
-    public Texture texture;
+    private Renderable ground;
+    private HeightField field;
+    private Texture texture;
 
     private float magnitude;
+
+    public Vector2 getHolePos(){
+        return new Vector2((int)hole.getPos().x/64,(int)hole.getPos().y/64 );
+    }
+
+    public Vector2 getBallPos(){
+        return new Vector2((int)ball.getPos().x/64,(int)ball.getPos().y/64 );
+    }
 
     /**
      * main constructor to load the map
