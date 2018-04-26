@@ -18,6 +18,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Tree;
+import com.mygdx.game.WObjects.Wall;
 
 public class MyGdxGame extends ApplicationAdapter {
 	private ModelBatch modelBatch;
@@ -33,6 +34,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private Map map;
 	private Ball ball;
 	private Tree tree;
+	private Wall wall;
 
 
 	private Environment environment;
@@ -63,6 +65,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		//create the tree
 		tree = new Tree(new Vector3(0,0,0), map);
 
+		//create a wall
+		wall = new Wall(new Vector3(50, 0,5), map);
+
 		//manage some camera controls
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
@@ -70,8 +75,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		//for the FPS
 		font = new BitmapFont();
 		batch = new SpriteBatch();
-
-
 	}
 
 	@Override
@@ -94,14 +97,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		//render the tree
 		tree.render(modelBatch,environment);
 
-		modelBatch.end();
+		wall.render(modelBatch, environment);
 
+		modelBatch.end();
 
 		//show the frame rate
 		batch.begin();
 		font.draw(batch, Gdx.graphics.getFramesPerSecond() + " fps", 3, Gdx.graphics.getHeight() - 3);
 		batch.end();
-
 	}
 	
 	@Override

@@ -15,11 +15,12 @@ import com.badlogic.gdx.math.Vector3;
 public class Tree {
 
     private ModelInstance tree;
+    private Model model;
 
     public Tree(Vector3 pos, Map map){
         //tree
         ModelLoader loader = new ObjLoader();
-        Model model = loader.loadModel(Gdx.files.internal("tree/Tree low.obj"));// set material color to white
+        model = loader.loadModel(Gdx.files.internal("tree/Tree low.obj"));// set material color to white
         model.materials.get(0).set(ColorAttribute.createDiffuse(Color.OLIVE));
         model.materials.get(1).set(ColorAttribute.createDiffuse(Color.BROWN));
         tree = new ModelInstance(model);
@@ -29,6 +30,9 @@ public class Tree {
 
     public void render(ModelBatch batch, Environment environment){
         batch.render(tree, environment);
+    }
 
+    public void dispose(){
+        model.dispose();
     }
 }
