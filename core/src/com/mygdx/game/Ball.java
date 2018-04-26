@@ -11,6 +11,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Ball {
+    /**
+     * IMPORTANT
+     * Because the map is over the y axis,
+     * the game axis are :
+     * x axis = x
+     * y axis = z
+     * z axis = y
+     */
 
     private Model model;
     private ModelInstance ballInstance;
@@ -96,7 +104,7 @@ public class Ball {
         ballInstance.calculateTransforms();
 
 
-        System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
+        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
     }
 
     public void dispose(){
