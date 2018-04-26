@@ -64,7 +64,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		ball = new Ball(new Vector3(5, map.getHeight(new Vector2(5,-5), Ball.RAD), -5), map);
 
 		//create the tree
-		tree = new Tree(new Vector2(0,0), map);
+		tree = new Tree(new Vector2(1,6), map);
 
 		//create a wall
 		wall = new Wall(new Vector2(0, 0));
