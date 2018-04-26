@@ -14,7 +14,7 @@ public class Ball {
     /**
      * IMPORTANT
      * Because the map is over the y axis,
-     * the game axis are :
+     * the game axes are :
      * x axis = x
      * y axis = z
      * z axis = y
@@ -102,7 +102,6 @@ public class Ball {
         float translH = map.getHeigth(new Vector2(newPos.x, newPos.z)) - map.getHeigth(new Vector2(pos.x, pos.z));
         ballInstance.transform.translate(0, translH, 0);
         ballInstance.calculateTransforms();
-
 
         //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeigth(new Vector2(pos.x, pos.z)));
     }
