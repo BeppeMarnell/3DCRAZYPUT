@@ -34,7 +34,7 @@ public class Wall {
         translPos.x = Helper.map(pos.x, 0, 20,-80, 80);
         translPos.y = Helper.map(pos.y, 0, 14,-56, 56);
 
-        wall.transform.translate(translPos.x +4f, +8,translPos.y +4f);
+        wall.transform.translate(translPos.x +4f, 0,translPos.y +4f);
     }
 
     /**

@@ -75,6 +75,7 @@ public class Map {
         ground.meshPart.size = field.mesh.getNumIndices();
         ground.meshPart.update();
         ground.material = new Material(TextureAttribute.createDiffuse(texture));
+        //ground.worldTransform.translate(80, 0, 56);
 
         //load the map with the .txt file info
         load(paths[2]);

@@ -67,7 +67,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		tree = new Tree(new Vector2(1,6), map);
 
 		//create a wall
-		wall = new Wall(new Vector2(0, 0));
+		wall = new Wall(new Vector2(10, 10));
 		boxWall = new Wall();
 
 		//manage some camera controls
