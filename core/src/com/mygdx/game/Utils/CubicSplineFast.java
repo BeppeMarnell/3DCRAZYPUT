@@ -89,7 +89,6 @@ public class CubicSplineFast {
         double var5 = 0.0D;
         double var7 = 0.0D;
         double var9 = 0.0D;
-        boolean var11 = false;
         int var12 = 0;
         int var13 = this.nPoints - 1;
 
