@@ -28,10 +28,6 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	private Map map;
-	//private Ball ball;
-	//private Tree tree;
-	//private Wall wall;
-	//private Wall boxWall;
 
 	World world;
 

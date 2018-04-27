@@ -15,6 +15,9 @@ public class Wall {
     private ModelInstance wall;
     private Model model;
 
+    //size of the wall
+    float size = 8f;
+
     /**
      * generates a wall in a specific position in the map
      * @param pos the position values has to be between 0-19 and 0-13
