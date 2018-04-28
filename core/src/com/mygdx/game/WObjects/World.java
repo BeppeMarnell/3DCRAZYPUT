@@ -14,6 +14,7 @@ public class World {
 
     private Map map;
     private Ball ball;
+    private Hole hole;
     private ArrayList<Tree> trees;
     private ArrayList<Wall> walls;
 
@@ -26,9 +27,12 @@ public class World {
         this.map = map;
 
         //generate the rest of the world objects
+
         //BALL
-        //ball = new Ball(map.getHolePos(),map);
-        ball = new Ball(new Vector2(5,-5),map);
+        ball = new Ball(map.getBallPos(),map);
+
+        //Hole
+        hole = new Hole(map.getHolePos(), map);
 
         //TREES and WALLS
         trees = new ArrayList<>();
@@ -43,7 +47,7 @@ public class World {
                     walls.add(new Wall(new Vector2(i,j)));
             }
         }
-
+        //add the surrounding walls
         walls.add(new Wall());
     }
 
@@ -58,6 +62,9 @@ public class World {
         //render the ball
         ball.render(batch, environment);
 
+        //render the hole
+        hole.render(batch, environment);
+
         //render the walls
         for(Wall w: walls) w.render(batch, environment);
 
@@ -67,6 +74,7 @@ public class World {
 
     public void dispose(){
         ball.dispose();
+        hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
     }

@@ -145,7 +145,12 @@ public class Map {
             }
         }
 
-        //get the hole and the ball position ????? TODO
+        //get the hole and the ball position
+        String[] holeInfo = objects[objects.length-2].split(",");
+        hole = new WorldObject(WorldObject.ObjectType.Hole, new Vector2(Float.parseFloat(holeInfo[2]), Float.parseFloat(holeInfo[3])), 0);
+
+        String[] ballInfo = objects[objects.length-1].split(",");
+        ball = new WorldObject(WorldObject.ObjectType.Ball, new Vector2(Float.parseFloat(ballInfo[2]), Float.parseFloat(ballInfo[3])), 0);
 
         double[][] interpArray = new double[20][14];
 
