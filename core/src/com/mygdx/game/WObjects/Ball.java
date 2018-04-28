@@ -2,12 +2,10 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -75,6 +73,9 @@ public class Ball {
         //initialize velocity and acceleration
         linearVelocity = new Vector2();
         acceleration = new Vector2();
+
+        //initialize the mass of the ball
+        mass = 2f;
     }
 
     /**
@@ -102,8 +103,11 @@ public class Ball {
         //set the acceleration to zero
         acceleration.set(new Vector2(0,0));
 
-        //stop the ball
-        if (Math.abs(linearVelocity.x) < 1 && Math.abs(linearVelocity.y) < 1) linearVelocity.set(0,0);
+        //stop the ball and set the state of the ball
+        if (Math.abs(linearVelocity.x) < 1 && Math.abs(linearVelocity.y) < 1){
+            linearVelocity.set(0,0);
+            state = BallState.Stopped;
+        }else state = BallState.Moving;
 
         move3DBall();
 
@@ -159,5 +163,9 @@ public class Ball {
 
     public void setLinearVelocity(Vector2 linearVelocity) {
         this.linearVelocity = linearVelocity;
+    }
+
+    public BallState getState() {
+        return state;
     }
 }
