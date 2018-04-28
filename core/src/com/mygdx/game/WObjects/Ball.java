@@ -111,7 +111,9 @@ public class Ball {
         //System.out.println(pos.x + " " + pos.y +" " + " height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD));
     }
 
-
+    /**
+     * This method moves the position of the 3D instance, do not change it
+     */
     private void move3DBall(){
         //Apply the physic to the 3D object
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
