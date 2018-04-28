@@ -31,4 +31,17 @@ public class WorldObject {
     public ObjectType getType() {
         return type;
     }
+
+    public float getFriction(){
+        /**
+         * 2 Grass terrain, friction 0.5f;
+         * 3 Dirt terrain, friction 0.7f;
+         * 4 Sand terrain, friction 0.9f;
+         */
+
+        if (type == ObjectType.Grass) return 0.99f;
+        else if(type == ObjectType.Dirt) return 0.97f;
+        else if(type == ObjectType.Sand) return 0.95f;
+        else return 1f;
+    }
 }

@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Ball {
+    private int iter = 0;
+
     /**
      * IMPORTANT
      * Because the map is over the y axis,
@@ -109,10 +111,20 @@ public class Ball {
             state = BallState.Stopped;
         }else state = BallState.Moving;
 
+
+        if(state == BallState.Moving){
+            linearVelocity.scl(map.getFriction(pos));
+        }
+
         move3DBall();
 
         // print out the position of the ball
-        //System.out.println(pos.x + " " + pos.y +" " + " height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD));
+        if (iter >20){
+            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
+            iter = 0;
+        }else{
+            iter++;
+        }
     }
 
     /**
@@ -137,19 +149,19 @@ public class Ball {
      */
     private void moveByKeys(){
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            linearVelocity.add(-1f,0);
+            linearVelocity.add(-5,0);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            linearVelocity.add(1f,0);
+            linearVelocity.add(5,0);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            linearVelocity.add(0,1f);
+            linearVelocity.add(0,5);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            linearVelocity.add(0,-1f);
+            linearVelocity.add(0,-5);
         }
     }
 

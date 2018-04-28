@@ -20,9 +20,9 @@ public class Map {
 
     /**
      * 1 Ball
-     * 2 Grass terrain
-     * 3 Dirt terrain
-     * 4 Sand terrain
+     * 2 Grass terrain, friction 0.5f;
+     * 3 Dirt terrain, friction 0.7f;
+     * 4 Sand terrain, friction 0.9f;
      * 5 Water
      * 6 Wall
      * 7 Tree
@@ -178,15 +178,35 @@ public class Map {
      */
     public float getHeight(Vector2 pos, float toAdd){
 
-        Vector2 translPos = new Vector2();
-        translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
-        translPos.y = Helper.map(pos.y, -56, 56, 0, 14);
+        Vector2 translPos = translPos(pos).cpy();
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
         if(Helper.map(valueH,0,1,0, magnitude)<0)
         return  toAdd;
         else return Helper.map(valueH,0,1,0, magnitude) + toAdd;
+    }
+
+    /**
+     * Function to get the friction in a specific position in the map
+     * @param pos
+     * @return the friction in the exact tile
+     */
+    public float getFriction(Vector2 pos){
+
+        //in order to not crash outofbounds
+        int i = (int)(pos.x +80)/8;
+        int j = (int)(pos.y+56)/8;
+
+        return mapObjects[(i>=0 &&i<20)? i: 1][(j>=0 &&j<14)? j: 1].getFriction();
+    }
+
+    private Vector2 translPos(Vector2 pos){
+        Vector2 translPos = new Vector2();
+        translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
+        translPos.y = Helper.map(pos.y, -56, 56, 0, 14);
+
+        return translPos;
     }
 
     public void dispose(){
