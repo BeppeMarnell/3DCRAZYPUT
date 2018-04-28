@@ -123,6 +123,7 @@ public class Ball {
         ballInstance.transform.translate(translX, -translH , translY);
         ballInstance.calculateTransforms();
     }
+
     /**
      * Move the ball by using the keyboards
      */
@@ -150,5 +151,9 @@ public class Ball {
 
     public Vector2 getPos() {
         return pos;
+    }
+
+    public void setLinearVelocity(Vector2 linearVelocity) {
+        this.linearVelocity = linearVelocity;
     }
 }
