@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -34,7 +33,7 @@ public class Ball {
     private Map map;
 
     //position of the ball (center of the object)
-    private Vector3 pos; // ( x , z, y ) think the position like this
+    private Vector2 pos;
 
     //linear velocity of the body
     private Vector2 linearVelocity;
@@ -62,8 +61,8 @@ public class Ball {
                         VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
 
-        pos = new Vector3(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), initPos.y);
-        ballInstance.transform.translate(pos);
+        pos = new Vector2(initPos.x, initPos.y);
+        ballInstance.transform.translate(pos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), pos.y);
 
         //copy the instance of the map
         this.map = map;
@@ -91,72 +90,57 @@ public class Ball {
      */
     public void update(float deltaTime){
 
-        //get the position of the ball
-        pos = ballInstance.transform.getTranslation(new Vector3());
-
         //move the ball with keys
         moveByKeys();
 
-        /* i've tried to add this methods but them didn't work so much
-
-        //move the ball
-        linearVelocity.add(acceleration.cpy().scl(deltaTime));
-        linearVelocity.add(acceleration.cpy().scl(2 * deltaTime));
-
-        pos.add(linearVelocity.x *deltaTime,0,linearVelocity.y *deltaTime );
+        //move the ball adding all the velocity and acceleration
+        pos.add(linearVelocity.cpy().scl(deltaTime));
+        linearVelocity.add(acceleration.cpy().scl(deltaTime)); // add delta time
 
         //set the acceleration to zero
         acceleration.set(new Vector2(0,0));
 
         //stop the ball
-        if (Math.abs(linearVelocity.x) < 5 && Math.abs(linearVelocity.y) < 5) linearVelocity.set(0,0);*/
+        if (Math.abs(linearVelocity.x) < 1 && Math.abs(linearVelocity.y) < 1) linearVelocity.set(0,0);
 
-        //calculate the ball height in which the ball is
-        Vector3 newPos = ballInstance.transform.getTranslation(new Vector3());
-
-        //translation for the y axis
-        float translH = map.getHeight(new Vector2(newPos.x, newPos.z), RAD) - map.getHeight(new Vector2(pos.x, pos.z), RAD);
-        ballInstance.transform.translate(0, translH, 0);
-        ballInstance.calculateTransforms();
+        move3DBall();
 
         // print out the position of the ball
-        //System.out.println(pos.x + " " + pos.y +" " + pos.z + " height: "+ map.getHeight(new Vector2(pos.x, pos.z), RAD));
+        //System.out.println(pos.x + " " + pos.y +" " + " height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD));
     }
 
+
+    private void move3DBall(){
+        //Apply the physic to the 3D object
+        Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
+
+        //translation for the all the axes from where the ball is now to where the vector "pos" tells
+        float translH = map.getHeight(new Vector2(oldPos.x, oldPos.z), RAD) - map.getHeight(new Vector2(pos.x, pos.y), RAD);
+        float translX = pos.x - oldPos.x;
+        float translY = pos.y - oldPos.z;
+
+        //in order to move the ball i've to apply the translation amount
+        ballInstance.transform.translate(translX, -translH , translY);
+        ballInstance.calculateTransforms();
+    }
     /**
      * Move the ball by using the keyboards
      */
     private void moveByKeys(){
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-
-            ballInstance.transform.translate(-1, 0,0);
-            ballInstance.calculateTransforms();
+            linearVelocity.add(-1f,0);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            ballInstance.transform.translate(1f, 0, 0);
-            ballInstance.calculateTransforms();
+            linearVelocity.add(1f,0);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            ballInstance.transform.translate(0, 0, 1f);
-            ballInstance.calculateTransforms();
+            linearVelocity.add(0,1f);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            ballInstance.transform.translate(0, 0, -1f);
-            ballInstance.calculateTransforms();
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.T)) {
-            ballInstance.transform.translate(0, -1, 0);
-            ballInstance.calculateTransforms();
-        }
-
-
-        if(Gdx.input.isKeyPressed(Input.Keys.G)) {
-            ballInstance.transform.translate(0, 1, 0);
-            ballInstance.calculateTransforms();
+            linearVelocity.add(0,-1f);
         }
     }
 
@@ -164,7 +148,7 @@ public class Ball {
         model.dispose();
     }
 
-    public Vector3 getPos() {
+    public Vector2 getPos() {
         return pos;
     }
 }
