@@ -98,29 +98,33 @@ public class Ball {
         //move the ball with keys
         moveByKeys();
 
-        //move the ball adding all the velocity and acceleration
-        pos.add(linearVelocity.cpy().scl(deltaTime));
-        linearVelocity.add(acceleration.cpy().scl(deltaTime)); // add delta time
+        //don't move if inthehole active
+        if(!map.isInHole(pos)){
 
-        //set the acceleration to zero
-        acceleration.set(new Vector2(0,0));
+            //move the ball adding all the velocity and acceleration
+            pos.add(linearVelocity.cpy().scl(deltaTime));
+            linearVelocity.add(acceleration.cpy().scl(deltaTime)); // add delta time
 
-        //stop the ball and set the state of the ball
-        if (Math.abs(linearVelocity.x) < 1 && Math.abs(linearVelocity.y) < 1){
-            linearVelocity.set(0,0);
-            state = BallState.Stopped;
-        }else state = BallState.Moving;
+            //set the acceleration to zero
+            acceleration.set(new Vector2(0,0));
+
+            //stop the ball and set the state of the ball
+            if (Math.abs(linearVelocity.x) < 1 && Math.abs(linearVelocity.y) < 1){
+                linearVelocity.set(0,0);
+                state = BallState.Stopped;
+            }else state = BallState.Moving;
 
 
-        if(state == BallState.Moving){
-            linearVelocity.scl(map.getFriction(pos));
+            if(state == BallState.Moving){
+                linearVelocity.scl(map.getFriction(pos));
+            }
         }
 
         move3DBall();
 
         // print out the position of the ball
         if (iter >20){
-            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
+            //System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
             iter = 0;
         }else{
             iter++;

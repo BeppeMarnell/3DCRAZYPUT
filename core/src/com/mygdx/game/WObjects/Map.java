@@ -209,6 +209,16 @@ public class Map {
         return translPos;
     }
 
+    public boolean isInHole(Vector2 pos){
+
+        //in order to not crash outofbounds
+        int i = (int)(pos.x +80)/8;
+        int j = (int)(pos.y+56)/8;
+
+         if(i == getHolePos().x && j == getHolePos().y)return true;
+         return false;
+    }
+
     public void dispose(){
         texture.dispose();
         field.dispose();
