@@ -27,8 +27,7 @@ public class Hole {
     public Hole(Vector2 pos, Map map){
         //tree
         ModelLoader loader = new ObjLoader();
-        model = loader.loadModel(Gdx.files.internal("hole/Flag (LM).obj"));
-
+        model = loader.loadModel(Gdx.files.internal("hole/flagBlue.obj"));
         hole = new ModelInstance(model);
 
         //find the exact position in the map
@@ -38,7 +37,7 @@ public class Hole {
 
         hole.transform.translate(translPos.x + 4f,
                 map.getHeight(new Vector2(translPos.x + 4f,translPos.y+ 4f), -0.5f),translPos.y + 4f) ;
-        hole.transform.scl(8f);
+        hole.transform.scl(2f);
     }
 
     public void render(ModelBatch batch, Environment environment){

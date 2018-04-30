@@ -44,7 +44,7 @@ public class Ball {
     private Vector2 acceleration;
 
     //mass
-    private float mass;
+    private final float mass = 2f;
 
     //radius
     public static final float RAD = 2.5f;
@@ -57,10 +57,9 @@ public class Ball {
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createSphere(5f, 5f, 5f,15,15,
-                new Material(ColorAttribute.createDiffuse(Color.WHITE)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
-                        VertexAttributes.Usage.TextureCoordinates);
+        model = modelBuilder.createSphere(5f, 5f, 5f,15,15,  new Material(ColorAttribute.createDiffuse(Color.WHITE)),
+                    VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
+
         ballInstance = new ModelInstance(model);
 
         pos = new Vector2(initPos.x, initPos.y);
@@ -75,9 +74,6 @@ public class Ball {
         //initialize velocity and acceleration
         linearVelocity = new Vector2();
         acceleration = new Vector2();
-
-        //initialize the mass of the ball
-        mass = 2f;
     }
 
     /**

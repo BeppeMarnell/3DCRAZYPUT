@@ -40,7 +40,7 @@ public class Tree {
         translPos.y = Helper.map(pos.y, 0, 14,-56, 56);
 
         tree.transform.translate(translPos.x + 4f,
-                map.getHeight(new Vector2(translPos.x + 4f,translPos.y+ 4f), -0.5f),translPos.y + 4f) ;
+                map.getHeight(new Vector2(translPos.x + 4f,translPos.y+ 4f), -1f),translPos.y + 4f) ;
         tree.transform.scl(0.1f);
     }
 

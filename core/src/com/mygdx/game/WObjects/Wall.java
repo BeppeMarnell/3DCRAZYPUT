@@ -1,11 +1,13 @@
 package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Utils.Helper;
 
 import java.util.ArrayList;
@@ -25,8 +27,7 @@ public class Wall {
     public Wall(Vector2 pos){
 
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createBox(8f, 18f, 8f,
-                new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)),
+        model = modelBuilder.createBox(8f, 18f, 8f, new Material(ColorAttribute.createDiffuse(Color.DARK_GRAY)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 
         wall = new ModelInstance(model);

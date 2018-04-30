@@ -2,14 +2,12 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.BiCubicSplineFast;
@@ -40,8 +38,12 @@ public class Map {
     private Renderable ground;
     private HeightField field;
     private Texture texture;
+    private Environment environment;
 
     private float magnitude;
+
+    //debug mode
+    private boolean debugMode = false;
 
     public Vector2 getHolePos(){
         return new Vector2((int)hole.getPos().x/64,(int)hole.getPos().y/64 );
@@ -76,6 +78,7 @@ public class Map {
         field.update();
 
         ground = new Renderable();
+        this.environment = environment;
         ground.environment = environment;
         ground.meshPart.mesh = field.mesh;
         ground.meshPart.primitiveType = GL20.GL_TRIANGLES;
@@ -83,7 +86,6 @@ public class Map {
         ground.meshPart.size = field.mesh.getNumIndices();
         ground.meshPart.update();
         ground.material = new Material(TextureAttribute.createDiffuse(texture));
-        //ground.worldTransform.translate(80, 0, 56);
 
         //load the map with the .txt file info
         load(paths[2]);
@@ -222,5 +224,22 @@ public class Map {
     public void dispose(){
         texture.dispose();
         field.dispose();
+    }
+
+    public void setDebugMode(boolean debugMode) {
+
+        ground = new Renderable();
+        ground.environment = environment;
+        ground.meshPart.mesh = field.mesh;
+
+        if(debugMode)ground.meshPart.primitiveType = GL20.GL_LINES;
+        else ground.meshPart.primitiveType = GL20.GL_TRIANGLES;
+
+        ground.meshPart.offset = 0;
+        ground.meshPart.size = field.mesh.getNumIndices();
+        ground.meshPart.update();
+
+        if(debugMode)ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BROWN));
+        else ground.material = new Material(TextureAttribute.createDiffuse(texture));
     }
 }
