@@ -184,8 +184,7 @@ public class Map {
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        if(Helper.map(valueH,0,1,0, magnitude)<0)
-        return  toAdd;
+        if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
         else return Helper.map(valueH,0,1,0, magnitude) + toAdd;
     }
 
