@@ -22,7 +22,6 @@ public class World {
 
     //put the bot inside
     private Bot bot;
-    private boolean debugMode = false;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -98,7 +97,6 @@ public class World {
     }
 
     public void setDebugMode(boolean debugMode) {
-        this.debugMode = debugMode;
         map.setDebugMode(debugMode);
     }
 
