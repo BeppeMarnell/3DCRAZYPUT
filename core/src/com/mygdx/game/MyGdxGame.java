@@ -153,10 +153,6 @@ public class MyGdxGame extends ApplicationAdapter {
 			String text = file.readString();
 			ret = Float.parseFloat(text);
 		}
-
 		return ret;
 	}
-
-
-
 }

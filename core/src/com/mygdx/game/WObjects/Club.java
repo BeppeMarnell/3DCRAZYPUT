@@ -57,7 +57,7 @@ public class Club implements InputProcessor {
             float translY = pos.y - oldPos.z;
 
             //in order to move the ball i've to apply the translation amount
-            club.transform.translate(translX * 0.007f , -translH, translY * 0.007f);
+            club.transform.translate(translX * 0.007f , 0, translY * 0.007f);
             club.calculateTransforms();
 
             //render the club
