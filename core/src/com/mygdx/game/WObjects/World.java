@@ -85,7 +85,7 @@ public class World {
         for(Tree t: trees) t.render(batch, environment);
 
         //render the club
-        //club.render(batch, environment);
+        club.render(batch, environment);
     }
 
     public void dispose(){
@@ -93,14 +93,14 @@ public class World {
         hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
-        //club.dispose();
+        club.dispose();
     }
 
     public void setDebugMode(boolean debugMode) {
         map.setDebugMode(debugMode);
     }
 
-    public Ball getBall(){
-        return ball;
+    public Vector2 getBallPos(){
+        return ball.getPos();
     }
 }

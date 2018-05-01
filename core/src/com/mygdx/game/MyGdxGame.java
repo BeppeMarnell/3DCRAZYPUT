@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
@@ -30,11 +29,12 @@ public class MyGdxGame extends ApplicationAdapter {
 	static float magnitude;
 	private String[] paths;
 
-	public boolean tracking = true;
+	public boolean tracking = false;
+	private int initPos = 0;
 
 	private Map map;
 
-	World world;
+	private World world;
 
 	private Environment environment;
 
@@ -45,7 +45,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		magnitude = readSettings();
 
 		modelBatch = new ModelBatch();
-
 
 		//create the environment lights
 		environment = new Environment();
@@ -58,7 +57,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		//create the world instance
 		world = new World(map);
 		world.setDebugMode(false);
-
 
 		//manage some camera and controls
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -83,15 +81,21 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void render () {
 		camController.update();
 
-		Ball ball = world.getBall();
+		//camera tracking methods
 		if(tracking) {
-			cam.position.x = ball.getPos().x;
-			cam.position.z = ball.getPos().y;
-		}else {
-			cam.position.set(0, 100f, 0);
-			cam.lookAt(ball.getPos().x, 0, ball.getPos().y ); //look at the ball
+			cam.position.x = world.getBallPos().x;
+			cam.position.z = world.getBallPos().y;
+			cam.lookAt(world.getBallPos().x,0,world.getBallPos().y);
+			initPos = 0;
+		}else
+			if(initPos == 0){
+				cam.position.set(0, 100f, 0);
+				cam.lookAt(0,0,0);
+				cam.near = 1f;
+				cam.far = 300f;
+				initPos++;
+			}
 
-		}
 		cam.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -120,20 +124,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.end();
 
 		camSet();
-
 	}
 
 	public void camSet(){
-		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
-			tracking = true;
-			camController = new CameraInputController(cam);
-			Gdx.input.setInputProcessor(camController);
-		}
-		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
-			tracking = false;
-			camController = new CameraInputController(cam);
-			Gdx.input.setInputProcessor(camController);
-		}
+		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) tracking = false;
+		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) tracking = true;
 	}
 	
 	@Override

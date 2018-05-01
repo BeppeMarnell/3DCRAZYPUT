@@ -52,18 +52,16 @@ public class Club implements InputProcessor {
             Vector3 oldPos = club.transform.getTranslation(new Vector3());
 
             //translation for the all the axes from where the ball is now to where the vector "pos" tells
-            //float translH = map.getHeight(new Vector2(oldPos.x, oldPos.z), 0) - map.getHeight(new Vector2(x, y), 0);
+            float translH = map.getHeight(new Vector2(oldPos.x, oldPos.z), 20) - map.getHeight(new Vector2(x, y), 20);
             float translX = pos.x - oldPos.x;
             float translY = pos.y - oldPos.z;
 
             //in order to move the ball i've to apply the translation amount
-            club.transform.translate(translX * 0.007f , 0 , translY * 0.007f);
+            club.transform.translate(translX * 0.007f , -translH, translY * 0.007f);
             club.calculateTransforms();
 
             //render the club
             batch.render(club, environment);
-
-            //System.out.println(x + " " + y + " " + oldPos.toString() + " " + translX + " " + translY);
         }
     }
 
