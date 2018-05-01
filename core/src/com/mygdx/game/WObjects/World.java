@@ -3,6 +3,7 @@ package com.mygdx.game.WObjects;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Bot;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,11 @@ public class World {
     private Hole hole;
     private ArrayList<Tree> trees;
     private ArrayList<Wall> walls;
+    private Club club;
+
+    //put the bot inside
+    private Bot bot;
+    private boolean debugMode = false;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -49,10 +55,18 @@ public class World {
         }
         //add the surrounding walls
         walls.add(new Wall());
+
+        //add the club
+        //club = new Club(map);
+
+        //initialize the bot
+        //bot =new Bot(map, ball);
     }
 
     public void update(float deltaTime){
         ball.update(deltaTime);
+
+        //bot.render(deltaTime);
     }
 
     public void render(ModelBatch batch, Environment environment){
@@ -70,6 +84,9 @@ public class World {
 
         //render the trees
         for(Tree t: trees) t.render(batch, environment);
+
+        //render the club
+        club.render(batch, environment);
     }
 
     public void dispose(){
@@ -77,6 +94,12 @@ public class World {
         hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
+        club.dispose();
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+        map.setDebugMode(debugMode);
     }
 
     public Ball getBall(){

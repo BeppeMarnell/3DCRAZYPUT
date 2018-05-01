@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
+import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -36,6 +37,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private Environment environment;
 
+	private Water water;
+
 	@Override
 	public void create () {
 		magnitude = readSettings();
@@ -53,6 +56,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//create the world instance
 		world = new World(map);
+		world.setDebugMode(false);
 
 
 		//manage some camera and controls
@@ -68,6 +72,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		//for the FPS
 		font = new BitmapFont();
 		batch = new SpriteBatch();
+
+		//ex water
+		water = new Water(environment);
+		water.setDebugMode(false);
 	}
 
 	@Override
@@ -92,7 +100,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		//render the map
 		map.render(modelBatch);
 
+		//render all the objects in the world
 		world.render(modelBatch, environment);
+
+		//render the water
+		//water.render(Gdx.graphics.getDeltaTime(), modelBatch);
 
 		modelBatch.end();
 
