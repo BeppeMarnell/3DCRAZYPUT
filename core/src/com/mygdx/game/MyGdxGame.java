@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -83,9 +84,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		camController.update();
 
 		Ball ball = world.getBall();
-		cam.position.x = ball.getPos().x;
-		cam.position.z = ball.getPos().y;
-		//cam.lookAt(ball.getPos().x, 0, ball.getPos().y ); //look at the ball
+		if(tracking) {
+			cam.position.x = ball.getPos().x;
+			cam.position.z = ball.getPos().y;
+		}else {
+			cam.position.set(0, 100f, 0);
+			cam.lookAt(ball.getPos().x, 0, ball.getPos().y ); //look at the ball
+
+		}
 		cam.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -112,6 +118,22 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.begin();
 		font.draw(batch, Gdx.graphics.getFramesPerSecond() + " fps", 3, Gdx.graphics.getHeight() - 3);
 		batch.end();
+
+		camSet();
+
+	}
+
+	public void camSet(){
+		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)){
+			tracking = true;
+			camController = new CameraInputController(cam);
+			Gdx.input.setInputProcessor(camController);
+		}
+		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)){
+			tracking = false;
+			camController = new CameraInputController(cam);
+			Gdx.input.setInputProcessor(camController);
+		}
 	}
 	
 	@Override
@@ -139,5 +161,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		return ret;
 	}
+
+
 
 }

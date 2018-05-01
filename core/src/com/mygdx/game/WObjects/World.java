@@ -57,7 +57,7 @@ public class World {
         walls.add(new Wall());
 
         //add the club
-        //club = new Club(map);
+        club = new Club(map);
 
         //initialize the bot
         //bot =new Bot(map, ball);
