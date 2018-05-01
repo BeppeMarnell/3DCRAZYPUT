@@ -1,6 +1,5 @@
 # DKEProject1-2		
 
-![uu](https://raw.githubusercontent.com/BeppeMarnell/3DCRAZYPUT/img.png)
 ![Alt text](img.png?raw=true "Optional Title")
 
 Crazy Putting Game!		
