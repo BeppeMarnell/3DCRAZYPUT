@@ -78,4 +78,8 @@ public class World {
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
     }
+
+    public Ball getBall(){
+        return ball;
+    }
 }

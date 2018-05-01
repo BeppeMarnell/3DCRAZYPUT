@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.World;
 
@@ -27,6 +28,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	static float magnitude;
 	private String[] paths;
 
+	public boolean tracking = true;
+
 	private Map map;
 
 	World world;
@@ -38,12 +41,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		magnitude = readSettings();
 
 		modelBatch = new ModelBatch();
-		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		cam.position.set(0, 100f, 0);
-		cam.lookAt(0,0,0);
-		cam.near = 1f;
-		cam.far = 300f;
-		cam.update();
+
 
 		//create the environment lights
 		environment = new Environment();
@@ -56,7 +54,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		//create the world instance
 		world = new World(map);
 
-		//manage some camera controls
+
+		//manage some camera and controls
+		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		cam.position.set(0, 100f, 0);
+		cam.lookAt(0,0,0);
+		cam.near = 1f;
+		cam.far = 300f;
+		cam.update();
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
 
@@ -69,7 +74,10 @@ public class MyGdxGame extends ApplicationAdapter {
 	public void render () {
 		camController.update();
 
-		//cam.lookAt(ball.getPos().x, 0, ball.getPos().z ); //look at the ball
+		Ball ball = world.getBall();
+		cam.position.x = ball.getPos().x;
+		cam.position.z = ball.getPos().y;
+		//cam.lookAt(ball.getPos().x, 0, ball.getPos().y ); //look at the ball
 		cam.update();
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
