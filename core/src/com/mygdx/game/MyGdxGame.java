@@ -56,7 +56,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//create the world instance
 		world = new World(map);
-		world.setDebugMode(false);
+		world.setDebugMode(true);
 
 		//manage some camera and controls
 		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -74,7 +74,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		//ex water
 		water = new Water(environment);
-		water.setDebugMode(false);
+		water.setDebugMode(true);
 	}
 
 	@Override

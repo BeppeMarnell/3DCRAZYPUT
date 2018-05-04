@@ -42,9 +42,6 @@ public class Map {
 
     private float magnitude;
 
-    //debug mode
-    private boolean debugMode = false;
-
     public Vector2 getHolePos(){
         return new Vector2((int)hole.getPos().x/64,(int)hole.getPos().y/64 );
     }
@@ -202,6 +199,11 @@ public class Map {
         return mapObjects[(i>=0 &&i<20)? i: 1][(j>=0 &&j<14)? j: 1].getFriction();
     }
 
+    /**
+     * translate actual world position in array position
+     * @param pos
+     * @return
+     */
     private Vector2 translPos(Vector2 pos){
         Vector2 translPos = new Vector2();
         translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
@@ -210,8 +212,12 @@ public class Map {
         return translPos;
     }
 
+    /**
+     * helper method to check whether the ball is in the hole
+     * @param pos
+     * @return
+     */
     public boolean isInHole(Vector2 pos){
-
         //in order to not crash outofbounds
         int i = (int)(pos.x +80)/8;
         int j = (int)(pos.y+56)/8;
@@ -225,20 +231,44 @@ public class Map {
         field.dispose();
     }
 
+    /**
+     * set a debug mode for the map, without textures
+     * @param debugMode
+     */
     public void setDebugMode(boolean debugMode) {
 
         ground = new Renderable();
         ground.environment = environment;
         ground.meshPart.mesh = field.mesh;
 
-        if(debugMode)ground.meshPart.primitiveType = GL20.GL_LINES;
+        if (debugMode) ground.meshPart.primitiveType = GL20.GL_LINES;
         else ground.meshPart.primitiveType = GL20.GL_TRIANGLES;
 
         ground.meshPart.offset = 0;
         ground.meshPart.size = field.mesh.getNumIndices();
         ground.meshPart.update();
 
-        if(debugMode)ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BROWN));
+        if (debugMode) ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BROWN));
         else ground.material = new Material(TextureAttribute.createDiffuse(texture));
+    }
+
+    /**
+     * Helper method to translate the map into a array map readable by the bot
+     * @return
+     */
+    public int[][] getArrayMap(){
+        int[][] map = new int[20][14];
+
+        //Convert the walls, trees, and water
+        for(int i=0; i<map.length; i++)
+            for (int j = 0; j < map[0].length; j++)
+                if(mapObjects[i][j].getType() == WorldObject.ObjectType.Tree ||mapObjects[i][j].getType() == WorldObject.ObjectType.Water
+                        || mapObjects[i][j].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
+
+        //Convert hole and ball position
+        map[(int)getBallPos().x][(int)getBallPos().y] = 7;
+        map[(int)getHolePos().x][(int)getHolePos().y] = 9;
+
+        return map;
     }
 }

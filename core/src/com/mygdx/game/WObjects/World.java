@@ -1,10 +1,8 @@
 package com.mygdx.game.WObjects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Bot;
 
 import java.util.ArrayList;
 
