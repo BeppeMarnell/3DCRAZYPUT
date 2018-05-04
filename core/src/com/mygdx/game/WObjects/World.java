@@ -22,7 +22,7 @@ public class World {
     private Club club;
 
     //put the bot inside
-    private Bot bot;
+    //private Bot bot;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -60,7 +60,7 @@ public class World {
         club = new Club(map);
 
         //initialize the bot
-        bot =new Bot(map, ball);
+        //bot =new Bot(map, ball);
     }
 
     public void update(float deltaTime){
@@ -87,8 +87,6 @@ public class World {
 
         //render the club
         club.render(batch, environment);
-
-        bot.render(Gdx.graphics.getDeltaTime());
     }
 
     public void dispose(){
