@@ -4,24 +4,78 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
-import com.mygdx.game.WObjects.Ball;
-import com.mygdx.game.WObjects.Map;
+import com.mygdx.game.WObjects.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Bot {
 
     private Map map;
     private Ball ball;
+    private Hole hole;
+    private Tree tree;
+
+    public Vector2 linearVelocity;
+
+    private Coordinate start;
+    private Coordinate end;
+
+    private static final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+
+    private boolean[][] visited;
+
+    private int[][] array;
+
+    private ArrayList<Coordinate> coordinates;
+
+
 
     public Bot(Map map , Ball ball){
         this.ball = ball;
         this.map = map;
+        this.start = setStart();
+        this.end = setEnd();
+        this.visited = new boolean[20][20];
+        this.array = new int[20][20];
+        this.coordinates = new ArrayList<>();
+        solve();
+        printArray();
+        printCoordiantes();
+
     }
+
+    public Coordinate setStart(){
+        int x = (int)ball.getPos().x;
+        int y = (int)ball.getPos().y;
+
+        return start = new Coordinate(x,y);
+    }
+
+    public Coordinate setEnd(){
+        int x = (int)map.getHolePos().x;
+        int y = (int)map.getHolePos().y;
+
+        return end = new Coordinate(x,y);
+    }
+
+
+
 
     public void render(float deltaTime){
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.P))
             throwBall(deltaTime);
+
+        if(Gdx.input.isKeyPressed(Input.Keys.G)){
+            
+
+        }
     }
+
+
 
 
     public void throwBall(float deltaTime){
@@ -33,6 +87,135 @@ public class Bot {
         Vector2 dir = holePos.sub(ballpos);
         float amount = holePos.dst(ballpos);
 
-        ball.setLinearVelocity(dir.cpy().scl(amount*deltaTime*10));
+        ball.setLinearVelocity(dir.cpy().scl(amount*deltaTime*2));
     }
+
+
+
+
+
+    public Coordinate getEntry() {
+        return start;
+    }
+
+    public Coordinate getExit() {
+        return end;
+    }
+
+    public boolean isExit(int x, int y) {
+        return x == end.getX() && y == end.getY();
+    }
+
+    public boolean isStart(int x, int y) {
+        return x == start.getX() && y == start.getY();
+    }
+
+    public boolean isExplored(int row, int col) {
+        return visited[row][col];
+    }
+
+    public boolean isWall(int x, int y){
+       boolean isWall;
+        if(map.mapObjects[x][y].getType() == WorldObject.ObjectType.Water){ isWall=true; }
+        else {isWall = false;}
+        return isWall;
+    }
+
+    public void setVisited(int row, int col, boolean value) {
+        visited[row][col] = value;
+    }
+
+    public boolean isValidLocation(int row, int col) {
+        if (row < 0 || row >= map.mapObjects.length || col < 0 || col >= map.mapObjects[0].length) {
+            return false;
+        }
+        return true;
+    }
+
+    public List<Coordinate> solve() {
+        LinkedList<Coordinate> nextToVisit = new LinkedList<>();
+        Coordinate start = getEntry();
+        nextToVisit.add(start);
+
+        while (!nextToVisit.isEmpty()) {
+            Coordinate cur = nextToVisit.remove();
+
+            if (!isValidLocation(cur.getX(), cur.getY()) || isExplored(cur.getX(), cur.getY())) {
+                continue;
+            }
+
+            if (isWall(cur.getX(), cur.getY())) {
+                setVisited(cur.getX(), cur.getY(), true);
+                continue;
+            }
+
+            if (isExit(cur.getX(), cur.getY())) {
+                return backtrackPath(cur);
+            }
+
+            for (int[] direction : DIRECTIONS) {
+                Coordinate coordinate = new Coordinate(cur.getX() + direction[0], cur.getY() + direction[1], cur);
+                nextToVisit.add(coordinate);
+                setVisited(cur.getX(), cur.getY(), true);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private List<Coordinate> backtrackPath(Coordinate cur) {
+        List<Coordinate> path = new ArrayList<>();
+        Coordinate iter = cur;
+
+        while (iter != null) {
+            path.add(iter);
+            iter = iter.parent;
+        }
+        System.out.println("Solved");
+        for(int i = 0; i < path.size(); i++) {
+            System.out.println(path.get(i).getStringX() + " : " + path.get(i).getStringY());
+            array[path.get(i).y][path.get(i).y] = 1;
+        }
+
+        for(int i = 0; i < path.size(); i++){
+
+        }
+
+        for(int i = 0; i < path.size(); i++){
+            coordinates.add(path.get(i));
+        }
+
+
+        System.out.println("-----------------");
+
+        for (int i = 0; i < path.size() - 1; i++) {
+            System.out.println((path.get(i+1).x - path.get(i).x) + " : " + (path.get(i+1).y - path.get(i).y));
+        }
+
+
+
+        return path;
+    }
+
+    public void printArray() {
+        for (int i = 0; i < array.length; i++) {
+            System.out.println();
+            for (int j = 0; j < array[i].length; j++) {
+                if (array[i][j] == 1) { System.out.print(". "); }
+                else { System.out.print("X "); }
+            }
+        }
+    }
+
+    public void move(List<Coordinate> path) {
+    }
+
+    public void printCoordiantes(){
+        for(int i = 0; i< coordinates.size(); i++){
+            System.out.println(coordinates.get(i).getStringX()+ " "+coordinates.get(i).getStringY());
+        }
+    }
+
+    
+
+
 }
