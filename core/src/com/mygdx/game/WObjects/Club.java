@@ -47,6 +47,7 @@ public class Club {
             pos.x = x; pos.y = y;
 
             club.transform.setTranslation(pos.x,  map.getHeight(new Vector2(pos.x, pos.y), 17), pos.y);
+            club.calculateTransforms();
 
             //render the club
             batch.render(club, environment);

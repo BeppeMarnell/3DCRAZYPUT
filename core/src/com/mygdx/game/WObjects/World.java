@@ -1,5 +1,6 @@
 package com.mygdx.game.WObjects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -59,7 +60,7 @@ public class World {
         club = new Club(map);
 
         //initialize the bot
-        //bot =new Bot(map, ball);
+        bot =new Bot(map, ball);
     }
 
     public void update(float deltaTime){
@@ -86,6 +87,8 @@ public class World {
 
         //render the club
         club.render(batch, environment);
+
+        bot.render(Gdx.graphics.getDeltaTime());
     }
 
     public void dispose(){

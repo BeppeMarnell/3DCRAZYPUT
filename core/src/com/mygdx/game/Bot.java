@@ -13,12 +13,14 @@ import java.util.List;
 
 public class Bot {
 
+    /**
+     * 1 walls - water - tree
+     * 7 ball
+     * 9 hole
+     */
+
     private Map map;
     private Ball ball;
-    private Hole hole;
-    private Tree tree;
-
-    public Vector2 linearVelocity;
 
     private Coordinate start;
     private Coordinate end;
@@ -31,8 +33,6 @@ public class Bot {
 
     private ArrayList<Coordinate> coordinates;
 
-
-
     public Bot(Map map , Ball ball){
         this.ball = ball;
         this.map = map;
@@ -42,9 +42,6 @@ public class Bot {
         this.array = new int[20][20];
         this.coordinates = new ArrayList<>();
         solve();
-        printArray();
-        printCoordiantes();
-
     }
 
     public Coordinate setStart(){
@@ -62,20 +59,22 @@ public class Bot {
     }
 
 
-
-
     public void render(float deltaTime){
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.P))
             throwBall(deltaTime);
 
         if(Gdx.input.isKeyPressed(Input.Keys.G)){
-            
 
+            Collections.reverse(coordinates);
+            for(Coordinate c: coordinates){
+                Vector2 coor = new Vector2(Helper.map(c.x,0,20,-80,80) ,
+                        Helper.map(c.y, 0,14, -56,56));
+                Vector2 dir = coor.sub(ball.getPos().cpy()).nor();
+                ball.setLinearVelocity(dir.scl(100f).cpy());
+            }
         }
     }
-
-
 
 
     public void throwBall(float deltaTime){
@@ -91,23 +90,12 @@ public class Bot {
     }
 
 
-
-
-
     public Coordinate getEntry() {
         return start;
     }
 
-    public Coordinate getExit() {
-        return end;
-    }
-
     public boolean isExit(int x, int y) {
         return x == end.getX() && y == end.getY();
-    }
-
-    public boolean isStart(int x, int y) {
-        return x == start.getX() && y == start.getY();
     }
 
     public boolean isExplored(int row, int col) {
@@ -184,14 +172,11 @@ public class Bot {
             coordinates.add(path.get(i));
         }
 
-
         System.out.println("-----------------");
 
         for (int i = 0; i < path.size() - 1; i++) {
-            System.out.println((path.get(i+1).x - path.get(i).x) + " : " + (path.get(i+1).y - path.get(i).y));
+            System.out.println((path.get(i + 1).x - path.get(i).x) + " : " + (path.get(i + 1).y - path.get(i).y));
         }
-
-
 
         return path;
     }
@@ -204,9 +189,6 @@ public class Bot {
                 else { System.out.print("X "); }
             }
         }
-    }
-
-    public void move(List<Coordinate> path) {
     }
 
     public void printCoordiantes(){
