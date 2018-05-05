@@ -45,4 +45,9 @@ public class Helper {
         return ratio * (valueCoord1 - startCoord1) + offset;
     }
 
+    public static float clamp(float min, float max, float closest) {
+        if (closest < min) { return min; }
+        if (closest > max) { return max; }
+        return closest;
+    }
 }
