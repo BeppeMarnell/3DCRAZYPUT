@@ -82,6 +82,7 @@ public class Ball extends Particle{
      */
     public void update(float deltaTime){
 
+        if(map.isInHole(new Vector2(position.x, position.z)))return;
         //move the ball with keys
         moveByKeys();
 

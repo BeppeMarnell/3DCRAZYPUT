@@ -86,36 +86,18 @@ public class Wall {
         border = new Wall[4];
 
         //first wall up
-        ModelBuilder modelBuilder = new ModelBuilder();
-        Model model1 = modelBuilder.createBox(160f, 15f, 8f,
-                new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        boxWalls.add(new ModelInstance(model1));
-        boxWalls.get(0).transform.translate(0,3,(56-4));
-        border[0] = new Wall(new Vector2(0, 56-4), new float[]{160f, 15f, 8f});
 
+        border[0] = new Wall(new Vector2(0, 56-4), new float[]{160f, 15f, 8f});
         //first wall up
-        Model model2 = modelBuilder.createBox(8f, 15f, 96f,
-                new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        boxWalls.add(new ModelInstance(model2));
-        boxWalls.get(1).transform.translate(-(80-4),3,0);
+
         border[1] = new Wall(new Vector2(-(80-4), 0), new float[]{8f, 15f, 96f});
 
         //first wall up
-        Model model3 = modelBuilder.createBox(8f, 15f, 96f,
-                new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        boxWalls.add(new ModelInstance(model3));
-        boxWalls.get(2).transform.translate((80-4),3,0);
+
         border[2] = new Wall(new Vector2((80-4), 0), new float[]{8f, 15f, 96f});
 
         //first wall up
-        Model model4 = modelBuilder.createBox(160f, 15f, 8f,
-                new Material(ColorAttribute.createDiffuse(Color.LIGHT_GRAY)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        boxWalls.add(new ModelInstance(model4));
-        boxWalls.get(3).transform.translate(0,3,-(56-4));
+
         border[3] = new Wall(new Vector2(0, -(56-4)), new float[]{160f, 15f, 8f});
 
         boxMode = true;
@@ -123,7 +105,7 @@ public class Wall {
 
     public void render(ModelBatch batch, Environment environment){
         if(!boxMode) batch.render(wall, environment);
-        else for (ModelInstance mI: boxWalls) batch.render(mI, environment);
+        else for (Wall mI: border) mI.render(batch, environment);
     }
 
     public void dispose(){
