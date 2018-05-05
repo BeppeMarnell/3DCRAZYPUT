@@ -9,11 +9,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 
 public class Ball {
-    private int iter = 0;
-
     /**
      * IMPORTANT
      * Because the map is over the y axis,
@@ -118,14 +115,6 @@ public class Ball {
         }
 
         move3DBall();
-
-        // print out the position of the ball
-        if (iter >20){
-            //System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
-            iter = 0;
-        }else{
-            iter++;
-        }
     }
 
     /**

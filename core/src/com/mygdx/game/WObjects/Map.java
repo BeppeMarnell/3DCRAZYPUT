@@ -43,11 +43,13 @@ public class Map {
     private float magnitude;
 
     public Vector2 getHolePos(){
-        return new Vector2((int)hole.getPos().x/64,(int)hole.getPos().y/64 );
+        return new Vector2((int)hole.getPos().x, (int)hole.getPos().y);
     }
 
     public Vector2 getBallPos(){
-        return new Vector2((int)ball.getPos().x/64,(int)ball.getPos().y/64 );
+        float x = Helper.map((int)ball.getPos().x, 1, 18,-72, 64);
+        float y = Helper.map((int)ball.getPos().y, 1, 12,40, -48);
+        return new Vector2(x + 4f, y + 4f);
     }
 
     /**
@@ -222,7 +224,7 @@ public class Map {
         int i = (int)(pos.x +80)/8;
         int j = (int)(pos.y+56)/8;
 
-         if(i == getHolePos().x && j == getHolePos().y)return true;
+         if(i == getHolePos().x && (13-j) == getHolePos().y)return true;
          return false;
     }
 

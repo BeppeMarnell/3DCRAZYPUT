@@ -2,11 +2,10 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
@@ -32,11 +31,12 @@ public class Hole {
 
         //find the exact position in the map
         Vector2 translPos = new Vector2();
-        translPos.x = Helper.map(pos.x, 0, 20,-80, 80);
-        translPos.y = Helper.map(pos.y, 0, 14,-56, 56);
 
-        hole.transform.translate(translPos.x + 4f,
-                map.getHeight(new Vector2(translPos.x + 4f,translPos.y+ 4f), -0.5f),translPos.y + 4f) ;
+        translPos.x = Helper.map(pos.x, 1, 18,-72, 64);
+        translPos.y = Helper.map(pos.y, 1, 12,40, -48);
+
+        hole.transform.translate(translPos.x +4f,
+                map.getHeight(new Vector2(translPos.x+4 ,translPos.y+4), -0.5f),translPos.y +4f ) ;
         hole.transform.scl(2f);
     }
 
