@@ -268,7 +268,9 @@ public class Map {
                         || mapObjects[i][j].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
 
         //Convert hole and ball position
-        map[(int)getBallPos().x][(int)getBallPos().y] = 7;
+        float x = Helper.map(getBallPos().x, 0, 20,-80, 80) + 4f;
+        float y = Helper.map(getBallPos().y, 0, 14,-56, 56) + 4f;
+        map[(int)x][(int)y] = 7;
         map[(int)getHolePos().x][(int)getHolePos().y] = 9;
 
         return map;
