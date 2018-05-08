@@ -11,7 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Particle;
 
-public class Ball extends Particle{
+public class Ball extends Particle {
+    private int iter = 0;
+
+    private static final float G = 9.81f;
+
     /**
      * IMPORTANT
      * Because the map is over the y axis,
@@ -21,10 +25,13 @@ public class Ball extends Particle{
      * z axis = y
      */
 
-    //enum to set up the world state and ball moving state
-    public enum BallState {Moving, Stopped,}
-    public enum MovingState {Up, Down, Straight}
-
+    //enum to set up the world state
+    public enum BallState {
+        Moving, Stopped,
+    }
+    public enum MovingState {
+        Up, Down, Straight,
+    }
     //Ball state
     private BallState state;
     private MovingState movement;
@@ -34,31 +41,30 @@ public class Ball extends Particle{
     //get a copy of the map
     private Map map;
 
+//    private World world;
+
     //radius
     public static final float RAD = 2.5f;
-    //gravity
-    private static final float G = 9.81f;
-    //mass
-    public static final float MASS = 2f;
-    //elasticity
-    public static final float ELASTICITY = 0.3f;
+    public static final float MASS = 3f;
+    public static final float ELASTICITY = 0.1f;
 
     /**
      * Initialize the ball 3d and add the position to it
      * @param initPos
      */
-    public Ball(Vector2 initPos, Map map) {
-        //calling the super constructor
+    public Ball(Vector2 initPos, Map map){
         super(new Vector3(initPos.x, map.getHeight(initPos, RAD), initPos.y), MASS, map);
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createSphere(5f, 5f, 5f, 15, 15, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
-
+        model = modelBuilder.createSphere(5f, 5f, 5f,15,15,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE)),
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
+                        VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
 
-        ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x, initPos.y), Ball.RAD), initPos.y);
+//        pos = new Vector2(initPos.x, initPos.y);
+        ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), initPos.y);
 
         //copy the instance of the map
         this.map = map;
@@ -81,8 +87,6 @@ public class Ball extends Particle{
      * Update the position of the ball
      */
     public void update(float deltaTime){
-
-        if(map.isInHole(new Vector2(position.x, position.z)))return;
         //move the ball with keys
         moveByKeys();
 
@@ -97,17 +101,30 @@ public class Ball extends Particle{
             switch(movement) {
                 case Up:
                     addForce(velocity.cpy().nor().scl(-1f * G * position.y));
+//                    totalForce.set(velocity.nor().scl(-1f*G*position.y));
                     break;
                 case Down:
                     addForce(velocity.cpy().nor().scl(G * position.y));
+//                    totalForce.set(velocity.nor().scl(G*position.y));
                     break;
                 case Straight:
+//                    updateForces();
                     addForce(velocity.cpy().nor().scl(-1));
                     break;
                 default:
                     break;
             }
+//            updateForces();
             integrate(deltaTime);
+        }
+
+        // print out the position of the ball
+        if (iter >20){
+//            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
+            System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
+            iter = 0;
+        }else{
+            iter++;
         }
     }
 
@@ -115,14 +132,20 @@ public class Ball extends Particle{
      * This method moves the position of the 3D instance, do not change it
      */
     private void move3DBall(){
-        //Apply the physic to the 3D object
+//        Apply the physic to the 3D object
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
 
-        if (oldPos.y > position.y) movement = MovingState.Down;
-        else if (oldPos.y < position.y) movement = MovingState.Up;
-        else movement = MovingState.Straight;
+        if (oldPos.y > position.y) {
+            movement = MovingState.Down;
+        } else if (oldPos.y < position.y) {
+            movement = MovingState.Up;
+        } else {
+            movement = MovingState.Straight;
+        }
 
+        //in order to move the ball i've to apply the translation amount
+//        ballInstance.transform.setTranslation(pos.x, map.getHeight(pos, RAD) , pos.y);
         ballInstance.transform.setTranslation(position.x, map.getHeight(new Vector2(position.x, position.z), RAD) , position.z);
         ballInstance.calculateTransforms();
     }
@@ -131,14 +154,23 @@ public class Ball extends Particle{
      * Move the ball by using the keyboards
      */
     private void moveByKeys(){
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) velocity.add(-5,0,0);
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            velocity.add(-5,0, 0);
+        }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) velocity.add(5,0,0);
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            velocity.add(5,0, 0);
+        }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) velocity.add(0,0,5);
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            velocity.add(0,0, 5);
+        }
 
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) velocity.add(0,0,-5);
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            velocity.add(0,0, -5);
+        }
     }
+
 
     public void dispose(){
         model.dispose();
@@ -148,7 +180,9 @@ public class Ball extends Particle{
         return state;
     }
 
+
     private Vector2 normalize(Vector2 v) {
         return v.scl(1 / v.len());
+
     }
 }
