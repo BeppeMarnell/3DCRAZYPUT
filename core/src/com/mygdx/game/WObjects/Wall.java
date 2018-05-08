@@ -1,13 +1,12 @@
 package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Physics.Obstacle;
 import com.mygdx.game.Utils.Helper;
 
 
@@ -24,9 +23,6 @@ public class Wall extends Obstacle {
     private Vector2 max, min;
     private Vector2 position;
     private Vector2 normal;
-    private float penetration;
-
-
 
     /**
      * generates a wall in a specific position in the map
@@ -42,7 +38,6 @@ public class Wall extends Obstacle {
         wall = new ModelInstance(model);
 
         //find the exact position in the map
-
         Vector2 translPos = new Vector2();
         translPos.x = Helper.map(pos.x, 0, 20,-80, 80);
         translPos.y = Helper.map(pos.y, 0, 14,-56, 56);
@@ -50,14 +45,12 @@ public class Wall extends Obstacle {
         translPos.x += 4f;
         translPos.y += 4f;
 
-//        wall.transform.translate(translPos.x +4f, 5,translPos.y +4f);
         wall.transform.translate(translPos.x, 5,translPos.y);
 
         max = new Vector2(translPos.x + size / 2, translPos.y + size / 2);
         min = new Vector2(translPos.x - size / 2, translPos.y - size / 2);
         position = new Vector2(translPos.cpy());
         normal = new Vector2();
-        penetration = 0;
     }
 
     public Wall(Vector2 pos, float[] size){
@@ -69,23 +62,14 @@ public class Wall extends Obstacle {
 
         wall = new ModelInstance(model);
 
-//        find the exact position in the map
-
-
-//        wall.transform.translate(translPos.x +4f, 5,translPos.y +4f);
+        //find the exact position in the map
         wall.transform.translate(pos.x,5, pos.y);
 
         max = new Vector2(pos.x + size[0] / 2, pos.y + size[2] / 2);
         min = new Vector2(pos.x - size[0] / 2, pos.y - size[2] / 2);
         position = new Vector2(pos.cpy());
         normal = new Vector2();
-        penetration = 0;
     }
-
-    /**
-     * Costructor to build the around walls
-     */
-//    private ArrayList<ModelInstance> boxWalls;
 
     public void render(ModelBatch batch, Environment environment){
         batch.render(wall, environment);
@@ -109,10 +93,6 @@ public class Wall extends Obstacle {
 
     public void setNormal(Vector2 normal) {
         this.normal = normal;
-    }
-
-    public void setPenetration(float penetration) {
-        this.penetration = penetration;
     }
 
     public Vector2 getNormal() {

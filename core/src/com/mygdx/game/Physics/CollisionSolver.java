@@ -3,7 +3,6 @@ package com.mygdx.game.Physics;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
-import com.mygdx.game.WObjects.Obstacle;
 import com.mygdx.game.WObjects.Wall;
 
 public class CollisionSolver {
@@ -58,13 +57,6 @@ public class CollisionSolver {
             float restitution = Math.min(ball.ELASTICITY, obstacle.ELASTICITY);
 
             float updatedNormalizedVelocity = -normalizedVelocity * restitution;
-
-//            Vector3
-
-
-
-
-
 
             float dv = -normalizedVelocity * (restitution + 1);
 

@@ -3,7 +3,6 @@ package com.mygdx.game.Physics;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
-import com.mygdx.game.WObjects.Obstacle;
 import com.mygdx.game.WObjects.Wall;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
