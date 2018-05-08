@@ -33,10 +33,11 @@ public class Particle {
        this.map = map;
     }
 
-    public void integrate(float dt) {
+    protected void integrate(float dt) {
         mu = map.getFriction(new Vector2(position.x, position.z));
-//        totalForce.scl(mu);
+        updateDrag(0.5f, 0.3f);
         velocityVerletIntegration(dt);
+//        semiImplicitEulerIntegration(dt);
         clearForces();
     }
 
@@ -84,7 +85,7 @@ public class Particle {
     }
 
     private void updateDrag(float k1, float k2) {
-        Vector3 force = velocity;
+        Vector3 force = velocity.cpy();
         float drag = force.len();
         drag = k1 * drag + k2 * drag * drag;
         force.nor().scl(-drag);
@@ -109,5 +110,9 @@ public class Particle {
 
     public void setVelocity(Vector3 velocity) {
         this.velocity = velocity;
+    }
+
+    public void setPosition(Vector3 position) {
+        this.position = position;
     }
 }
