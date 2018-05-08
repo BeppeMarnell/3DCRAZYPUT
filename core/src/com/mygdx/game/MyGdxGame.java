@@ -3,9 +3,11 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,6 +23,7 @@ import com.mygdx.game.WObjects.World;
 public class MyGdxGame extends ApplicationAdapter {
 	private ModelBatch modelBatch;
 	private Camera cam;
+	private Camera cam2;
 	private CameraInputController camController;
 
 	private BitmapFont font;
@@ -68,6 +71,12 @@ public class MyGdxGame extends ApplicationAdapter {
 		camController = new CameraInputController(cam);
 		Gdx.input.setInputProcessor(camController);
 
+		//set a second camera for the throw mode
+		cam2 = new OrthographicCamera(Gdx.graphics.getWidth()/7 +10, Gdx.graphics.getHeight()/7 +10);
+		cam2.position.set(0, 100f, 0);
+		cam2.lookAt(0,0,0);
+		cam2.update();
+
 		//for the FPS
 		font = new BitmapFont();
 		batch = new SpriteBatch();
@@ -79,24 +88,37 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		camController.update();
 
-		//camera tracking methods
-		if(tracking) {
-			cam.position.x = world.getBallPos().x;
-			cam.position.z = world.getBallPos().y;
-			cam.lookAt(world.getBallPos().x,0,world.getBallPos().y);
-			initPos = 0;
-		}else
-			if(initPos == 0){
+		//update the camera only if the player is not throwing the ball
+		if(!world.isThrowMode()) {
+			camController.update();
+
+			//camera tracking methods
+			if (tracking) {
+				cam.position.x = world.getBallPos().x;
+				cam.position.z = world.getBallPos().y;
+
+				cam.direction.set(0, 0, -1);
+				cam.up.set(0, 1, 0);
+
+				cam.lookAt(world.getBallPos().x, 0, world.getBallPos().y);
+				cam.position.set(world.getBallPos().x, 100, world.getBallPos().y);
+
+				initPos = 0;
+
+			} else if (initPos == 0) {
+				cam.direction.set(0, 0, -1);
+				cam.up.set(0, 1, 0);
+
 				cam.position.set(0, 100f, 0);
-				cam.lookAt(0,0,0);
+				cam.lookAt(0, 0, 0);
+
 				cam.near = 1f;
 				cam.far = 300f;
 				initPos++;
 			}
-
-		cam.update();
+			cam.update();
+		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(1,1,1,0);
@@ -105,7 +127,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		//update the world
 		world.update(Gdx.graphics.getDeltaTime());
 
-		modelBatch.begin(cam);
+		if(!world.isThrowMode())modelBatch.begin(cam);
+		else modelBatch.begin(cam2);
 
 		//render the map
 		map.render(modelBatch);
