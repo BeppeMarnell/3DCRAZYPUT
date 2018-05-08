@@ -32,20 +32,22 @@ public class Ball extends Particle {
     public enum MovingState {
         Up, Down, Straight,
     }
+
     //Ball state
     private BallState state;
     private MovingState movement;
 
     private Model model;
     private ModelInstance ballInstance;
+
     //get a copy of the map
     private Map map;
 
-//    private World world;
-
     //radius
     public static final float RAD = 2.5f;
+    //mass
     public static final float MASS = 3f;
+    //elasticity
     public static final float ELASTICITY = 0.1f;
 
     /**
@@ -63,7 +65,6 @@ public class Ball extends Particle {
                         VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
 
-//        pos = new Vector2(initPos.x, initPos.y);
         ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), initPos.y);
 
         //copy the instance of the map
@@ -120,7 +121,6 @@ public class Ball extends Particle {
 
         // print out the position of the ball
         if (iter >20){
-//            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
             System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
             iter = 0;
         }else{

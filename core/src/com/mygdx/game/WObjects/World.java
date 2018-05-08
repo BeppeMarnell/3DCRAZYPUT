@@ -3,8 +3,6 @@ package com.mygdx.game.WObjects;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Physics.CollisionSolver;
 import com.mygdx.game.Physics.CollisionDetector;
 
 import java.util.ArrayList;
@@ -22,6 +20,8 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
+
+    private Club club;
 
 
     /**
@@ -60,6 +60,9 @@ public class World {
         // Instantiate the collision detector
         collisionDetector = new CollisionDetector(ball);
 
+        //add the club
+        club = new Club(map);
+
     }
 
     private void generateBorders(ArrayList<Wall> walls){
@@ -77,96 +80,12 @@ public class World {
 
     public void update(float deltaTime){
         for (Wall w : walls) {
-//            System.out.println(collisionDetector.collidesWithWall(w));
             collisionDetector.collidesWithWall(w);
         }
 
+        //update ball
         ball.update(deltaTime);
     }
-
-//    public boolean collidesWithWall(Wall wall) {
-//        if (wall.getPosition() == null) {
-//            return false;
-//        }
-//        Vector2 max = wall.getMax().cpy();
-//        Vector2 min = wall.getMin().cpy();
-//        Vector2 ballPosition = new Vector2(ball.getPosition().x, ball.getPosition().z);
-//
-//        boolean collides = false;
-//
-//        Vector2 distance = wall.getPosition().cpy().sub(ballPosition);
-//
-//        Vector2 closest = distance.cpy();
-//
-//        float hx = (max.x - min.x) / 2;
-//        float hy = (max.y - min.y) / 2;
-//
-//        float xPos = clamp(-hx, hx, closest.x);
-//        float yPos = clamp(-hy, hy, closest.y);
-//
-//        closest.set(xPos, yPos);
-//
-//        if (distance.equals(closest)) {
-//            collides = true;
-//
-//            // find the nearest Axis
-//            if (Math.abs(distance.x) > Math.abs(distance.y)) {
-//                if (closest.x > 0) {
-//                    closest.x = hx;
-//                } else {
-//                    closest.x = -hx;
-//                }
-//            } else {
-//                if (closest.y > 0) {
-//                    closest.y = hy;
-//                } else {
-//                    closest.y = -hy;
-//                }
-//            }
-//        }
-//
-//        Vector2 normal = distance.cpy().sub(closest);
-//        float distanceToClosestPoint = normal.cpy().len2();
-//
-//        if (Math.pow(Ball.RAD, 2) < distanceToClosestPoint && !collides) {
-//            return false;
-//        }
-//
-//        distanceToClosestPoint = normal.cpy().len();
-//
-//        if (collides) {
-//            wall.setNormal(distance.cpy().nor().scl(-1));
-//            wall.setPenetration(Ball.RAD + distanceToClosestPoint);
-//        } else {
-//            wall.setNormal(distance.cpy().nor());
-//            wall.setPenetration(Ball.RAD - distanceToClosestPoint);
-//        }
-//
-//        return true;
-//    }
-//
-////    public void solveCollision(Wall wall, CollisionSolver data) {
-//    public void solveCollision(Wall wall) {
-//        Vector2 ballVelocity = new Vector2(ball.getVelocity().x, ball.getVelocity().z);
-//        // Wall's velocity
-//        Vector2 relativeVelocity = new Vector2(0, 0).sub(ballVelocity);
-//        float normalizedVelocity = relativeVelocity.cpy().dot(wall.getNormal());
-//
-//        if (normalizedVelocity < 0) {
-//
-//            float elasticity = Math.min(ball.ELASTICITY, wall.ELASTICITY);
-//
-//            float impulseScl = (-(1 + elasticity) * normalizedVelocity) / (1 / ball.getMass() + 1 / wall.MASS);
-//
-//            Vector2 impulse = wall.getNormal().cpy().scl(impulseScl);
-//
-//            Vector2 newVelocity = ballVelocity.cpy();
-//            newVelocity.sub(impulse.cpy().scl(ball.getInverseMass()));
-//            System.out.println(ballVelocity + " " + newVelocity);
-//
-//            ball.setVelocity(new Vector3(newVelocity.x, 0, newVelocity.y));
-//        }
-//    }
 
     public void render(ModelBatch batch, Environment environment){
         //render the map
@@ -190,5 +109,18 @@ public class World {
         hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
+        club.dispose();
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        map.setDebugMode(debugMode);
+    }
+
+    public Vector2 getBallPos(){
+        return new Vector2(ball.getPosition().x, ball.getPosition().z);
+    }
+
+    public boolean isThrowMode(){
+        return club.throwMode;
     }
 }
