@@ -102,6 +102,9 @@ public class World {
 
         //render the trees
         for(Tree t: trees) t.render(batch, environment);
+
+        //render the club
+        club.render(batch, environment);
     }
 
     public void dispose(){

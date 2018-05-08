@@ -54,7 +54,7 @@ public class CollisionDetector {
 
         closest.set(xPos, yPos);
 
-        System.out.println(distance + " " + closest);
+        //System.out.println(distance + " " + closest);
 
 
         if (distance.equals(closest.cpy().add(ball.RAD, ball.RAD))) {

@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Particle;
 
 public class Ball extends Particle {
-    private int iter = 0;
 
     private static final float G = 9.81f;
 
@@ -118,14 +117,6 @@ public class Ball extends Particle {
 //            updateForces();
             integrate(deltaTime);
         }
-
-        // print out the position of the ball
-        if (iter >20){
-            System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
-            iter = 0;
-        }else{
-            iter++;
-        }
     }
 
     /**
@@ -145,7 +136,6 @@ public class Ball extends Particle {
         }
 
         //in order to move the ball i've to apply the translation amount
-//        ballInstance.transform.setTranslation(pos.x, map.getHeight(pos, RAD) , pos.y);
         ballInstance.transform.setTranslation(position.x, map.getHeight(new Vector2(position.x, position.z), RAD) , position.z);
         ballInstance.calculateTransforms();
     }

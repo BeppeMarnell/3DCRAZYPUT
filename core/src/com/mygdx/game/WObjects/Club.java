@@ -68,9 +68,6 @@ public class Club{
             //render the club
             batch.render(club, environment);
 
-
-            //touchDrag();
-
         }else throwMode = false;
     }
 
@@ -78,7 +75,6 @@ public class Club{
      * manage the touch gesture
      */
     public void touchDrag(){
-
 
         if(Gdx.input.isTouched()){
             touching = true;
