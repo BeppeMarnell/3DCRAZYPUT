@@ -47,6 +47,9 @@ public class World {
         trees = new ArrayList<>();
         walls = new ArrayList<>();
 
+        //create the club
+        club = new Club(map);
+
         //add the surrounding walls
         generateBorders(walls);
 
