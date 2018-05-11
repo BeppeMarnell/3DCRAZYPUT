@@ -56,7 +56,7 @@ public class World {
                     trees.add(new Tree(new Vector2(i,j), map));
                 else if(map.mapObjects[i][j].getType() == WorldObject.ObjectType.Wall)
 //                    walls.add(new Wall(new Vector2(i,j)));
-                    walls.add(new Wall(new Vector3(i, 0 ,j), new Vector3(4f, 15f, 4f), Color.DARK_GRAY, false));
+                    walls.add(new Wall(new Vector3(i, 0 ,j), new Vector3(8f, 15f, 8f), Color.DARK_GRAY, false));
             }
         }
 
