@@ -12,14 +12,14 @@ import com.mygdx.game.Utils.Helper;
 
 public class Hole {
     /**
-     * Interpret the tree as a rectangle ( box ), and not as the little tree
+     * Interpret the hole as a rectangle ( box ), and not as the little tree
      */
 
     private ModelInstance hole;
     private Model model;
 
     /**
-     * Create a little tree in a specific position of the map
+     * Create a hole in a specific position of the map
      * @param pos the position values has to be between 0-19 and 0-13
      * @param map pass a copy of the map
      */
