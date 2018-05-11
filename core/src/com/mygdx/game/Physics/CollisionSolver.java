@@ -1,8 +1,9 @@
 package com.mygdx.game.Physics;
 
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
+import com.mygdx.game.WObjects.Obstacle;
 import com.mygdx.game.WObjects.Wall;
 
 public class CollisionSolver {
@@ -16,41 +17,48 @@ public class CollisionSolver {
         this.ball = ball;
     }
 
-    public void solveCollision(Wall wall) {
-        Vector2 ballVelocity = new Vector2(ball.getVelocity().x, ball.getVelocity().z);
+    public void solveCollision(Wall wall, Vector3 normal) {
+        Vector3 ballVelocity = ball.getVelocity().cpy();
         // Wall's velocity
-        Vector2 relativeVelocity = new Vector2(0, 0).sub(ballVelocity);
-        float normalizedVelocity = relativeVelocity.cpy().dot(wall.getNormal());
+//        Vector3 relativeVelocity = Obstacle.VELOCITY.sub(ballVelocity);
+        float normalizedVelocity = ballVelocity.cpy().dot(normal);
 
         if (normalizedVelocity < 0) {
 
             float elasticity = Math.min(ball.ELASTICITY, wall.ELASTICITY);
 
             float impulseScl = (-(1 + elasticity) * normalizedVelocity) / (ball.getInverseMass() + wall.getInverseMass());
+            System.out.println(impulseScl);
 
-            Vector2 impulse = wall.getNormal().cpy().scl(impulseScl);
+            Vector3 impulse = normal.cpy().scl(impulseScl);
 
-            Vector2 newVelocity = ballVelocity.cpy();
+            Vector3 newVelocity = ballVelocity.cpy();
             newVelocity.sub(impulse.cpy().scl(ball.getInverseMass()));
-//            System.out.println(ballVelocity + " " + newVelocity);
+            System.out.println(ballVelocity + " " + newVelocity);
 
             ball.setVelocity(new Vector3(newVelocity.x, 0, newVelocity.y));
         }
     }
 
-    public void solve(Obstacle obstacle, Vector3 normal, float penetration) {
+    public void solve(Obstacle obstacle, Vector3 normal, float penetration, float dt) {
         this.obstacle = obstacle;
         this.normal = normal;
         this.penetration = penetration;
 
-        calculateImpulse();
-//        solvePenetration();
+        calculateImpulse(dt);
+        solvePenetration();
 
     }
 
-    private void calculateImpulse() {
+    private void calculateImpulse(float dt) {
+        Vector3 obstacleVelocity = obstacle.VELOCITY.cpy();
+        Vector3 ballVelocity = ball.getVelocity().cpy();
+        // Wall's velocity
+        Vector3 relativeVelocity = obstacleVelocity.sub(ballVelocity);
+//        float normalizedVelocity = ballVelocity.cpy().dot(normal.cpy());
+        float normalizedVelocity = relativeVelocity.dot(normal);
         // normalize ball's velocity
-        float normalizedVelocity =  ball.getVelocity().cpy().dot(normal);
+//        float normalizedVelocity =  ball.getVelocity().cpy().dot(normal);
 
         if (normalizedVelocity < 0) {
             // calculate difference in velocity
@@ -58,8 +66,20 @@ public class CollisionSolver {
 
             float updatedNormalizedVelocity = -normalizedVelocity * restitution;
 
-            float dv = -normalizedVelocity * (restitution + 1);
+            Vector3 velocityCausedByAcceleration = ball.getAcceleration();
 
+            float separationVelocityCausedByAcceleration = velocityCausedByAcceleration.dot(normal) * dt;
+
+            if (separationVelocityCausedByAcceleration < 0) {
+                updatedNormalizedVelocity += restitution * separationVelocityCausedByAcceleration;
+
+                if (updatedNormalizedVelocity < 0) {
+                    updatedNormalizedVelocity = 0;
+                }
+            }
+
+//            float dv = -1f * normalizedVelocity * (restitution + 1);
+            float dv = updatedNormalizedVelocity - normalizedVelocity;
 
             // get inverse mass of ball and obstacle
             totalInverseMass = ball.getInverseMass() + obstacle.getInverseMass();
@@ -70,8 +90,11 @@ public class CollisionSolver {
             // apply the impulse scalar to the normal
             Vector3 impulse = normal.cpy().scl(impulseScalar);
 
+            Vector3 newVelocity = ballVelocity.cpy().sub(impulse.cpy().scl(ball.getInverseMass()));
+            System.out.println(impulseScalar + " " + impulse.cpy().scl(ball.getInverseMass()) + " " + normal + " " + newVelocity + " " + ballVelocity + " " + relativeVelocity);
+
             // update the velocity
-            ball.setVelocity(ball.getVelocity().cpy().add(impulse.cpy().scl(ball.getInverseMass())));
+            ball.setVelocity(newVelocity);
 
         }
     }
@@ -79,7 +102,7 @@ public class CollisionSolver {
     private void solvePenetration() {
         if (penetration > 0) {
 
-            Vector3 penetrationResolution = normal.cpy().scl(penetration / totalInverseMass);
+            Vector3 penetrationResolution = normal.cpy().scl(-1f * penetration / totalInverseMass);
 
             // calculate change in position
             Vector3 dp = penetrationResolution.cpy().scl(ball.getInverseMass());

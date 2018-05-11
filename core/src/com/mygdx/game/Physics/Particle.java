@@ -2,6 +2,7 @@ package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 
 public class Particle {
@@ -56,9 +57,12 @@ public class Particle {
     private void velocityVerletIntegration(float dt) {
         acceleration.set(totalForce.cpy().scl(inverseMass));
         oldVelocity.set(velocity);
-        velocity.set((velocity.cpy().scl(mu)).add(acceleration.cpy().scl(dt)));
+        Vector3 newVelocity = velocity.cpy().scl(mu).add(acceleration.cpy().scl(dt));
+//        if (Math.abs(newVelocity.x) <= Ball.MAX_VELOCITY && Math.abs(newVelocity.z) <= Ball.MAX_VELOCITY) {
+            velocity.set(newVelocity);
 //        velocity.add(acceleration.cpy().scl(dt));
-        position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
+            position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
+//        }
     }
 
     protected void addForce(Vector3 force) {
@@ -109,10 +113,14 @@ public class Particle {
     }
 
     public void setVelocity(Vector3 velocity) {
-        this.velocity = velocity;
+        this.velocity.set(velocity);
     }
 
     public void setPosition(Vector3 position) {
         this.position = position;
+    }
+
+    public Vector3 getAcceleration() {
+        return acceleration;
     }
 }

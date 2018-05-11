@@ -2,7 +2,10 @@ package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.WObjects.Ball;
+import com.mygdx.game.WObjects.Map;
+import com.mygdx.game.WObjects.Obstacle;
 import com.mygdx.game.WObjects.Wall;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
@@ -23,82 +26,81 @@ public class CollisionDetector {
     }
 
 
-    public boolean collidesWithWall(Wall wall) {
+    public boolean collidesWithWall(Wall wall, float dt) {
         obstacle = wall;
-//        Wall wall = (Wall) obstacle;
 
-//        if (wall == null) {
-//            return false;
-//        }
-
-        if (obstacle.getPosition() == null) {
-            System.out.println("Obstacle has no position");
-            return false;
-        }
-
-        Vector2 max = wall.getMax().cpy();
-        Vector2 min = wall.getMin().cpy();
-        Vector2 ballPosition = new Vector2(ball.getPosition().x, ball.getPosition().z);
+        Vector3 max = wall.getMax().cpy();
+        Vector3 min = wall.getMin().cpy();
+        Vector3 ballPosition = ball.getCenter();
+//        System.out.println("============== ballPos: " + ballPosition + " " + max + " " + min);
 
         boolean collides = false;
 
-        Vector2 distance = obstacle.getPosition().cpy().sub(ballPosition);
+        Vector3 distance = obstacle.getPosition().cpy().sub(ballPosition);//.sub(ball.getRadius());
 
-        Vector2 closest = distance.cpy();
+        Vector3 closest = distance.cpy();
+//        System.out.println("======Preclamp: " + distance + " " + closest);
 
-        float hx = (max.x - min.x) / 2;
-        float hy = (max.y - min.y) / 2;
+        float hx = (max.x - min.x)*0.5f;
+        float hy = (max.y - min.y)*0.5f;
+        float hz = (max.z - min.z)*0.5f;
 
         float xPos = clamp(closest.x, -hx, hx);
         float yPos = clamp(closest.y, -hy, hy);
+        float zPos = clamp(closest.z, -hz, hz);
 
-        closest.set(xPos, yPos);
+        closest.set(xPos, yPos, zPos);
 
-        //System.out.println(distance + " " + closest);
+        distance.sub(ball.getRadius());
 
-
-        if (distance.equals(closest.cpy().add(ball.RAD, ball.RAD))) {
 //        if (distance.equals(closest)) {
-            collides = true;
+//            collides = true;
+//
+//            // find the nearest Axis
+//            if (Math.abs(distance.x) > Math.abs(distance.z)) {
+//                if (closest.x > 0) {
+//                    closest.x = hx;
+//                } else {
+//                    closest.x = -hx;
+//                }
+//            } else {
+//                if (closest.z > 0) {
+//                    closest.z = hz;
+//                } else{
+//                    closest.z = -hz;
+//                }
+//            }
+//        }
 
-            // find the nearest Axis
-            if (Math.abs(distance.x) > Math.abs(distance.y)) {
-                if (closest.x > 0) {
-                    closest.x = hx;
-                } else {
-                    closest.x = -hx;
-                }
-            } else {
-                if (closest.y > 0) {
-                    closest.y = hy;
-                } else {
-                    closest.y = -hy;
-                }
-            }
-        }
+        closest = wall.getPosition().cpy().sub(closest);
+//        System.out.println("Postcollision: " + distance + " " + closest);
 
-        Vector2 normal = distance.cpy().sub(closest);
-        float distanceToClosestPoint = normal.cpy().len2();
+        Vector3 normal = closest.cpy().sub(ball.getCenter()).nor();
+//        float distanceToClosestPoint = closest.cpy().sub(wall.getPosition()).len2();
+        float distanceToClosestPoint = closest.cpy().sub(ballPosition).len2();
+//        System.out.println("dtoclosest: " + distanceToClosestPoint + " " + closest + " " + wall.getPosition());
 
-        if (Math.pow(Ball.RAD, 2) < distanceToClosestPoint && !collides) {
+        if (Math.pow(ball.getRadius(), 2) < distanceToClosestPoint && !collides) {
             return false;
         }
 
-        distanceToClosestPoint = normal.cpy().len();
+//        distanceToClosestPoint = normal.cpy().len();
 
-        Vector3 normal3 = new Vector3(distance.x, 0, distance.y);
-        float penetration = Ball.RAD + distanceToClosestPoint;
+        float penetration = ball.getRadius() - (float) Math.sqrt(distanceToClosestPoint);
 
-        if (collides) {
-            wall.setNormal(normal.scl(-1));
-            collisionSolver.solveCollision(wall);
-//            collisionSolver.solve(obstacle, normal3.scl(-1), penetration);
-        } else {
-            wall.setNormal(normal);
-            penetration = Ball.RAD - distanceToClosestPoint;
-            collisionSolver.solveCollision(wall);
-//            collisionSolver.solve(obstacle, normal3, penetration);
-        }
+//        if (collides) {
+////            wall.setNormal(normal.scl(-1));
+////            collisionSolver.solveCollision(wall);
+//            System.out.println("====== inside; normal: " + normal.cpy().scl(-1) + " penetr: " + penetration + " dist2closest: " + Math.sqrt(distanceToClosestPoint));
+//
+//            collisionSolver.solve(obstacle, normal.cpy().scl(-1), penetration, dt);
+//        } else {
+//        System.out.println("====== inside; normal: " + normal.cpy().scl(-1) + " penetr: " + penetration + " dist2closest: " + Math.sqrt(distanceToClosestPoint));
+//            wall.setNormal(normal);
+//            penetration = Ball.RAD - distanceToClosestPoint;
+//        collisionSolver.solveCollision(wall, normal.cpy().scl(-1));
+        collisionSolver.solve(obstacle, normal.cpy().scl(1), penetration, dt);
+//        }
 
         return true;
     }
