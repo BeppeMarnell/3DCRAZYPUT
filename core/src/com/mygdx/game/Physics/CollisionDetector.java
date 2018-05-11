@@ -53,54 +53,18 @@ public class CollisionDetector {
 
         distance.sub(ball.getRadius());
 
-//        if (distance.equals(closest)) {
-//            collides = true;
-//
-//            // find the nearest Axis
-//            if (Math.abs(distance.x) > Math.abs(distance.z)) {
-//                if (closest.x > 0) {
-//                    closest.x = hx;
-//                } else {
-//                    closest.x = -hx;
-//                }
-//            } else {
-//                if (closest.z > 0) {
-//                    closest.z = hz;
-//                } else{
-//                    closest.z = -hz;
-//                }
-//            }
-//        }
-
         closest = wall.getPosition().cpy().sub(closest);
-//        System.out.println("Postcollision: " + distance + " " + closest);
 
         Vector3 normal = closest.cpy().sub(ball.getCenter()).nor();
-//        float distanceToClosestPoint = closest.cpy().sub(wall.getPosition()).len2();
         float distanceToClosestPoint = closest.cpy().sub(ballPosition).len2();
-//        System.out.println("dtoclosest: " + distanceToClosestPoint + " " + closest + " " + wall.getPosition());
 
         if (Math.pow(ball.getRadius(), 2) < distanceToClosestPoint && !collides) {
             return false;
         }
 
-//        distanceToClosestPoint = normal.cpy().len();
-
         float penetration = ball.getRadius() - (float) Math.sqrt(distanceToClosestPoint);
 
-//        if (collides) {
-////            wall.setNormal(normal.scl(-1));
-////            collisionSolver.solveCollision(wall);
-//            System.out.println("====== inside; normal: " + normal.cpy().scl(-1) + " penetr: " + penetration + " dist2closest: " + Math.sqrt(distanceToClosestPoint));
-//
-//            collisionSolver.solve(obstacle, normal.cpy().scl(-1), penetration, dt);
-//        } else {
-//        System.out.println("====== inside; normal: " + normal.cpy().scl(-1) + " penetr: " + penetration + " dist2closest: " + Math.sqrt(distanceToClosestPoint));
-//            wall.setNormal(normal);
-//            penetration = Ball.RAD - distanceToClosestPoint;
-//        collisionSolver.solveCollision(wall, normal.cpy().scl(-1));
         collisionSolver.solve(obstacle, normal.cpy().scl(1), penetration, dt);
-//        }
 
         return true;
     }

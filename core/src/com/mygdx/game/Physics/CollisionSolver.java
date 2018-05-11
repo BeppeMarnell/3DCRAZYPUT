@@ -20,7 +20,6 @@ public class CollisionSolver {
     public void solveCollision(Wall wall, Vector3 normal) {
         Vector3 ballVelocity = ball.getVelocity().cpy();
         // Wall's velocity
-//        Vector3 relativeVelocity = Obstacle.VELOCITY.sub(ballVelocity);
         float normalizedVelocity = ballVelocity.cpy().dot(normal);
 
         if (normalizedVelocity < 0) {
@@ -28,13 +27,13 @@ public class CollisionSolver {
             float elasticity = Math.min(ball.ELASTICITY, wall.ELASTICITY);
 
             float impulseScl = (-(1 + elasticity) * normalizedVelocity) / (ball.getInverseMass() + wall.getInverseMass());
-            System.out.println(impulseScl);
+            //System.out.println(impulseScl);
 
             Vector3 impulse = normal.cpy().scl(impulseScl);
 
             Vector3 newVelocity = ballVelocity.cpy();
             newVelocity.sub(impulse.cpy().scl(ball.getInverseMass()));
-            System.out.println(ballVelocity + " " + newVelocity);
+            //System.out.println(ballVelocity + " " + newVelocity);
 
             ball.setVelocity(new Vector3(newVelocity.x, 0, newVelocity.y));
         }
@@ -91,7 +90,7 @@ public class CollisionSolver {
             Vector3 impulse = normal.cpy().scl(impulseScalar);
 
             Vector3 newVelocity = ballVelocity.cpy().sub(impulse.cpy().scl(ball.getInverseMass()));
-            System.out.println(impulseScalar + " " + impulse.cpy().scl(ball.getInverseMass()) + " " + normal + " " + newVelocity + " " + ballVelocity + " " + relativeVelocity);
+            //System.out.println(impulseScalar + " " + impulse.cpy().scl(ball.getInverseMass()) + " " + normal + " " + newVelocity + " " + ballVelocity + " " + relativeVelocity);
 
             // update the velocity
             ball.setVelocity(newVelocity);
