@@ -13,7 +13,6 @@ import com.mygdx.game.Physics.BoundingSphere;
 import com.mygdx.game.Physics.Particle;
 
 public class Ball extends Particle implements BoundingSphere {
-    private int iter = 0;
 
     private static final float G = 9.81f;
 
@@ -46,8 +45,11 @@ public class Ball extends Particle implements BoundingSphere {
 
     //radius
     public static final float RAD = 2.5f;
+    //mass
     public static final float MASS = 2f;
-    public static final float ELASTICITY = 0.6f;
+    //elasticity
+    public static final float ELASTICITY = 0.1f;
+    //maxVel
     public static final float MAX_VELOCITY = 94;
 
     /**
@@ -119,15 +121,6 @@ public class Ball extends Particle implements BoundingSphere {
 //            updateForces();
             integrate(deltaTime);
         }
-
-        // print out the position of the ball
-        if (iter >20){
-//            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
-            System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
-            iter = 0;
-        }else{
-            iter++;
-        }
     }
 
     /**
@@ -192,5 +185,4 @@ public class Ball extends Particle implements BoundingSphere {
     public float getRadius() {
         return RAD;
     }
-
 }
