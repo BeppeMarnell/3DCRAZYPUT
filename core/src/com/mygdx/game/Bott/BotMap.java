@@ -25,10 +25,10 @@ public class BotMap {
     private static final int EXIT = 9;
     private static final int PATH = 4;
 
-    private int[][] maze;
+    public int[][] maze;
     private boolean[][] visited;
-    private Coordinate start;
-    private Coordinate end;
+    public Coordinate start;
+    public Coordinate end;
 
 
     BotMap(Map map){
@@ -84,7 +84,7 @@ public class BotMap {
     }
 
     public boolean isWall(int row, int col) {
-        return maze[row][col] == WALL;
+        return maze[row ][col] == WALL;
     }
 
     public void setVisited(int row, int col, boolean value) {
@@ -128,6 +128,19 @@ public class BotMap {
         System.out.println(toString(tempMaze));
 
     }
+
+    public void printPathNode(List<Node> path) {
+        int[][] tempMaze = Arrays.stream(maze).map(int[]::clone).toArray(int[][]::new);
+        for (Node node : path) {
+            if (isStart(node.getRow(), node.getCol()) || isExit(node.getRow(), node.getCol())) {
+                continue;
+            }
+            tempMaze[node.getRow()][node.getCol()] = PATH;
+        }
+        System.out.println(toString(tempMaze));
+
+    }
+
 
 
 

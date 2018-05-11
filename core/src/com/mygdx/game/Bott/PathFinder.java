@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PathFinder {
-   private  final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 }};
+   private  final int[][] DIRECTIONS = { { 0, 1 }, {1, 0 }, { 0, -1 }, { -1, 0 }};
     private final int[][] DDIRECTIONS = { {1,1}, {-1,-1}, {1,-1}, {-1,1}};
     private final int[][] DDIRECTIONS1 = { {-1,-1}, {1,-1}, {-1,1}};
     private final int[][] DDIRECTIONS2 = { {1,1}, {1,-1}, {-1,1}};
@@ -50,7 +50,6 @@ public class PathFinder {
                     }
                 }
 
-
                 else if((   (botMap.isWall(cur.getX(),cur.getY()-1)))  || (botMap.isWall(cur.getX()-1,cur.getY())  ) == true   ){
                     for(int[] diagonaldirection2 : DDIRECTIONS2) {
                         Coordinate coordinate = new Coordinate(cur.getX() + diagonaldirection2[0], cur.getY() + diagonaldirection2[1], cur);
@@ -78,6 +77,8 @@ public class PathFinder {
                     botMap.setVisited(cur.getX(), cur.getY(), true);
                 }
             }
+
+
         }
         return Collections.emptyList();
     }
@@ -90,7 +91,7 @@ public class PathFinder {
             path.add(iter);
             iter = iter.parent;
         }
-        System.out.println("Solved");
+
 
         return path;
     }
