@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Physics.BoundingSphere;
 import com.mygdx.game.Physics.Particle;
 
-public class Ball extends Particle {
+public class Ball extends Particle implements BoundingSphere {
+    private int iter = 0;
 
     private static final float G = 9.81f;
 
@@ -31,23 +33,22 @@ public class Ball extends Particle {
     public enum MovingState {
         Up, Down, Straight,
     }
-
     //Ball state
     private BallState state;
     private MovingState movement;
 
     private Model model;
     private ModelInstance ballInstance;
-
     //get a copy of the map
     private Map map;
 
+//    private World world;
+
     //radius
     public static final float RAD = 2.5f;
-    //mass
-    public static final float MASS = 3f;
-    //elasticity
-    public static final float ELASTICITY = 0.1f;
+    public static final float MASS = 2f;
+    public static final float ELASTICITY = 0.6f;
+    public static final float MAX_VELOCITY = 94;
 
     /**
      * Initialize the ball 3d and add the position to it
@@ -64,6 +65,7 @@ public class Ball extends Particle {
                         VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
 
+//        pos = new Vector2(initPos.x, initPos.y);
         ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), Ball.RAD), initPos.y);
 
         //copy the instance of the map
@@ -117,6 +119,15 @@ public class Ball extends Particle {
 //            updateForces();
             integrate(deltaTime);
         }
+
+        // print out the position of the ball
+        if (iter >20){
+//            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
+            System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
+            iter = 0;
+        }else{
+            iter++;
+        }
     }
 
     /**
@@ -136,8 +147,10 @@ public class Ball extends Particle {
         }
 
         //in order to move the ball i've to apply the translation amount
-        ballInstance.transform.setTranslation(position.x, map.getHeight(new Vector2(position.x, position.z), RAD) , position.z);
+//        ballInstance.transform.setTranslation(pos.x, map.getHeight(pos, RAD) , pos.y);
+        ballInstance.transform.setTranslation(position.x, position.y, position.z);
         ballInstance.calculateTransforms();
+        position.set(position.x, position.y, position.z);
     }
 
     /**
@@ -170,9 +183,14 @@ public class Ball extends Particle {
         return state;
     }
 
-
-    private Vector2 normalize(Vector2 v) {
-        return v.scl(1 / v.len());
-
+    @Override
+    public Vector3 getCenter() {
+        return position;
     }
+
+    @Override
+    public float getRadius() {
+        return RAD;
+    }
+
 }
