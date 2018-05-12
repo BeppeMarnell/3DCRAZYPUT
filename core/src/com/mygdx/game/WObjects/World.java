@@ -109,4 +109,17 @@ public class World {
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
     }
+    
+        
+    public void setDebugMode(boolean debugMode) {
+        map.setDebugMode(debugMode);
+    }
+
+    public Vector2 getBallPos(){
+        return new Vector2(ball.getPosition().x, ball.getPosition().z);
+    }
+
+    public boolean isThrowMode(){
+        return club.throwMode;
+    }
 }
