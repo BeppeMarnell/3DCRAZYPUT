@@ -12,8 +12,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.BoundingSphere;
 
 public class Ball extends BoundingSphere {
-    private int iter = 0;
-
     /**
      * IMPORTANT
      * Because the map is over the y axis,
@@ -39,7 +37,6 @@ public class Ball extends BoundingSphere {
     public static final float RAD = 2.5f;
     public static final float MASS = 2f;
     public static final float ELASTICITY = 0.6f;
-    public static final float MAX_VELOCITY = 94;
 
     /**
      * Initialize the ball 3d and add the position to it
@@ -56,7 +53,6 @@ public class Ball extends BoundingSphere {
                         VertexAttributes.Usage.TextureCoordinates);
         ballInstance = new ModelInstance(model);
 
-//        pos = new Vector2(initPos.x, initPos.y);
         ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), RAD), initPos.y);
 
         //copy the instance of the map
@@ -105,14 +101,6 @@ public class Ball extends BoundingSphere {
                     break;
             }
             integrate(deltaTime, map.getFriction(new Vector2(position.x, position.z)));
-        }
-
-        // print out the position of the ball
-        if (iter >20){
-            System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
-            iter = 0;
-        }else{
-            iter++;
         }
     }
 

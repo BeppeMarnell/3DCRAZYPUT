@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Utils.BiCubicSplineFast;
 import com.mygdx.game.Utils.HeightField;
 import com.mygdx.game.Utils.Helper;
@@ -183,8 +184,14 @@ public class Map {
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
-        else return Helper.map(valueH,0,1,0, magnitude) + toAdd;
+        int newX = (int)Helper.map(pos.x, -80,80,0,160);
+        int newY = (int)Helper.map(pos.y, -56,56,0,112);
+        float H =  new Vector3(field.getPositionAt(new Vector3(),newX,newY)).y;
+
+        /*if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
+        else return Helper.map(valueH,0,1,0, magnitude) + toAdd;*/
+
+        return H + toAdd;
     }
 
     /**
