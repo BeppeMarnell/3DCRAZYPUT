@@ -67,21 +67,6 @@ public class World {
 
     }
 
-    private void generateBorders(ArrayList<Wall> walls){
-        borders = new Wall[4];
-
-        Vector3 yBorder = new Vector3(8, 15, 96);
-        Vector3 xBorder = new Vector3(160, 15, 8);
-        borders[0] = new Wall(new Vector3(0, 0, 56-4), xBorder, Color.LIGHT_GRAY, true);
-        borders[1] = new Wall(new Vector3(-(80-4), 0, 0), yBorder, Color.LIGHT_GRAY, true);
-        borders[2] = new Wall(new Vector3((80-4), 0,  0), yBorder, Color.LIGHT_GRAY, true);
-        borders[3] = new Wall(new Vector3(0,0, -(56-4)), xBorder, Color.LIGHT_GRAY, true);
-
-        for (int i = 0; i < 4; i++) {
-            walls.add(borders[i]);
-        }
-    }
-
     public void update(float deltaTime){
         for (Wall w : walls) {
             collisionDetector.collidesWithWall(w, deltaTime);
@@ -129,5 +114,20 @@ public class World {
 
     public boolean isThrowMode(){
         return club.throwMode;
+    }
+
+    private void generateBorders(ArrayList<Wall> walls){
+        borders = new Wall[4];
+
+        Vector3 yBorder = new Vector3(8, 15, 96);
+        Vector3 xBorder = new Vector3(160, 15, 8);
+        borders[0] = new Wall(new Vector3(0, 0, 56-4), xBorder, Color.LIGHT_GRAY, true);
+        borders[1] = new Wall(new Vector3(-(80-4), 0, 0), yBorder, Color.LIGHT_GRAY, true);
+        borders[2] = new Wall(new Vector3((80-4), 0,  0), yBorder, Color.LIGHT_GRAY, true);
+        borders[3] = new Wall(new Vector3(0,0, -(56-4)), xBorder, Color.LIGHT_GRAY, true);
+
+        for (int i = 0; i < 4; i++) {
+            walls.add(borders[i]);
+        }
     }
 }

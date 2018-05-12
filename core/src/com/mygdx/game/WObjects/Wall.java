@@ -43,10 +43,6 @@ public class Wall extends Obstacle {
         wall.transform.translate(position);
     }
 
-    /**
-     * Costructor to build the around walls
-     */
-
     public void render(ModelBatch batch, Environment environment){
         batch.render(wall, environment);
     }
