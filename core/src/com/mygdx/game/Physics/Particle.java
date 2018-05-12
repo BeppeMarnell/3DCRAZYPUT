@@ -18,10 +18,9 @@ public class Particle {
     protected float mu;
     protected float inverseMass;
     protected float mass;
-    private Map map;
 
 
-    public Particle(Vector3 position, float mass, Map map) {
+    public Particle(Vector3 position, float mass) {
        this.position = position;
        this.mass = mass;
        velocity = new Vector3();
@@ -31,11 +30,10 @@ public class Particle {
        gravity = new Vector3(0, -G, 0);
        friction = new Vector3();
        totalForce = new Vector3();
-       this.map = map;
     }
 
-    protected void integrate(float dt) {
-        mu = map.getFriction(new Vector2(position.x, position.z));
+    protected void integrate(float dt, float mu) {
+        this.mu = mu;
         updateDrag(0.5f, 0.3f);
         velocityVerletIntegration(dt);
 //        semiImplicitEulerIntegration(dt);
@@ -58,11 +56,8 @@ public class Particle {
         acceleration.set(totalForce.cpy().scl(inverseMass));
         oldVelocity.set(velocity);
         Vector3 newVelocity = velocity.cpy().scl(mu).add(acceleration.cpy().scl(dt));
-//        if (Math.abs(newVelocity.x) <= Ball.MAX_VELOCITY && Math.abs(newVelocity.z) <= Ball.MAX_VELOCITY) {
-            velocity.set(newVelocity);
-//        velocity.add(acceleration.cpy().scl(dt));
-            position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
-//        }
+        velocity.set(newVelocity);
+        position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
     }
 
     protected void addForce(Vector3 force) {
