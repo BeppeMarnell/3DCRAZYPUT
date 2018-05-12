@@ -1,32 +1,28 @@
 package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Physics.BoundingBox;
 import com.mygdx.game.Utils.Helper;
 
 
-public class Wall extends Obstacle implements BoundingBox {
+public class Wall extends Obstacle {
+    public final static Vector3 VELOCITY = new Vector3(0, 0, 0);
     public final static float ELASTICITY = 0.8f;
     public final static float MASS = 100f;
 
     private ModelInstance wall;
     private Model model;
 
-    private Vector3 max, min;
-    private Vector3 position;
-
     /**
      * generates a wall in a specific position in the map
      * @param pos the position values has to be between 0-19 and 0-13
      */
     public Wall(Vector3 pos, Vector3 size, Color c, boolean isBorder){
-        super(MASS, pos);
+        super(pos, size, MASS, ELASTICITY, VELOCITY);
 
         ModelBuilder modelBuilder = new ModelBuilder();
         model = modelBuilder.createBox(size.x, size.y, size.z, new Material(ColorAttribute.createDiffuse(c)),
@@ -44,12 +40,7 @@ public class Wall extends Obstacle implements BoundingBox {
             position.z += 4f;
             position.y = size.y * 0.5f;// + 4f;
         }
-//        wall.transform.translate(position.x +4f, 5,position.y +4f);
-//        wall.transform.translate(position.x, 5,position.y);
         wall.transform.translate(position);
-
-        max = new Vector3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z + size.z * 0.5f);
-        min = new Vector3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z - size.z * 0.5f);
     }
 
     /**
@@ -64,23 +55,4 @@ public class Wall extends Obstacle implements BoundingBox {
         model.dispose();
     }
 
-    public Vector3 getMax() {
-        return max;
-    }
-
-    public Vector3 getMin() {
-        return min;
-    }
-
-    public Vector3 getHalfSize() {
-        float hx = (max.x - min.x) / 2;
-        float hy = (max.y - min.y) / 2;
-        float hz = (max.z - min.z) / 2;
-
-        return new Vector3(hx, hy, hz);
-    }
-
-    public Vector3 getPosition() {
-        return position;
-    }
 }

@@ -1,43 +1,23 @@
 package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Physics.BoundingBox;
 
-public class Obstacle {
-    public final static float ELASTICITY = 0.8f;
-    public final static Vector3 VELOCITY = new Vector3(0, 0, 0);
-    protected Vector3 position;
-    protected float mass;
-    protected float[] size;
-    private float inverseMass;
+public class Obstacle extends BoundingBox{
+    protected float elasticity;
+    protected Vector3 velocity;
 
-
-
-    public Obstacle(float mass, Vector3 position) {
-        this.position = position;
-        this.mass = mass;
-        inverseMass = 1 / mass;
+    public Obstacle(Vector3 position, Vector3 size, float mass, float elasticity, Vector3 velocity) {
+        super(position, size, mass);
+        this.elasticity = elasticity;
+        this.velocity = velocity;
     }
 
-    public Obstacle(float mass, Vector3 position, float[] size) {
-        this(mass, position);
-        this.size = size;
+    public float getElasticity() {
+        return elasticity;
     }
 
-    public float getMass() {
-        return mass;
+    public Vector3 getVelocity() {
+        return velocity;
     }
-
-    public Vector3 getPosition() {
-        return position;
-    }
-
-    public float[] getSize() {
-        return size;
-    }
-
-    public float getInverseMass() {
-        return inverseMass;
-    }
-
-
 }

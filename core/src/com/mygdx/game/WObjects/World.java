@@ -5,10 +5,8 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Physics.CollisionSolver;
 import com.mygdx.game.Physics.CollisionDetector;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class World {
@@ -24,8 +22,7 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
-    
-    private Club club;
+
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -47,9 +44,6 @@ public class World {
         trees = new ArrayList<>();
         walls = new ArrayList<>();
 
-        //create the club
-        club = new Club(map);
-
         //add the surrounding walls
         generateBorders(walls);
 
@@ -59,17 +53,19 @@ public class World {
                 if(map.mapObjects[i][j].getType() == WorldObject.ObjectType.Tree)
                     trees.add(new Tree(new Vector2(i,j), map));
                 else if(map.mapObjects[i][j].getType() == WorldObject.ObjectType.Wall)
-                    walls.add(new Wall(new Vector3(i, 0 ,j), new Vector3(8f, 15f, 8f), Color.DARK_GRAY, false));
+//                    walls.add(new Wall(new Vector2(i,j)));
+                    walls.add(new Wall(new Vector3(i, 0, j), new Vector3(8f, 15f, 8f), Color.DARK_GRAY, false));
             }
         }
 
         // Instantiate the collision detector
         collisionDetector = new CollisionDetector(ball);
+
     }
 
     private void generateBorders(ArrayList<Wall> walls){
         borders = new Wall[4];
-        
+
         Vector3 yBorder = new Vector3(8, 15, 96);
         Vector3 xBorder = new Vector3(160, 15, 8);
         borders[0] = new Wall(new Vector3(0, 0, 56-4), xBorder, Color.LIGHT_GRAY, true);
@@ -83,9 +79,10 @@ public class World {
     }
 
     public void update(float deltaTime){
-        for (Wall w : walls) collisionDetector.collidesWithWall(w, deltaTime);
-        
-        //update the ball
+        for (Wall w : walls) {
+            collisionDetector.collidesWithWall(w, deltaTime);
+        }
+
         ball.update(deltaTime);
     }
 
@@ -104,9 +101,6 @@ public class World {
 
         //render the trees
         for(Tree t: trees) t.render(batch, environment);
-        
-        //render the club
-        club.render(batch, environment);
     }
 
     public void dispose(){
@@ -114,18 +108,5 @@ public class World {
         hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
-        club.dispose();
-    }
-    
-    public void setDebugMode(boolean debugMode) {
-        map.setDebugMode(debugMode);
-    }
-
-    public Vector2 getBallPos(){
-        return new Vector2(ball.getPosition().x, ball.getPosition().z);
-    }
-
-    public boolean isThrowMode(){
-        return club.throwMode;
     }
 }
