@@ -180,18 +180,16 @@ public class Map {
      */
     public float getHeight(Vector2 pos, float toAdd){
 
-        Vector2 translPos = translPos(pos).cpy();
+        //find the exact position in the map
+        Vector2 translPos = new Vector2();
+        translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
+        translPos.y = Helper.map(pos.y, -56, 56, 0, 14);
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
+        // float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        int newX = (int)Helper.map(pos.x, -80,80,0,160);
-        int newY = (int)Helper.map(pos.y, -56,56,0,112);
-        float H =  new Vector3(field.getPositionAt(new Vector3(),newX,newY)).y;
-
-        /*if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
-        else return Helper.map(valueH,0,1,0, magnitude) + toAdd;*/
-
-        return H + toAdd;
+        if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
+        else return Helper.map(valueH,0,1,0, magnitude) + toAdd;
     }
 
     /**
