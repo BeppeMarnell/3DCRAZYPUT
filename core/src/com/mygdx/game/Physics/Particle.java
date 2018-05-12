@@ -1,12 +1,10 @@
 package com.mygdx.game.Physics;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.WObjects.Ball;
-import com.mygdx.game.WObjects.Map;
 
 public class Particle {
     protected static final float G = 9.81f;
+
     protected Vector3 position;
     protected Vector3 velocity;
     // Old velocity required for Velocity Verlet Integration
@@ -68,18 +66,21 @@ public class Particle {
         totalForce.setZero();
     }
 
-    protected void updateForces() {
+    protected void updateForces(float scalar) {
+        update2DGravity(scalar);
         updateGravity();
         updateFriction();
     }
 
+    private void update2DGravity(float scalar) {
+        addForce(velocity.cpy().scl(scalar * G * position.y));
+    }
+
     private void updateGravity() {
-//        gravity = new Vector3(-1 * mass * G * position.y, -1 * G, -1 * mass * G * position.y);
         addForce(gravity);
     }
 
     private void updateFriction() {
-//        friction.set(velocity.cpy().nor().scl(-1 * mu * G));
         addForce(friction);
     }
 

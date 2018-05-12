@@ -8,7 +8,7 @@ import com.mygdx.game.WObjects.Wall;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
 public class CollisionDetector {
-    private Ball ball;
+    private BoundingSphere ball;
     private Obstacle obstacle;
     private CollisionSolver collisionSolver;
 
@@ -17,10 +17,10 @@ public class CollisionDetector {
         collisionSolver = new CollisionSolver(ball);
     }
 
-    public boolean collidesWithWall(Wall wall, float dt) {
-        obstacle = wall;
+    public boolean collidesWithWall(BoundingBox wall, float dt) {
+        obstacle = (Wall) wall;
 
-        Vector3 ballCenter = ball.getCenter();
+        Vector3 ballCenter = ball.getPosition();
         Vector3 distance = obstacle.getPosition().cpy().sub(ballCenter);
         Vector3 halfSize = obstacle.getHalfSize();
 
@@ -38,7 +38,7 @@ public class CollisionDetector {
 
         if (Math.pow(ball.getRadius(), 2) < distanceToClosestPoint) return false;
 
-        Vector3 normal = closest.cpy().sub(ball.getCenter()).nor();
+        Vector3 normal = closest.cpy().sub(ball.getPosition()).nor();
         float penetration = ball.getRadius() - (float) Math.sqrt(distanceToClosestPoint);
 
         collisionSolver.solve(obstacle, normal, penetration, dt);
