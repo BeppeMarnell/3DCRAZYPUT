@@ -22,7 +22,8 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
-
+    
+    private Club club;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -43,6 +44,9 @@ public class World {
         //TREES and WALLS
         trees = new ArrayList<>();
         walls = new ArrayList<>();
+        
+        //create the club
+        club = new Club(map);
 
         //add the surrounding walls
         generateBorders(walls);
@@ -101,6 +105,9 @@ public class World {
 
         //render the trees
         for(Tree t: trees) t.render(batch, environment);
+        
+        //render the club
+        club.render(batch, environment);
     }
 
     public void dispose(){
@@ -108,6 +115,7 @@ public class World {
         hole.dispose();
         for(Wall w: walls) w.dispose();
         for(Tree t: trees) t.dispose();
+        club.dispose();
     }
     
         
