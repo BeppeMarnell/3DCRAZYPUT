@@ -14,8 +14,6 @@ import com.mygdx.game.Physics.BoundingSphere;
 public class Ball extends BoundingSphere {
     private int iter = 0;
 
-    private static final float G = 9.81f;
-
     /**
      * IMPORTANT
      * Because the map is over the y axis,
@@ -48,7 +46,6 @@ public class Ball extends BoundingSphere {
      * @param initPos
      */
     public Ball(Vector2 initPos, Map map){
-//        super(new Vector3(initPos.x, map.getHeight(initPos, RAD), initPos.y), MASS, map);
         super(new Vector3(initPos.x, map.getHeight(initPos, RAD), initPos.y), MASS, RAD);
 
         //create the ball object
@@ -94,29 +91,24 @@ public class Ball extends BoundingSphere {
         move3DBall();
 
         if (state == BallState.Moving) {
-            switch(movement) {
+            switch (movement) {
                 case Up:
                     addForce(velocity.cpy().nor().scl(-1f * G * position.y));
-//                    totalForce.set(velocity.nor().scl(-1f*G*position.y));
                     break;
                 case Down:
                     addForce(velocity.cpy().nor().scl(G * position.y));
-//                    totalForce.set(velocity.nor().scl(G*position.y));
                     break;
                 case Straight:
-//                    updateForces();
-                    addForce(velocity.cpy().nor().scl(-1));
+                    addForce(velocity.cpy().nor().scl(G * position.y * -1f));
                     break;
                 default:
                     break;
             }
-//            updateForces();
             integrate(deltaTime, map.getFriction(new Vector2(position.x, position.z)));
         }
 
         // print out the position of the ball
         if (iter >20){
-//            System.out.println(" height: "+ map.getHeight(new Vector2(pos.x, pos.y), RAD) + " vel: " + linearVelocity.toString());
             System.out.println(" height: "+ map.getHeight(new Vector2(position.x, position.z), RAD) + " vel: " + velocity.toString());
             iter = 0;
         }else{
@@ -143,7 +135,6 @@ public class Ball extends BoundingSphere {
         //in order to move the ball i've to apply the translation amount
         ballInstance.transform.setTranslation(position);
         ballInstance.calculateTransforms();
-        setPosition(position);
     }
 
     /**
