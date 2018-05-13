@@ -164,7 +164,8 @@ public class Map {
 
         for(int i=1; i<mapObjects.length-1; i++) {
             for (int t = 1; t < mapObjects[0].length-1; t++) {
-                interpArray[i][t] = Helper.map(mapObjects[i][t].getHeight(), 0,4,0,1);
+                //interpArray[i][t] = Helper.map(mapObjects[i][t].getHeight(), 0,4,0,1);
+                interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*8, t*8).y, 0,8,0,1);
             }
         }
 
