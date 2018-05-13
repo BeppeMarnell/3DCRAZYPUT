@@ -159,12 +159,11 @@ public class Map {
         double[] x1 = new double[20];
         double[] x2 = new double[14];
         //create the x1 and x2 indices
-        for(int i=0; i<20; i++) x1[i] = i;
-        for (int t=0; t<14; t++) x2[t] = t;
+        for(int i=0; i<x1.length; i++) x1[i] = i;
+        for (int t=0; t<x2.length; t++) x2[t] = t;
 
-        for(int i=1; i<mapObjects.length-1; i++) {
-            for (int t = 1; t < mapObjects[0].length-1; t++) {
-                //interpArray[i][t] = Helper.map(mapObjects[i][t].getHeight(), 0,4,0,1);
+        for(int i=1; i<x1.length-1; i++) {
+            for (int t = 1; t < x2.length-1; t++) {
                 interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*8, t*8).y, 0,8,0,1);
             }
         }
