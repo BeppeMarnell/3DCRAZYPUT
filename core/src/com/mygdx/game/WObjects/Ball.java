@@ -34,7 +34,7 @@ public class Ball extends BoundingSphere {
     private Map map;
 
     //radius
-    public static final float RAD = 2.5f;
+    public static final float RAD = 1f;
     public static final float MASS = 2f;
     public static final float ELASTICITY = 0.6f;
 
@@ -47,7 +47,7 @@ public class Ball extends BoundingSphere {
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createSphere(2 * RAD, 2 * RAD, 2 * RAD,15,15,
+        model = modelBuilder.createSphere(2, 2, 2,15,15,
                 new Material(ColorAttribute.createDiffuse(Color.WHITE)),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                         VertexAttributes.Usage.TextureCoordinates);
