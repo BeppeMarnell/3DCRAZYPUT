@@ -162,8 +162,8 @@ public class Map {
         for(int i=0; i<x1.length; i++) x1[i] = i;
         for (int t=0; t<x2.length; t++) x2[t] = t;
 
-        for(int i=1; i<x1.length-1; i++) {
-            for (int t = 1; t < x2.length-1; t++) {
+        for(int i=0; i<x1.length; i++) {
+            for (int t = 0; t < x2.length; t++) {
                 interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*8, t*8).y, 0,8,0,1);
             }
         }
@@ -188,8 +188,7 @@ public class Map {
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
         // float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
-        if(Helper.map(valueH,0,1,0, magnitude)<0) return  toAdd;
-        else return Helper.map(valueH,0,1,0, magnitude) + toAdd;
+        return Helper.map(valueH,0,1,0, magnitude) + toAdd;
     }
 
     /**
