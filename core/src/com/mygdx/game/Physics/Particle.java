@@ -1,6 +1,7 @@
 package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.WObjects.Ball;
 
 public class Particle {
     protected static final float G = 9.81f;
@@ -28,14 +29,21 @@ public class Particle {
        gravity = new Vector3(0, -G, 0);
        friction = new Vector3();
        totalForce = new Vector3();
+       mu = 1;
     }
 
-    protected void integrate(float dt, float mu) {
-        this.mu = mu;
-        updateDrag(0.5f, 0.3f);
+    protected void integrate(float dt, Ball.MovingState state) {
+        updateForces(state);
         velocityVerletIntegration(dt);
 //        semiImplicitEulerIntegration(dt);
         clearForces();
+    }
+
+    protected void updateForces(Ball.MovingState state) {
+        update2DGravity(state);
+//        updateGravity();
+        updateDrag(0.5f, 0.3f);
+        updateFriction();
     }
 
     private void eulerIntegration(float dt) {
@@ -53,7 +61,7 @@ public class Particle {
     private void velocityVerletIntegration(float dt) {
         acceleration.set(totalForce.cpy().scl(inverseMass));
         oldVelocity.set(velocity);
-        Vector3 newVelocity = velocity.cpy().scl(mu).add(acceleration.cpy().scl(dt));
+        Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
         position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
     }
@@ -66,14 +74,9 @@ public class Particle {
         totalForce.setZero();
     }
 
-    protected void updateForces(float scalar) {
-        update2DGravity(scalar);
-        updateGravity();
-        updateFriction();
-    }
-
-    private void update2DGravity(float scalar) {
-        addForce(velocity.cpy().scl(scalar * G * position.y));
+    private void update2DGravity(Ball.MovingState state) {
+        if (state == Ball.MovingState.Down) addForce(velocity.cpy().nor().scl(G * position.y));
+        else addForce(velocity.cpy().nor().scl(-G * position.y));
     }
 
     private void updateGravity() {
@@ -81,7 +84,7 @@ public class Particle {
     }
 
     private void updateFriction() {
-        addForce(friction);
+        velocity.scl(mu);
     }
 
     private void updateDrag(float k1, float k2) {

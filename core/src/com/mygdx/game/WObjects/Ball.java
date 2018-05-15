@@ -36,7 +36,7 @@ public class Ball extends BoundingSphere {
     //radius
     public static final float RAD = 1f;
     public static final float MASS = 2f;
-    public static final float ELASTICITY = 0.6f;
+    public static final float ELASTICITY = 0.3f;
 
     /**
      * Initialize the ball 3d and add the position to it
@@ -77,30 +77,17 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
-        moveByKeys();
 
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
             velocity.setZero();
             state = BallState.Stopped;
-        } else state = BallState.Moving;
+        } //else state = BallState.Moving;
 
-        move3DBall();
+        moveByKeys();
 
         if (state == BallState.Moving) {
-            switch (movement) {
-                case Up:
-                    addForce(velocity.cpy().nor().scl(-1f * G * position.y));
-                    break;
-                case Down:
-                    addForce(velocity.cpy().nor().scl(G * position.y));
-                    break;
-                case Straight:
-                    addForce(velocity.cpy().nor().scl(G * position.y * -1f));
-                    break;
-                default:
-                    break;
-            }
-            integrate(deltaTime, map.getFriction(new Vector2(position.x, position.z)));
+            move3DBall();
+            integrate(deltaTime, movement);
         }
     }
 
@@ -111,6 +98,7 @@ public class Ball extends BoundingSphere {
 //        Apply the physic to the 3D object
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
+        mu = map.getFriction(new Vector2(position.x, position.y));
 
         if (oldPos.y > position.y) {
             movement = MovingState.Down;
@@ -129,23 +117,23 @@ public class Ball extends BoundingSphere {
      * Move the ball by using the keyboards
      */
     private void moveByKeys(){
+        state = BallState.Moving;
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            velocity.add(-5,0, 0);
+            addForce(new Vector3(-100,0,0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            velocity.add(5,0, 0);
+            addForce(new Vector3(100,0,0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            velocity.add(0,0, 5);
+            addForce(new Vector3(0,0,100));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            velocity.add(0,0, -5);
+            addForce(new Vector3(0,0,-100));
         }
     }
-
 
     public void dispose(){
         model.dispose();
