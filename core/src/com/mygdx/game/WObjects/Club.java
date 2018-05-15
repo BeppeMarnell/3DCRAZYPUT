@@ -15,9 +15,11 @@ import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Physics.BoundingBox;
+import com.mygdx.game.Physics.BoundingSphere;
 import com.mygdx.game.Utils.Helper;
 
-public class Club{
+public class Club {
 
     private ModelInstance club;
     private Model model;
