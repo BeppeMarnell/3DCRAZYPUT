@@ -1,6 +1,6 @@
 package com.mygdx.game.Bott;
 
-import com.mygdx.game.WObjects.Ball;
+import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
@@ -8,108 +8,96 @@ import java.util.List;
 
 public class Bot {
 
+    public Bot(Map map, int option){
+        AlgorithmMap algorithmMap = new AlgorithmMap(map);
 
-
-    public Ball ball;
-
-    public Bot(Map map){
-
-        BotMap botMap = new BotMap(map);
-       // bfs(botMap);
-        astar(botMap);
-
+        long startTime = System.currentTimeMillis();
+        BFS(algorithmMap);
+        //aStar(algorithmMap);
+        long endTime = System.currentTimeMillis();
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
     }
 
-
-    private void bfs(BotMap botMap) {
-        PathFinder pathFinder = new PathFinder();
-        List<Coordinate> path = pathFinder.solve(botMap);
-        List<Coordinate> straightPath = separateShot(path);
-
-        botMap.printPath(path);
-        botMap.printPath(straightPath);
-
-        System.out.println(straightPath.size());
-
-        botMap.reset();
+    private void BFS(AlgorithmMap algorithmMap){
+        BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
+        List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
+        List<Coordinate> finalPath = separateShot(solvedPath);
+        List<Vector2> path = toVector2(finalPath);
+        printVector(path);
+       // algorithmMap.printPath(solvedPath);
+        algorithmMap.reset();
     }
 
+    private void aStar(AlgorithmMap algorithmMap){
+        AStarAlgorithm aStarAlgorithm =
+                new AStarAlgorithm(algorithmMap.map.length, algorithmMap.map[0].length, algorithmMap.start,algorithmMap.end);
 
-    private void astar(BotMap botMap){
-        Node start = new Node(botMap.start.getX(),botMap.start.getY() );
-
-        Node end = new Node(botMap.end.getX(), botMap.end.getY());
-
-
-
-        AStar aStar = new AStar(botMap.maze.length, botMap.maze[0].length, start, end);
-
-       for(int i =0; i < botMap.maze.length; i++){
-           for(int j = 0; j < botMap.maze[0].length; j++){
-               if(botMap.maze[i][j]==1){
-                   aStar.setBlock(i,j);
-               }
-           }
-       }
-
-        for(int i =7; i < botMap.maze.length-7; i++){
-            for(int j = 7; j < botMap.maze[0].length-7; j++){
-                if(botMap.maze[i][j]==1){
-                    aStar.setBlock(i+2, j);
-                    aStar.setBlock(i-2, j);
-                    aStar.setBlock(i, j+2);
-                    aStar.setBlock(i ,j-2);
-                    aStar.setBlock(i+2, j+2);
-                    aStar.setBlock(i-2, j+2);
-                    aStar.setBlock(i-2, j-2);
-                    aStar.setBlock(i+2 ,j-2);
-
+        for(int i =0; i < algorithmMap.map.length; i++){
+            for(int j = 0; j < algorithmMap.map[0].length; j++){
+                if(algorithmMap.map[i][j]==1){
+                    aStarAlgorithm.setBlock(i,j);
                 }
             }
         }
 
+        for(int i =64; i < algorithmMap.map.length-64; i++){
+            for(int j = 64; j < algorithmMap.map[0].length-64; j++){
+                if(algorithmMap.map[i][j]==1){
+                    aStarAlgorithm.setBlock(i+31, j);
+                    aStarAlgorithm.setBlock(i-31, j);
+                    aStarAlgorithm.setBlock(i, j+31);
+                    aStarAlgorithm.setBlock(i ,j-31);
+                    aStarAlgorithm.setBlock(i+31, j+31);
+                    aStarAlgorithm.setBlock(i-31, j+31);
+                    aStarAlgorithm.setBlock(i-31, j-31);
+                    aStarAlgorithm.setBlock(i+31 ,j-31);
 
-        List<Node> path = aStar.findPath();
+                }
+            }
+        }
+        List<Coordinate> path = aStarAlgorithm.findPath();
+        System.out.println("Solved");
+        List<Coordinate> finalPath = separateShot(path);
+        List<Vector2> Vpath = toVector2(finalPath);
+        algorithmMap.printPath(path);
+       // algorithmMap.printPath(finalPath);
+        algorithmMap.reset();
 
-        System.out.println(path.size());
-        System.out.println(separateShotAStar(path).size());
-
-
-        botMap.printPathNode(path);
-
-        botMap.reset();
     }
 
-
-
-
+    /**
+     * Method which removes the nodes in a straight path.
+     * @param path the current path
+     * @return the path with points.
+     * @throws IndexOutOfBoundsException if the maze hasn't a solution.
+     */
     public  List<Coordinate> separateShot(List<Coordinate> path) throws IndexOutOfBoundsException {
-       try { List<Coordinate> shotsLV = new ArrayList<>();
-        Coordinate origin = path.get(0);
-        double slope;
+        try { List<Coordinate> shotsLV = new ArrayList<>();
+            Coordinate origin = path.get(0);
+            double slope;
 
-        if (path.size() > 1) {
-            slope = calculateSlope(origin, path.get(1));
+            if (path.size() > 1) {
+                slope = calculateSlope(origin, path.get(1));
 
-            for (int x = 2; x < path.size(); x++) {
-                double tempSlope = calculateSlope(origin, path.get(x));
+                for (int x = 2; x < path.size(); x++) {
+                    double tempSlope = calculateSlope(origin, path.get(x));
 
-                if (tempSlope != slope) {
+                    if (tempSlope != slope) {
 
-                    origin = path.get(x - 1);
-                    shotsLV.add(origin);
-                    slope = calculateSlope(origin, path.get(x));
+                        origin = path.get(x - 1);
+                        shotsLV.add(origin);
+                        slope = calculateSlope(origin, path.get(x));
+                    }
                 }
             }
-        }
 
-        return shotsLV;
-       }
-       catch (Exception e ){
-           System.out.println("No Solution!");
-           List<Coordinate> emptyList = new ArrayList<>();
-           return emptyList;
-       }
+            return shotsLV;
+        }
+        catch (Exception e ){
+            System.out.println("No Solution!");
+            List<Coordinate> emptyList = new ArrayList<>();
+            return emptyList;
+        }
 
 
     }
@@ -129,53 +117,21 @@ public class Bot {
         return (c2.x - c1.x);
     }
 
-
-
-    public  List<Node> separateShotAStar(List<Node> path) throws IndexOutOfBoundsException {
-        try {
-            List<Node> shotsLV = new ArrayList<>();
-            Node origin = path.get(0);
-            double slope;
-
-            if (path.size() > 1) {
-                slope = calculateSlopeAStar(origin, path.get(1));
-
-                for (int x = 2; x < path.size(); x++) {
-                    double tempSlope = calculateSlopeAStar(origin, path.get(x));
-
-                    if (tempSlope != slope) {
-
-                        origin = path.get(x - 1);
-                        shotsLV.add(origin);
-                        slope = calculateSlopeAStar(origin, path.get(x));
-                    }
-                }
-            }
-
-            return shotsLV;
+    public List<Vector2> toVector2(List<Coordinate> path){
+       List<Vector2> vector2s = new ArrayList<>();
+        for(int i = path.size()-1; i>-1; i--){
+            Vector2 cur = new Vector2(path.get(i).x, path.get(i).y);
+            vector2s.add(cur);
         }
-        catch (Exception e ){
-            System.out.println("No Solution!");
-            List<Node> emptyList = new ArrayList<>();
-            return emptyList;
+        return vector2s;
+    }
+
+    public void printVector(List<Vector2> pathInVector){
+        for(int i = 0; i<pathInVector.size(); i++){
+            System.out.println(pathInVector.get(i).x+ " : "+ pathInVector.get(i).y);
         }
-
-
     }
 
-    public  double calculateSlopeAStar(Node c1, Node c2) {
-        if (calculateXAStar(c1, c2) != 0)
-            return calculateYAStar(c1, c2)/(calculateXAStar(c1, c2));
-        else
-            return -1;
-    }
 
-    public  double calculateYAStar(Node c1, Node c2) {
-        return (c2.getCol() - c1.getCol());
-    }
 
-    public  double calculateXAStar(Node c1, Node c2) {
-        return (c2.getRow() - c1.getRow());
-    }
 }
-
