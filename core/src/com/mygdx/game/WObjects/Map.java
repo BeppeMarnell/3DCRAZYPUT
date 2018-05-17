@@ -63,7 +63,7 @@ public class Map {
         //create the ground
         texture = new Texture(Gdx.files.internal(paths[0]));
 
-        float w = 80f;float h = 0;float l = 56f;
+        float w = 72f;float h = 0;float l = 48f;
         Pixmap data = new Pixmap(Gdx.files.internal(paths[1]));
         field = new HeightField(true, data, true, VertexAttributes.Usage.Position
                 | VertexAttributes.Usage.Normal | VertexAttributes.Usage.ColorUnpacked | VertexAttributes.Usage.TextureCoordinates);
@@ -154,17 +154,17 @@ public class Map {
         String[] ballInfo = objects[objects.length-1].split(",");
         ball = new WorldObject(WorldObject.ObjectType.Ball, new Vector2(Float.parseFloat(ballInfo[2]), Float.parseFloat(ballInfo[3])), 0);
 
-        double[][] interpArray = new double[20][14];
+        double[][] interpArray = new double[36][24];
 
-        double[] x1 = new double[20];
-        double[] x2 = new double[14];
+        double[] x1 = new double[36];
+        double[] x2 = new double[24];
         //create the x1 and x2 indices
         for(int i=0; i<x1.length; i++) x1[i] = i;
         for (int t=0; t<x2.length; t++) x2[t] = t;
 
         for(int i=0; i<x1.length; i++) {
             for (int t = 0; t < x2.length; t++) {
-                interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*8, t*8).y, 0,8,0,1);
+                interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*4, t*4).y, 0,8,0,1);
             }
         }
 
@@ -182,11 +182,10 @@ public class Map {
 
         //find the exact position in the map
         Vector2 translPos = new Vector2();
-        translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
-        translPos.y = Helper.map(pos.y, -56, 56, 0, 14);
+        translPos.x = Helper.map(pos.x, -72, 72, 0, 36);
+        translPos.y = Helper.map(pos.y, -48, 48, 0, 24);
 
         float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
-        // float valueH = (float)bSpline.interpolate((double)translPos.x,(double)translPos.y); // + ball heigth
 
         return Helper.map(valueH,0,1,0, magnitude) + toAdd;
     }
@@ -203,19 +202,6 @@ public class Map {
         int j = (int)(pos.y+56)/8;
 
         return mapObjects[(i>=0 &&i<20)? i: 1][(j>=0 &&j<14)? j: 1].getFriction();
-    }
-
-    /**
-     * translate actual world position in array position
-     * @param pos
-     * @return
-     */
-    private Vector2 translPos(Vector2 pos){
-        Vector2 translPos = new Vector2();
-        translPos.x = Helper.map(pos.x, -80, 80, 0, 20);
-        translPos.y = Helper.map(pos.y, -56, 56, 0, 14);
-
-        return translPos;
     }
 
     /**

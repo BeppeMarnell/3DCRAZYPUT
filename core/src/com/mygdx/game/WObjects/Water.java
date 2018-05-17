@@ -25,20 +25,20 @@ public class Water {
     private Environment environment;
 
     private float datas[];
-    private int width = 25;
-    private int height = 25;
+    private int width = 160;
+    private int height = 112;
 
     private float time = 0;
     private ArrayList<WaveTrain> trains;
 
     public Water(Environment environment){
         //create the ground
-        texture = new Texture(Gdx.files.internal("water.BMP"));
+        texture = new Texture(Gdx.files.internal("water.jpg"));
 
-        float w = 8f;float h = 0;float l = 8f;
-
+        float w = 76f;float h = 0;float l = 48f;
 
         datas = new float[(height*width+width)];
+
         //fill datas with random value between 0 an 1
         fillRandom(datas, width,height);
 
@@ -63,8 +63,9 @@ public class Water {
         ground.meshPart.offset = 0;
         ground.meshPart.size = field.mesh.getNumIndices();
         ground.meshPart.update();
+        //ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BLUE));
         ground.material = new Material(new TextureAttribute(TextureAttribute.Diffuse, texture));
-        ground.worldTransform.translate(0, 0.3f, 0);
+        ground.worldTransform.translate(0, 0.6f, 0);
 
         //wave train
         trains = new ArrayList<>();
@@ -207,6 +208,6 @@ public class Water {
 
         if(debugMode)ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BLUE));
         else ground.material = new Material(TextureAttribute.createDiffuse(texture));
-        ground.worldTransform.translate(0, 0.3f, 0);
+        ground.worldTransform.translate(0, 2f, 0);
     }
 }
