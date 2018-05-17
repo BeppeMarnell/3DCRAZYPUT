@@ -20,13 +20,6 @@ Objectives for Phase 2 :
 - [Physic 2d Java Engine](https://github.com/wilkystyle/java2dphysicsengine)		
  		
 		
-### How to use the Path builder a test a map		
-**2 Building mode**		
- 1. Placing blocks and generate the map ( be sure you place the ball and the hole )		
- 2. Generate a random Map		
- 		
-'Every time you are going to export 2 .png files and 1 .txt' **the name of each is very important**		
- 		
-**How to test a map with Visualizer.jar**		
- - The program needs all the three files generated from the path builder in the same directory		
- - to test the magnitude of each map, in the same path put a file called 'settings.txt' with inside a float value (not more 20)
+### Map improvements		
+**Update to version up to 18-May**		
+ Warning **incompatibly issue** with older maps  
