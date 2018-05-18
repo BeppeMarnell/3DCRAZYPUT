@@ -52,6 +52,8 @@ public class AlgorithmMap {
         }
     }
 
+
+
     public String toString(int[][] maze) {
         StringBuilder result = new StringBuilder(getWidth() * (getHeight() + 1));
         for (int col = 0; col < getWidth(); col++) {
@@ -99,6 +101,8 @@ public class AlgorithmMap {
     public boolean isExit(int x, int y){ return x==end.getX() && y==end.getY(); }
 
     public Coordinate getStart() { return start; }
+
+    public void setStart(int x, int y) { this.start = new Coordinate(x,y); }
 
     public Coordinate getEnd() { return end; }
 

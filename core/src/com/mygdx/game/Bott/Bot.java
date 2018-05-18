@@ -1,6 +1,7 @@
 package com.mygdx.game.Bott;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
@@ -8,23 +9,25 @@ import java.util.List;
 
 public class Bot {
 
-    public Bot(Map map, int option){
-        AlgorithmMap algorithmMap = new AlgorithmMap(map);
+    AlgorithmMap algorithmMap;
+    List<Vector2> BFS_Path;
+    List<Vector2> ASTAR_Path;
 
-        long startTime = System.currentTimeMillis();
+
+
+    public Bot(Map map, int option){
+        algorithmMap = new AlgorithmMap(map);
         BFS(algorithmMap);
-        //aStar(algorithmMap);
-        long endTime = System.currentTimeMillis();
-        System.out.println("That took " + (endTime - startTime) + " milliseconds");
+        aStar(algorithmMap);
+
     }
 
     private void BFS(AlgorithmMap algorithmMap){
         BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
         List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
         List<Coordinate> finalPath = separateShot(solvedPath);
-        List<Vector2> path = toVector2(finalPath);
-        printVector(path);
-       // algorithmMap.printPath(solvedPath);
+        BFS_Path = toVector2(finalPath);
+        algorithmMap.printPath(finalPath);
         algorithmMap.reset();
     }
 
@@ -40,30 +43,26 @@ public class Bot {
             }
         }
 
-        for(int i =64; i < algorithmMap.map.length-64; i++){
-            for(int j = 64; j < algorithmMap.map[0].length-64; j++){
-                if(algorithmMap.map[i][j]==1){
-                    aStarAlgorithm.setBlock(i+31, j);
-                    aStarAlgorithm.setBlock(i-31, j);
-                    aStarAlgorithm.setBlock(i, j+31);
-                    aStarAlgorithm.setBlock(i ,j-31);
-                    aStarAlgorithm.setBlock(i+31, j+31);
-                    aStarAlgorithm.setBlock(i-31, j+31);
-                    aStarAlgorithm.setBlock(i-31, j-31);
-                    aStarAlgorithm.setBlock(i+31 ,j-31);
-
-                }
-            }
-        }
         List<Coordinate> path = aStarAlgorithm.findPath();
-        System.out.println("Solved");
         List<Coordinate> finalPath = separateShot(path);
-        List<Vector2> Vpath = toVector2(finalPath);
-        algorithmMap.printPath(path);
-       // algorithmMap.printPath(finalPath);
+        algorithmMap.printPath(finalPath);
+        ASTAR_Path = toVector2(finalPath);
         algorithmMap.reset();
 
     }
+
+    public void updateStart(Vector2 start){
+        int x = (int) Helper.map(start.x, -80, 80,0, 20);
+        int y = (int) Helper.map(start.y, -56, 56,0, 14);
+        algorithmMap.setStart(x, y);
+    }
+
+    public void updatePath(){
+        BFS(algorithmMap);
+        aStar(algorithmMap);
+    }
+
+
 
     /**
      * Method which removes the nodes in a straight path.
@@ -133,5 +132,12 @@ public class Bot {
     }
 
 
+    public List<Vector2> getBFS_Path() {
+        return BFS_Path;
+    }
+
+    public List<Vector2> getASTAR_Path() {
+        return ASTAR_Path;
+    }
 
 }
