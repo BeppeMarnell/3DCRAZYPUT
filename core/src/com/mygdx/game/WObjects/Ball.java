@@ -81,7 +81,7 @@ public class Ball extends BoundingSphere {
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
             velocity.setZero();
             state = BallState.Stopped;
-        } //else state = BallState.Moving;
+        } else state = BallState.Moving;
 
         moveByKeys();
 
@@ -135,7 +135,23 @@ public class Ball extends BoundingSphere {
         }
     }
 
+    /**
+     * Move the ball assigning a force
+     */
+    public void moveBall(Vector2 force){
+        addForce(new Vector3(force.x, 0, force.y));
+    }
+
     public void dispose(){
         model.dispose();
+    }
+
+    /**
+     * call the method to know if the ball is stopped
+     * @return boolean value
+     */
+    public boolean isStopped(){
+        if(state ==BallState.Stopped)return true;
+        else return false;
     }
 }
