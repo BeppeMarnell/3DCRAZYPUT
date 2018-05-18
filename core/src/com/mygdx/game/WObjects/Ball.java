@@ -147,7 +147,7 @@ public class Ball extends BoundingSphere {
     }
 
     /**
-     * call the method to know if the ball is stopped
+     * Call the method to know if the ball is stopped
      * @return boolean value
      */
     public boolean isStopped(){
