@@ -3,7 +3,6 @@ package com.mygdx.game.Bott;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
-
 import java.util.ArrayList;
 import java.util.List;
 

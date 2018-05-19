@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.BoundingBox;
@@ -30,12 +31,8 @@ public class Club {
     //set the throw game screen
     public boolean throwMode = false;
 
-    //touching
-    private boolean touching;
-    private Vector2 iniTouch;
-    private Vector2 finTouch;
-
     private Vector2 pos;
+
     public Club(Map map){
         //tree
         ModelLoader loader = new ObjLoader();
@@ -49,11 +46,9 @@ public class Club {
         this.map = map;
 
         pos = new Vector2();
-
-        touching = false;
     }
 
-    public void render(ModelBatch batch, Environment environment){
+    public void render(ModelBatch batch, Environment environment, Ball ball){
 
         //render and update only if the key T is pressed
         if(Gdx.input.isKeyPressed(Input.Keys.T)){
@@ -70,22 +65,23 @@ public class Club {
             //render the club
             batch.render(club, environment);
 
+            //call the method to throw the ball
+            if(ball.isStopped()) lunchBall(ball);
+
+
         }else throwMode = false;
     }
 
-    /**
-     * manage the touch gesture
-     */
-    public void touchDrag(){
+    private void lunchBall(Ball ball){
+        Circle clubC = new Circle(pos.x,pos.y, 2.4f);
 
-        if(Gdx.input.isTouched()){
-            touching = true;
+        Circle ballC = new Circle(ball.getPosition().cpy().x,ball.getPosition().cpy().z,1 );
 
+        if(clubC.overlaps(ballC)){
+            //calculate direction and throw the ball
+            Vector2 dir = new Vector2(pos.cpy().sub(new Vector2(ball.getPosition().cpy().x,ball.getPosition().cpy().z))).scl(-150f);
 
-        }else if(!Gdx.input.isTouched()){
-            iniTouch = new Vector2();
-            finTouch = new Vector2();
-            touching = false;
+            ball.moveBall(dir);
         }
     }
 

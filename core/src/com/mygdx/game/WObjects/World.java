@@ -63,7 +63,6 @@ public class World {
 
         // Instantiate the collision detector
         collisionDetector = new CollisionDetector(ball);
-
     }
 
     public void update(float deltaTime){
@@ -91,7 +90,7 @@ public class World {
         for(Tree t: trees) t.render(batch, environment);
         
         //render the club
-        club.render(batch, environment);
+        club.render(batch, environment, ball);
     }
 
     public void dispose(){
