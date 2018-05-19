@@ -65,7 +65,7 @@ public class Water {
         ground.meshPart.update();
         //ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BLUE));
         ground.material = new Material(new TextureAttribute(TextureAttribute.Diffuse, texture));
-        ground.worldTransform.translate(0, 0.6f, 0);
+        ground.worldTransform.translate(0, 0f, 0);
 
         //wave train
         trains = new ArrayList<>();
@@ -208,6 +208,6 @@ public class Water {
 
         if(debugMode)ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BLUE));
         else ground.material = new Material(TextureAttribute.createDiffuse(texture));
-        ground.worldTransform.translate(0, 2f, 0);
+        ground.worldTransform.translate(0, 0.5f, 0);
     }
 }

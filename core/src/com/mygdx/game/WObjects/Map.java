@@ -87,11 +87,11 @@ public class Map {
         ground.meshPart.update();
         ground.material = new Material(TextureAttribute.createDiffuse(texture));
 
-        //load the map with the .txt file info
-        load(paths[2]);
-
         //set magnitude
         this.magnitude = magnitude;
+
+        //load the map with the .txt file info
+        load(paths[2]);
     }
 
     /**
@@ -164,7 +164,7 @@ public class Map {
 
         for(int i=0; i<x1.length; i++) {
             for (int t = 0; t < x2.length; t++) {
-                interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*4, t*4).y, 0,8,0,1);
+                interpArray[i][t] = Helper.map(field.getPositionAt(new Vector3(),i*4, t*4).y, 0,magnitude,0,1);
             }
         }
 
