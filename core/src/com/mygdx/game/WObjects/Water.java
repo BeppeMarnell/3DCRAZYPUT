@@ -208,6 +208,6 @@ public class Water {
 
         if(debugMode)ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BLUE));
         else ground.material = new Material(TextureAttribute.createDiffuse(texture));
-        ground.worldTransform.translate(0, 0.5f, 0);
+        ground.worldTransform.translate(0, 0.3f, 0);
     }
 }
