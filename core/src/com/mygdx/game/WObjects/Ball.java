@@ -3,6 +3,7 @@ package com.mygdx.game.WObjects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -33,6 +34,8 @@ public class Ball extends BoundingSphere {
     //get a copy of the map
     private Map map;
 
+    private boolean debugMode = true;
+
     //radius
     public static final float RAD = 1f;
     public static final float MASS = 2f;
@@ -47,10 +50,17 @@ public class Ball extends BoundingSphere {
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
-        model = modelBuilder.createSphere(2, 2, 2,15,15,
-                new Material(ColorAttribute.createDiffuse(Color.WHITE)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
-                        VertexAttributes.Usage.TextureCoordinates);
+        if(!debugMode)
+            model = modelBuilder.createSphere(2, 2, 2,15,15,
+                    new Material(ColorAttribute.createDiffuse(Color.WHITE)),
+                    VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
+                            VertexAttributes.Usage.TextureCoordinates);
+        else
+            model = modelBuilder.createSphere(2, 2, 2,15,15, GL20.GL_LINES,
+                    new Material(ColorAttribute.createDiffuse(Color.WHITE)),
+                    VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
+                            VertexAttributes.Usage.TextureCoordinates);
+
         ballInstance = new ModelInstance(model);
 
         ballInstance.transform.translate(initPos.x, map.getHeight(new Vector2(initPos.x,initPos.y), RAD), initPos.y);
