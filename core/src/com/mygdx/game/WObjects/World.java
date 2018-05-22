@@ -91,7 +91,30 @@ public class World {
         
         //render the club
         club.render(batch, environment, ball);
+        
+         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+            moveBot();
+        }
     }
+    
+     public void moveBot(){
+        Bot bot = new Bot(map,1);
+      /* int x = (int)Helper.map(getBallPos().x, -80, 80,0, 20);
+        int y = (int) Helper.map(getBallPos().y, -56, 56,0, 14);
+
+        if(bot.algorithmMap.getStart().getX() == x && bot.algorithmMap.getStart().getY() == y){
+
+        }
+        else{
+            int x1 = (int)Helper.map(getBallPos().x, -80, 80,0, 20);
+            int y1= (int)Helper.map(getBallPos().y, -56, 56,0, 14);
+            Vector2 start = new Vector2(x1,y1);
+            bot.updateStart(start);
+            bot.updatePath();
+        }
+        */
+    }
+
 
     public void dispose(){
         ball.dispose();
