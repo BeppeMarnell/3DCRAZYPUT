@@ -27,6 +27,10 @@ public class Map {
      * 7 Tree
      * 8 Hole
      */
+    
+    //Increments the Map Array 
+    int n = 3;
+    
 
     public WorldObject[][] mapObjects;
     private WorldObject ball;
@@ -248,20 +252,20 @@ public class Map {
      * Helper method to translate the map into a array map readable by the bot
      * @return
      */
-    public int[][] getArrayMap(){
-        int[][] map = new int[20][14];
+   public int[][] getArrayMap(){
+        int[][] map = new int[n*20][n*14];
 
         //Convert the walls, trees, and water
         for(int i=0; i<map.length; i++)
             for (int j = 0; j < map[0].length; j++)
-                if(mapObjects[i][j].getType() == WorldObject.ObjectType.Tree ||mapObjects[i][j].getType() == WorldObject.ObjectType.Water
-                        || mapObjects[i][j].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
+                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree ||mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
+                        || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
 
         //Convert hole and ball position
         float x = Helper.map(getBallPos().x, -80, 80,0, 20);
         float y = Helper.map(getBallPos().y, -56, 56,0, 14);
-        map[(int)x][(int)y] = 7;
-        map[(int)getHolePos().x][13-(int)getHolePos().y] = 9;
+        map[n*(int)x][n*(int)y] = 7;
+        map[n*(int)getHolePos().x][n*(13-(int)getHolePos().y)] = 9;
 
         return map;
     }
