@@ -21,12 +21,13 @@ public class Bot {
 
     }
 
-    private void BFS(AlgorithmMap algorithmMap){
+     private void BFS(AlgorithmMap algorithmMap){
         BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
         List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
         List<Coordinate> finalPath = separateShot(solvedPath);
         BFS_Path = toVector2(finalPath);
-        algorithmMap.printPath(finalPath);
+        System.out.println("Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
+        algorithmMap.printPath(finalPath); //Comment this for not printing
         algorithmMap.reset();
     }
 
@@ -44,12 +45,11 @@ public class Bot {
 
         List<Coordinate> path = aStarAlgorithm.findPath();
         List<Coordinate> finalPath = separateShot(path);
-        algorithmMap.printPath(finalPath);
+        algorithmMap.printPath(finalPath); //Comment this for not printing
         ASTAR_Path = toVector2(finalPath);
         algorithmMap.reset();
 
     }
-
     public void updateStart(Vector2 start){
         int x = (int) Helper.map(start.x, -80, 80,0, 20);
         int y = (int) Helper.map(start.y, -56, 56,0, 14);
