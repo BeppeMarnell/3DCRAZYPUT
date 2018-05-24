@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Assets;
@@ -260,8 +259,8 @@ public class Map {
                         || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
 
         //Convert hole and ball position
-        float x = Helper.map(getBallPos().x, -80, 80,0, 20);
-        float y = Helper.map(getBallPos().y, -56, 56,0, 14);
+        float x = Helper.map(getInitBallPos().x, -80, 80,0, 20);
+        float y = Helper.map(getInitBallPos().y, -56, 56,0, 14);
         map[n*(int)x][n*(int)y] = 7;
         map[n*(int)getHolePos().x][n*(13-(int)getHolePos().y)] = 9;
 
