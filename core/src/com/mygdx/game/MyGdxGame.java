@@ -84,6 +84,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		//ex water
 		water = new Water(environment);
 		water.setDebugMode(false);
+
+		Assets.init();
 	}
 
 	@Override
@@ -178,4 +180,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		return ret;
 	}
+
+
 }

@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Assets;
 import com.mygdx.game.Utils.BiCubicSplineFast;
 import com.mygdx.game.Utils.HeightField;
 import com.mygdx.game.Utils.Helper;
@@ -214,9 +216,22 @@ public class Map {
         int i = (int)(pos.x +80)/8;
         int j = (int)(pos.y+56)/8;
 
-         if(i == getHolePos().x && (13-j) == getHolePos().y)return true;
+         if(i == getHolePos().x && (13-j) == getHolePos().y){
+             Assets.Scored();
+             return true;
+         }
          return false;
     }
+
+    /**
+     * Method that parses the distance ball-hole to the ASSets, so it can give a correct volume of crowd cheering
+     */
+    public void parseDistance(){
+        Vector ballVec = ball.getPos();
+        Vector holeVec = hole.getPos();
+        
+    }
+
 
     public void dispose(){
         texture.dispose();
