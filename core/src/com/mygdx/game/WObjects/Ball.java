@@ -131,7 +131,6 @@ public class Ball extends BoundingSphere {
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             state = BallState.Moving;
             addForce(new Vector3(-100,0,0));
-//            addForceAtPoint(new Vector3(-100, 0, 0), new Vector3(-0.5f, 0, 0.5f));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {

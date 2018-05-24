@@ -224,21 +224,6 @@ public class Map {
     }
 
     /**
-     * Method that parses the distance ball-hole to the ASSets, so it can give a correct volume of crowd cheering
-     */
-    public void parseDistance(){
-        Vector ballVec = ball.getPos();
-        Vector holeVec = hole.getPos();
-        
-    }
-
-
-    public void dispose(){
-        texture.dispose();
-        field.dispose();
-    }
-
-    /**
      * set a debug mode for the map, without textures
      * @param debugMode
      */
@@ -281,5 +266,10 @@ public class Map {
         map[n*(int)getHolePos().x][n*(13-(int)getHolePos().y)] = 9;
 
         return map;
+    }
+
+    public void dispose(){
+        texture.dispose();
+        field.dispose();
     }
 }
