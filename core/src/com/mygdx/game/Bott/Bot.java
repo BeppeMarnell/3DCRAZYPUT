@@ -27,6 +27,7 @@ public class Bot {
         List<Coordinate> finalPath = separateShot(solvedPath);
         BFS_Path = toVector2(finalPath);
         System.out.println("Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
+        algorithmMap.printPath(solvedPath);
         //algorithmMap.printPath(finalPath); //Comment this for not printing
         algorithmMap.reset();
     }
@@ -45,7 +46,7 @@ public class Bot {
 
         List<Coordinate> path = aStarAlgorithm.findPath();
         List<Coordinate> finalPath = separateShot(path);
-        //algorithmMap.printPath(finalPath); //Comment this for not printing
+       // algorithmMap.printPath(finalPath); //Comment this for not printing
         ASTAR_Path = toVector2(finalPath);
         algorithmMap.reset();
 

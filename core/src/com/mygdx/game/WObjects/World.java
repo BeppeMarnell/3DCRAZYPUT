@@ -98,36 +98,49 @@ public class World {
         club.render(batch, environment, ball);
         
          if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
-            moveBot();
+             Bot bot = new Bot(map);
+             moveBot(bot, 2);
+
         }
     }
     
-     public void moveBot() throws IndexOutOfBoundsException{
+     public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
        try {
-           Bot bot = new Bot(map);
+           int startX = (int)getBallPos().x;
+           int startY = (int)getBallPos().y;
            int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
            int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
-           Vector2 start = new Vector2(x1, y1);
-           bot.updateStart(start);
+           Vector2 Start = new Vector2(startX, startY);
+           Vector2 AlgorithmStart = new Vector2(x1,y1);
+
+           bot.updateStart(AlgorithmStart);
            bot.updatePath();
-           Vector2 point = new Vector2(bot.getBFS_Path().get(0));
 
-           Vector2 dir = new Vector2(point.sub(start));
+           int endX = (int)Helper.map(bot.getBFS_Path().get(1).x, 0,20,-80,80);
+           int endY = (int)Helper.map(bot.getBFS_Path().get(1).x, 0, 14, -56, 56);
+           Vector2 End = new Vector2(endX, endY);
 
-           ball.moveBall(ball.calculateForce(dir,0.1f));
-           System.out.println("---------------------------------------");
+           Vector2 Direction = new Vector2(Start.sub(End));
+
+           ball.moveBall(Direction.scl(n));
        }
+
        catch (Exception e){
-           Bot bot = new Bot(map);
+           int startX = (int)getBallPos().x;
+           int startY = (int)getBallPos().y;
            int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
            int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
-           Vector2 start = new Vector2(x1, y1);
-           bot.updateStart(start);
+           Vector2 Start = new Vector2(startX, startY);
+           Vector2 AlgorithmStart = new Vector2(x1,y1);
+
+           bot.updateStart(AlgorithmStart);
            bot.updatePath();
-           Vector2 point = new Vector2(map.getHolePos().cpy());
-           Vector2 dir = new Vector2(point.sub(start));
-           ball.moveBall(ball.calculateForce(dir,0.1f));
-           System.out.println("---------------------------------------");
+
+           Vector2 End = new Vector2(map.getHolePos());
+
+           Vector2 Direction = new Vector2(Start.sub(End));
+
+           ball.moveBall(Direction.scl(n));
        }
 
     }
