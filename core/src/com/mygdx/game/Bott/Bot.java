@@ -1,20 +1,20 @@
 package com.mygdx.game.Bott;
 
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Bot {
 
-    AlgorithmMap algorithmMap;
+    public AlgorithmMap algorithmMap;
     List<Vector2> BFS_Path;
     List<Vector2> ASTAR_Path;
 
 
 
-    public Bot(Map map, int option){
+    public Bot(Map map){
         algorithmMap = new AlgorithmMap(map);
         BFS(algorithmMap);
         aStar(algorithmMap);
@@ -51,9 +51,7 @@ public class Bot {
 
     }
     public void updateStart(Vector2 start){
-        int x = (int) Helper.map(start.x, -80, 80,0, 20);
-        int y = (int) Helper.map(start.y, -56, 56,0, 14);
-        algorithmMap.setStart(x, y);
+        algorithmMap.setStart((int)start.x, (int)start.y);
     }
 
     public void updatePath(){

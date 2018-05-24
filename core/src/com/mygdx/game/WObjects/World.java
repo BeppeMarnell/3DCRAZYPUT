@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
+import com.mygdx.game.Utils.Helper;
 
 import java.util.ArrayList;
 
@@ -102,21 +103,14 @@ public class World {
     }
     
      public void moveBot(){
-        Bot bot = new Bot(map,1);
-      /* int x = (int)Helper.map(getInitBallPos().x, -80, 80,0, 20);
-        int y = (int) Helper.map(getInitBallPos().y, -56, 56,0, 14);
+        Bot bot = new Bot(map);
+        int x1 = (int)Helper.map(getBallPos().x, -80, 80,0, 20);
+        int y1= (int)Helper.map(getBallPos().y, -56, 56,0, 14);
+        Vector2 start = new Vector2(x1,y1);
+        bot.updateStart(start);
+        bot.updatePath();
+        System.out.println("---------------------------------------");
 
-        if(bot.algorithmMap.getStart().getX() == x && bot.algorithmMap.getStart().getY() == y){
-
-        }
-        else{
-            int x1 = (int)Helper.map(getInitBallPos().x, -80, 80,0, 20);
-            int y1= (int)Helper.map(getInitBallPos().y, -56, 56,0, 14);
-            Vector2 start = new Vector2(x1,y1);
-            bot.updateStart(start);
-            bot.updatePath();
-        }
-        */
     }
 
 
