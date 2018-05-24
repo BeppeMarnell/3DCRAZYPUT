@@ -27,10 +27,6 @@ public class Map {
      * 7 Tree
      * 8 Hole
      */
-    
-    //Increments the Map Array 
-    int n = 3;
-    
 
     public WorldObject[][] mapObjects;
     private WorldObject ball;
@@ -252,7 +248,9 @@ public class Map {
      * Helper method to translate the map into a array map readable by the bot
      * @return
      */
-   public int[][] getArrayMap(){
+   public int[][] getArrayMap(int n){
+        //Increments the Map Array 
+       
         int[][] map = new int[n*20][n*14];
 
         //Convert the walls, trees, and water
