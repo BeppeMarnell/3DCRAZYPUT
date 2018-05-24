@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 
 public class Assets {
+    public static boolean playSounds = false;
+
     private static Sound backgroundsound;
     private static Sound idubbbz;
     private static Sound golfballHit;
@@ -23,8 +25,10 @@ public class Assets {
             soundworks = false;
         }
 
-        backgroundsound.loop(0.5f);
-        crowd.loop(0.1f);
+        if(!playSounds){
+            backgroundsound.loop(0.5f);
+            crowd.loop(0.1f);
+        }
     }
 
     public static void setCheerVolume(float distance){
