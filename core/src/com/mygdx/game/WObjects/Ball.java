@@ -88,10 +88,10 @@ public class Ball extends BoundingSphere {
     public void update(float deltaTime){
         //move the ball with keys
 
-        if (Math.abs(velocity.x) < 0.5 && Math.abs(velocity.z) < 0.5) {
+        if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
             velocity.setZero();
             state = BallState.Stopped;
-        } else state = BallState.Moving;
+        } //else state = BallState.Moving;
 
         moveByKeys();
 
@@ -105,7 +105,7 @@ public class Ball extends BoundingSphere {
      * This method moves the position of the 3D instance, do not change it
      */
     private void move3DBall(){
-        //Apply the physic to the 3D object
+//        Apply the physic to the 3D object
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
         mu = map.getFriction(new Vector2(position.x, position.y));
@@ -130,13 +130,12 @@ public class Ball extends BoundingSphere {
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             state = BallState.Moving;
-
             addForce(new Vector3(-100,0,0));
+//            addForceAtPoint(new Vector3(-100, 0, 0), new Vector3(-0.5f, 0, 0.5f));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             state = BallState.Moving;
-
             addForce(new Vector3(100,0,0));
         }
 
@@ -156,6 +155,11 @@ public class Ball extends BoundingSphere {
      */
     public void moveBall(Vector2 force){
         setVelocity(new Vector3(-force.x, 0, -force.y));
+    }
+
+    public Vector3 calculateForce(Vector3 distance, float time) {
+        float inverseTime = 1 / time;
+        return new Vector3(distance.scl(mass * inverseTime));
     }
 
     public void dispose(){

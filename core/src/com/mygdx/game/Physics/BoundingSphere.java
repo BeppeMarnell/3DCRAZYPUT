@@ -2,11 +2,11 @@ package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Vector3;
 
-public class BoundingSphere extends Particle{
+public class BoundingSphere extends RigidBody {
     protected float radius;
 
     public BoundingSphere(Vector3 position, float mass, float radius) {
-        super(position, mass);
+        super(position, mass, radius);
         this.radius = radius;
     }
 
