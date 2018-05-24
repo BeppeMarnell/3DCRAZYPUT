@@ -102,14 +102,33 @@ public class World {
         }
     }
     
-     public void moveBot(){
-        Bot bot = new Bot(map);
-        int x1 = (int)Helper.map(getBallPos().x, -80, 80,0, 20);
-        int y1= (int)Helper.map(getBallPos().y, -56, 56,0, 14);
-        Vector2 start = new Vector2(x1,y1);
-        bot.updateStart(start);
-        bot.updatePath();
-        System.out.println("---------------------------------------");
+     public void moveBot() throws IndexOutOfBoundsException{
+       try {
+           Bot bot = new Bot(map);
+           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
+           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
+           Vector2 start = new Vector2(x1, y1);
+           bot.updateStart(start);
+           bot.updatePath();
+           Vector2 point = new Vector2(bot.getBFS_Path().get(0));
+
+           Vector2 dir = new Vector2(point.sub(start));
+
+           ball.moveBall(ball.calculateForce(dir,0.1f));
+           System.out.println("---------------------------------------");
+       }
+       catch (Exception e){
+           Bot bot = new Bot(map);
+           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
+           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
+           Vector2 start = new Vector2(x1, y1);
+           bot.updateStart(start);
+           bot.updatePath();
+           Vector2 point = new Vector2(map.getHolePos().cpy());
+           Vector2 dir = new Vector2(point.sub(start));
+           ball.moveBall(ball.calculateForce(dir,0.1f));
+           System.out.println("---------------------------------------");
+       }
 
     }
 

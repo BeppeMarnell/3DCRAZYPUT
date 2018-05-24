@@ -157,9 +157,9 @@ public class Ball extends BoundingSphere {
         setVelocity(new Vector3(-force.x, 0, -force.y));
     }
 
-    public Vector3 calculateForce(Vector3 distance, float time) {
+    public Vector2 calculateForce(Vector2 distance, float time) {
         float inverseTime = 1 / time;
-        return new Vector3(distance.scl(mass * inverseTime));
+        return new Vector2(distance.scl(mass * inverseTime));
     }
 
     public void dispose(){
