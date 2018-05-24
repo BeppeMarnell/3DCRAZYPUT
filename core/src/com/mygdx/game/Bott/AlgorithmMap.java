@@ -31,7 +31,7 @@ public class AlgorithmMap {
     public static final String ANSI_BLUE = "\u001B[34m";
 
     public AlgorithmMap(Map map){
-        this.map = map.getArrayMap();
+        this.map = map.getArrayMap(3);
         this.visited = new boolean[this.map.length][this.map[0].length];
         setStartAndEnd();
     }

@@ -256,7 +256,7 @@ public class Map {
         //Convert the walls, trees, and water
         for(int i=0; i<map.length; i++)
             for (int j = 0; j < map[0].length; j++)
-                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree ||mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
+                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
                         || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
 
         //Convert hole and ball position

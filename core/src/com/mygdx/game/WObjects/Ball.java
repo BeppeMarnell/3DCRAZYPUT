@@ -34,7 +34,7 @@ public class Ball extends BoundingSphere {
     //get a copy of the map
     private Map map;
 
-    private boolean debugMode = true;
+    private boolean debugMode = false;
 
     //radius
     public static final float RAD = 1f;
