@@ -49,7 +49,7 @@ public class Map {
         return new Vector2((int)hole.getPos().x, (int)hole.getPos().y);
     }
 
-    public Vector2 getBallPos(){
+    public Vector2 getInitBallPos(){
         float x = Helper.map((int)ball.getPos().x, 1, 18,-72, 64);
         float y = Helper.map((int)ball.getPos().y, 1, 12,40, -48);
         return new Vector2(x + 4f, y + 4f);
