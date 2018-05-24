@@ -34,7 +34,7 @@ public class Ball extends BoundingSphere {
     //get a copy of the map
     private Map map;
 
-    private boolean debugMode = true;
+    private boolean debugMode = false;
 
     //radius
     public static final float RAD = 1f;
@@ -154,6 +154,7 @@ public class Ball extends BoundingSphere {
      * Move the ball assigning a force
      */
     public void moveBall(Vector2 force){
+        state = BallState.Moving;
         setVelocity(new Vector3(-force.x, 0, -force.y));
     }
 

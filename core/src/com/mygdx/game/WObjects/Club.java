@@ -68,7 +68,6 @@ public class Club {
             //call the method to throw the ball
             if(ball.isStopped()) lunchBall(ball);
 
-
         }else throwMode = false;
     }
 
@@ -79,7 +78,7 @@ public class Club {
 
         if(clubC.overlaps(ballC)){
             //calculate direction and throw the ball
-            Vector2 dir = new Vector2(pos.cpy().sub(new Vector2(ball.getPosition().cpy().x,ball.getPosition().cpy().z))).scl(-150f);
+            Vector2 dir = new Vector2(pos.cpy().sub(new Vector2(ball.getPosition().cpy().x,ball.getPosition().cpy().z))).scl(50f);
 
             ball.moveBall(dir);
         }
