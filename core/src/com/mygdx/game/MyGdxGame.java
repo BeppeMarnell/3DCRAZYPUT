@@ -21,6 +21,11 @@ import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
 
 public class MyGdxGame extends ApplicationAdapter {
+
+	/**
+	 * Main class of the game
+	 */
+
 	private ModelBatch modelBatch;
 	private Camera cam;
 	private Camera cam2;
@@ -86,7 +91,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		water.setDebugMode(false);
 
 		//initialize assets
-		Assets.init();
+		//Assets.init();
 	}
 
 	@Override
@@ -181,6 +186,4 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		return ret;
 	}
-
-
 }
