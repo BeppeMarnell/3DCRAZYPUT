@@ -106,25 +106,26 @@ public class World {
     
      public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
        try {
-           int startX = (int)getBallPos().x;
-           int startY = (int)getBallPos().y;
-           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
-           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
+           int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
+           int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
+           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
+           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14); // y coordinate for the algorithm
            Vector2 Start = new Vector2(startX, startY);
            Vector2 AlgorithmStart = new Vector2(x1,y1);
 
-           bot.updateStart(AlgorithmStart);
-           bot.updatePath();
+           bot.updateStart(AlgorithmStart); //Updates the start
+           bot.updatePath(); //Updates the path
 
-           int endX = (int)Helper.map(bot.getBFS_Path().get(1).x, 0,20,-80,80);
-           int endY = (int)Helper.map(bot.getBFS_Path().get(1).x, 0, 14, -56, 56);
-           Vector2 End = new Vector2(endX, endY);
+           int endX = (int)Helper.map(bot.getBFS_Path().get(1).x, 0,20,-80,80); //gets the x coordinate in the path
+           int endY = (int)Helper.map(bot.getBFS_Path().get(1).y, 0, 14, -56, 56); // gets the y coordinate in the path
+           Vector2 End = new Vector2(endX, endY); //Build the end Vector(the point where the ball should be hit towards)
 
-           Vector2 Direction = new Vector2(Start.sub(End));
+           Vector2 Direction = new Vector2(End.sub(Start)); //To get the right direction we subtract the end and ball vectors
 
            ball.moveBall(Direction.scl(n));
        }
 
+       //If the path is empty, it means the ball and the hole are in a straight line. So the end Vector is the position of the hole.
        catch (Exception e){
            int startX = (int)getBallPos().x;
            int startY = (int)getBallPos().y;
@@ -138,7 +139,7 @@ public class World {
 
            Vector2 End = new Vector2(map.getHolePos());
 
-           Vector2 Direction = new Vector2(Start.sub(End));
+           Vector2 Direction = new Vector2(End.sub(Start));
 
            ball.moveBall(Direction.scl(n));
        }

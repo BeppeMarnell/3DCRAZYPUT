@@ -9,8 +9,8 @@ import java.util.List;
 public class Bot {
 
     public AlgorithmMap algorithmMap;
-    List<Vector2> BFS_Path;
-    List<Vector2> ASTAR_Path;
+    List<Coordinate> BFS_Path;
+    List<Coordinate> ASTAR_Path;
 
 
 
@@ -25,7 +25,7 @@ public class Bot {
         BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
         List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
         List<Coordinate> finalPath = separateShot(solvedPath);
-        BFS_Path = toVector2(finalPath);
+        BFS_Path = finalPath;
         System.out.println("Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
         algorithmMap.printPath(solvedPath);
         //algorithmMap.printPath(finalPath); //Comment this for not printing
@@ -47,7 +47,7 @@ public class Bot {
         List<Coordinate> path = aStarAlgorithm.findPath();
         List<Coordinate> finalPath = separateShot(path);
        // algorithmMap.printPath(finalPath); //Comment this for not printing
-        ASTAR_Path = toVector2(finalPath);
+        ASTAR_Path = finalPath;
         algorithmMap.reset();
 
     }
@@ -130,11 +130,11 @@ public class Bot {
     }
 
 
-    public List<Vector2> getBFS_Path() {
+    public List<Coordinate> getBFS_Path() {
         return BFS_Path;
     }
 
-    public List<Vector2> getASTAR_Path() {
+    public List<Coordinate> getASTAR_Path() {
         return ASTAR_Path;
     }
 

@@ -8,8 +8,8 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Coordinate extends Vector2 {
 
-    int x;
-    int y;
+    public int x;
+    public int y;
     Coordinate parent;
     /*
      *Fields below used for methods for A*.
