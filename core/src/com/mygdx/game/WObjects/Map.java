@@ -19,14 +19,10 @@ import com.mygdx.game.Utils.Helper;
 public class Map {
 
     /**
-     * 1 Ball
-     * 2 Grass terrain, friction 0.5f;
-     * 3 Dirt terrain, friction 0.7f;
-     * 4 Sand terrain, friction 0.9f;
-     * 5 Water
-     * 6 Wall
-     * 7 Tree
-     * 8 Hole
+     * Class containing all the information about the map
+     * 3D map between -80 and 80 on the x axis
+     * -56 and 56 on the z axis
+     * y axis used for the height
      */
 
     public WorldObject[][] mapObjects;
@@ -223,8 +219,7 @@ public class Map {
     }
 
     /**
-     * s
-     * et a debug mode for the map, without textures
+     * set a debug mode for the map, without textures
      * @param debugMode
      */
     public void setDebugMode(boolean debugMode) {

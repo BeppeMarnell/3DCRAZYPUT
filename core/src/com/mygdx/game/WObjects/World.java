@@ -105,7 +105,7 @@ public class World {
     }
     
      public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
-       try {
+       /*try {
            int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
            int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
            int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
@@ -143,7 +143,7 @@ public class World {
 
            ball.moveBall(Direction.scl(n));
        }
-
+*/
     }
 
 
