@@ -223,7 +223,8 @@ public class Map {
     }
 
     /**
-     * set a debug mode for the map, without textures
+     * s
+     * et a debug mode for the map, without textures
      * @param debugMode
      */
     public void setDebugMode(boolean debugMode) {

@@ -86,7 +86,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		water.setDebugMode(false);
 
 		//initialize assets
-		//Assets.init();
+		Assets.init();
 	}
 
 	@Override
