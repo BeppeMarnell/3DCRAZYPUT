@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
-import com.mygdx.game.Utils.Helper;
 
 import java.util.ArrayList;
 
@@ -97,7 +96,7 @@ public class World {
         //render the club
         club.render(batch, environment, ball);
         
-         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              Bot bot = new Bot(map);
              moveBot(bot, 2);
 
@@ -105,7 +104,7 @@ public class World {
     }
     
      public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
-       /*try {
+      /* try {
            int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
            int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
            int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm

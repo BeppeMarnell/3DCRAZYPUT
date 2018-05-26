@@ -16,7 +16,7 @@ public class Bot {
 
     public Bot(Map map){
         algorithmMap = new AlgorithmMap(map);
-        BFS(algorithmMap);
+        //BFS(algorithmMap);
         aStar(algorithmMap);
 
     }
@@ -44,9 +44,23 @@ public class Bot {
             }
         }
 
+        for(int i = 3; i < algorithmMap.map.length-4; i++){
+            for(int j = 3; j < algorithmMap.map[0].length-4; j++) {
+                if (algorithmMap.map[i][j] == 1) {
+                    aStarAlgorithm.setBlock(i+1, j);
+                    aStarAlgorithm.setBlock(i,j+1);
+                    aStarAlgorithm.setBlock(i-1,j);
+                    aStarAlgorithm.setBlock(i,j-1);
+
+                }
+            }
+        }
+
+
+
         List<Coordinate> path = aStarAlgorithm.findPath();
         List<Coordinate> finalPath = separateShot(path);
-       // algorithmMap.printPath(finalPath); //Comment this for not printing
+        algorithmMap.printPath(path); //Comment this for not printing
         ASTAR_Path = finalPath;
         algorithmMap.reset();
 

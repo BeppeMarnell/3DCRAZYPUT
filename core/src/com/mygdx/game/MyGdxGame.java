@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -86,7 +85,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		water.setDebugMode(false);
 
 		//initialize assets
-		Assets.init();
+		//Assets.init();
 	}
 
 	@Override
