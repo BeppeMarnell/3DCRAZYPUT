@@ -98,6 +98,7 @@ public class World {
         club.render(batch, environment, ball);
         
          if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+            System.out.println("B IS PRESSED");
              Bot bot = new Bot(map);
              moveBot(bot, 2);
 

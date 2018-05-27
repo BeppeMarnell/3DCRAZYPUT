@@ -5,6 +5,7 @@ import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 public class Bot {
 
@@ -16,9 +17,21 @@ public class Bot {
 
     public Bot(Map map){
         algorithmMap = new AlgorithmMap(map);
+        long lStartTime = System.nanoTime();
+        System.out.println("Starttime: "+lStartTime);
         BFS(algorithmMap);
-        aStar(algorithmMap);
+        long lEndTime = System.nanoTime();
+        System.out.println("Endttime: "+lEndTime);
+        long output = lEndTime - lStartTime;
+        System.out.println("BFS - time: " + output);
 
+
+        lStartTime = System.nanoTime();
+        aStar(algorithmMap);
+        lEndTime = System.nanoTime();
+        output = lEndTime - lStartTime;
+        output/=1000;
+        System.out.println("astar - time: " + output/(10^9));
     }
 
      private void BFS(AlgorithmMap algorithmMap){
@@ -26,9 +39,9 @@ public class Bot {
         List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
         List<Coordinate> finalPath = separateShot(solvedPath);
         BFS_Path = finalPath;
-        System.out.println("Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
+        System.out.println("BFS - Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
         algorithmMap.printPath(solvedPath);
-        //algorithmMap.printPath(finalPath); //Comment this for not printing
+        algorithmMap.printPath(finalPath); //Comment this for not printing
         algorithmMap.reset();
     }
 
@@ -46,7 +59,9 @@ public class Bot {
 
         List<Coordinate> path = aStarAlgorithm.findPath();
         List<Coordinate> finalPath = separateShot(path);
-       // algorithmMap.printPath(finalPath); //Comment this for not printing
+        System.out.println("Astarprinting:");
+        System.out.println("PathLength: "+path.size()+" FinalPath: "+finalPath.size());
+        algorithmMap.printPath(finalPath); //Comment this for not printing
         ASTAR_Path = finalPath;
         algorithmMap.reset();
 
