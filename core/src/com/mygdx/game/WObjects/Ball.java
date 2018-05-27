@@ -106,17 +106,27 @@ public class Ball extends BoundingSphere {
      */
     private void move3DBall(){
 //        Apply the physic to the 3D object
+        float err = 0.001f;
+
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
         mu = map.getFriction(new Vector2(position.x, position.y));
 
-        if (oldPos.y > position.y) {
+//        if (oldPos.y > position.y) {
+//            movement = MovingState.Down;
+//        } else if (oldPos.y < position.y) {
+//            movement = MovingState.Up;
+//        } else {
+//            movement = MovingState.Straight;
+//        }
+        if (oldPos.y - position.y > err) {
             movement = MovingState.Down;
-        } else if (oldPos.y < position.y) {
+        } else if (position.y - oldPos.y > err) {
             movement = MovingState.Up;
         } else {
             movement = MovingState.Straight;
         }
+//        System.out.println("Old height: " + oldPos.y + " new h: " + position.y + " mov: " + movement);
 
         //in order to move the ball i've to apply the translation amount
         ballInstance.transform.setTranslation(position);
