@@ -95,10 +95,10 @@ public class Ball extends BoundingSphere {
 
         moveByKeys();
 
-        if (state == BallState.Moving) {
+//        if (state == BallState.Moving) {
             move3DBall();
             integrate(deltaTime, movement);
-        }
+//        }
     }
 
     /**
@@ -112,13 +112,6 @@ public class Ball extends BoundingSphere {
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
         mu = map.getFriction(new Vector2(position.x, position.y));
 
-//        if (oldPos.y > position.y) {
-//            movement = MovingState.Down;
-//        } else if (oldPos.y < position.y) {
-//            movement = MovingState.Up;
-//        } else {
-//            movement = MovingState.Straight;
-//        }
         if (oldPos.y - position.y > err) {
             movement = MovingState.Down;
         } else if (position.y - oldPos.y > err) {
@@ -126,7 +119,6 @@ public class Ball extends BoundingSphere {
         } else {
             movement = MovingState.Straight;
         }
-//        System.out.println("Old height: " + oldPos.y + " new h: " + position.y + " mov: " + movement);
 
         //in order to move the ball i've to apply the translation amount
         ballInstance.transform.setTranslation(position);
@@ -141,6 +133,7 @@ public class Ball extends BoundingSphere {
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             state = BallState.Moving;
             addForce(new Vector3(-100,0,0));
+//            moveBall(new Vector2(150, 0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
