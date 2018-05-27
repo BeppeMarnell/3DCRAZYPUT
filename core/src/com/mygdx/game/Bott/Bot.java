@@ -16,7 +16,7 @@ public class Bot {
 
     public Bot(Map map){
         algorithmMap = new AlgorithmMap(map);
-        //BFS(algorithmMap);
+       // BFS(algorithmMap);
         aStar(algorithmMap);
 
     }
@@ -55,6 +55,7 @@ public class Bot {
                 }
             }
         }
+
 
 
 

@@ -157,7 +157,7 @@ public class Ball extends BoundingSphere {
      */
     public void moveBall(Vector2 force){
         state = BallState.Moving;
-        setVelocity(new Vector3(-force.x, 0, -force.y));
+        setVelocity(new Vector3(force.x, 0, force.y));
     }
 
     public Vector2 calculateForce(Vector2 distance, float time) {
