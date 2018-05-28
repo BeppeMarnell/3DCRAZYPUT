@@ -141,12 +141,8 @@ public class Ball extends BoundingSphere {
     /**
      * Move the ball assigning a force
      */
-    public void moveBall(Vector2 force){
-        state = BodyState.Moving;
-        setVelocity(new Vector3(-force.x, 0, -force.y));
-    }
-
     public void move(Vector2 force) {
+        state = BodyState.Moving;
         addForce(new Vector3(force.x, 0, force.y));
     }
 
@@ -155,7 +151,6 @@ public class Ball extends BoundingSphere {
         Vector2 oldVelocity = new Vector2(velocity.x, velocity.z);
         Vector2 updatedVelocity = distance.cpy().scl(inverseTime);
         Vector2 updatedAcceleration = updatedVelocity.cpy().sub(oldVelocity).scl(inverseTime);
-//        move(updatedAcceleration.cpy().scl(mass));
         return new Vector2(updatedAcceleration.scl(mass));
     }
 
