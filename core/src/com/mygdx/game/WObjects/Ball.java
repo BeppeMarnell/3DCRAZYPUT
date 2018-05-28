@@ -22,12 +22,6 @@ public class Ball extends BoundingSphere {
      * z axis = y
      */
 
-    //enum to set up the world state
-    public enum BallState { Moving, Stopped, }
-    public enum MovingState { Up, Down, Straight, }
-    //Ball state
-    private BallState state;
-    private MovingState movement;
 
     private Model model;
     private ModelInstance ballInstance;
@@ -69,7 +63,7 @@ public class Ball extends BoundingSphere {
         this.map = map;
 
         //set the ball state
-        state = BallState.Stopped;
+        state = BodyState.Stopped;
     }
 
     /**
@@ -87,18 +81,19 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
+        if (state == BodyState.Moving) {
+            move3DBall();
+            integrate(deltaTime);
+        }
 
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-            velocity.setZero();
-            state = BallState.Stopped;
-        } //else state = BallState.Moving;
+            clearForces();
+//            velocity.setZero();
+            state = BodyState.Stopped;
+        } //else state = BodyState.Moving;
 
         moveByKeys();
 
-//        if (state == BallState.Moving) {
-            move3DBall();
-            integrate(deltaTime, movement);
-//        }
     }
 
     /**
@@ -113,11 +108,11 @@ public class Ball extends BoundingSphere {
         mu = map.getFriction(new Vector2(position.x, position.y));
 
         if (oldPos.y - position.y > err) {
-            movement = MovingState.Down;
+            movement = Direction.Down;
         } else if (position.y - oldPos.y > err) {
-            movement = MovingState.Up;
+            movement = Direction.Up;
         } else {
-            movement = MovingState.Straight;
+            movement = Direction.Straight;
         }
 
         //in order to move the ball i've to apply the translation amount
@@ -131,23 +126,19 @@ public class Ball extends BoundingSphere {
     private void moveByKeys(){
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            state = BallState.Moving;
             addForce(new Vector3(-100,0,0));
 //            moveBall(new Vector2(150, 0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            state = BallState.Moving;
             addForce(new Vector3(100,0,0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            state = BallState.Moving;
             addForce(new Vector3(0,0,100));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            state = BallState.Moving;
             addForce(new Vector3(0,0,-100));
         }
     }
@@ -156,7 +147,7 @@ public class Ball extends BoundingSphere {
      * Move the ball assigning a force
      */
     public void moveBall(Vector2 force){
-        state = BallState.Moving;
+        state = BodyState.Moving;
         setVelocity(new Vector3(-force.x, 0, -force.y));
     }
 
@@ -174,7 +165,7 @@ public class Ball extends BoundingSphere {
      * @return boolean value
      */
     public boolean isStopped(){
-        if(state ==BallState.Stopped)return true;
+        if(state == BodyState.Stopped)return true;
         else return false;
     }
 }

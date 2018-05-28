@@ -4,10 +4,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
 import com.mygdx.game.Physics.Rotation.AQuaternion;
-import com.mygdx.game.WObjects.Ball;
 
 public class RigidBody {
     protected static final float G = 9.81f;
+
+    //enum to set up the world state
+    public enum BodyState { Moving, Stopped, }
+    public enum Direction { Up, Down, Straight, }
+    //Ball state
+    protected BodyState state;
+    protected Direction movement;
 
     protected Vector3 position;
     protected Vector3 velocity;
@@ -52,12 +58,14 @@ public class RigidBody {
         orientation = new AQuaternion();
         transform = new AMatrix4();
         this.radius = radius;
+        state = BodyState.Stopped;
+        movement = Direction.Straight;
 
-        generateInertiaTensorSphere();
+//        generateInertiaTensorSphere();
     }
 
-    protected void integrate(float dt, Ball.MovingState state) {
-        updateForces(state);
+    protected void integrate(float dt) {
+        updateForces();
         velocityVerletIntegration(dt);
 //        semiImplicitEulerIntegration(dt);
 //        updateMatrices();
@@ -136,7 +144,8 @@ public class RigidBody {
 //        inverseInertiaTensor.set(inertiaTensor.inv());
     }
 
-    protected void addForce(Vector3 force) {
+    public void addForce(Vector3 force) {
+        state = BodyState.Moving;
         totalForce.add(force);
     }
 
@@ -155,15 +164,15 @@ public class RigidBody {
         totalTorque.setZero();
     }
 
-    protected void updateForces(Ball.MovingState state) {
-        update2DGravity(state);
+    protected void updateForces() {
+        update2DGravity();
 //        updateGravity();
         updateDrag(0.5f, 0.3f);
         updateFriction();
     }
 
-    private void update2DGravity(Ball.MovingState state) {
-        if (state == Ball.MovingState.Down) addForce(velocity.cpy().nor().scl(G * position.y));
+    private void update2DGravity() {
+        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(G * position.y));
         else addForce(velocity.cpy().nor().scl(-G * position.y));
     }
 

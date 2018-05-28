@@ -95,7 +95,8 @@ public class World {
         
         //render the club
         club.render(batch, environment, ball);
-        
+
+//        ball.addForce(new Vector3(-100, 0, 0));
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              Bot bot = new Bot(map);
              moveBot(bot, 2);
