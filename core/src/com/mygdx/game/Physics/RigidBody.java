@@ -1,5 +1,6 @@
 package com.mygdx.game.Physics;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
@@ -20,6 +21,7 @@ public class RigidBody {
     // Old velocity required for Velocity Verlet Integration
     protected Vector3 oldVelocity;
     protected Vector3 acceleration;
+    protected Vector3 oldAcceleration;
     protected Vector3 angularAcceleration;
     protected Vector3 gravity;
     protected Vector3 totalForce;
@@ -45,6 +47,7 @@ public class RigidBody {
         velocity = new Vector3();
         oldVelocity = velocity;
         acceleration = new Vector3();
+        oldAcceleration = acceleration;
         angularAcceleration = new Vector3();
         rotation = new Vector3();
         oldRotation = rotation;
@@ -85,7 +88,9 @@ public class RigidBody {
     }
 
     private void velocityVerletIntegration(float dt) {
+//        oldAcceleration.set(acceleration);
         acceleration.set(totalForce.cpy().scl(inverseMass));
+//        oldAcceleration.add(totalForce.cpy().scl(inverseMass));
         oldVelocity.set(velocity);
         Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
@@ -181,7 +186,18 @@ public class RigidBody {
     }
 
     private void updateFriction() {
-        velocity.scl(mu);
+//        float f = G * mu * mass * 1 / position.y;
+//        Vector2 fr = new Vector2(position.x, position.z);
+//        fr.nor().scl(G * mu * mass);
+        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(-G * (1/position.y) * mu * mass));
+        else addForce(velocity.cpy().nor().scl(mass * G * (1/position.y) * mu));
+//        System.out.println("========= " + f + " " + fr);
+//        Vector2 tmpPosition = new Vector2(velocity.x, velocity.y);
+//        tmpPosition.scl(mass * G * (1 / position.y));
+//        friction.set(tmpPosition.x, 0, tmpPosition.y);
+//        System.out.println("============= Friction: " + friction);
+//        totalForce.sub(friction);
+//        velocity.scl(mu);
     }
 
     private void updateDrag(float k1, float k2) {
