@@ -61,9 +61,6 @@ public class Ball extends BoundingSphere {
 
         //copy the instance of the map
         this.map = map;
-
-        //set the ball state
-        state = BodyState.Stopped;
     }
 
     /**
@@ -124,10 +121,8 @@ public class Ball extends BoundingSphere {
      * Move the ball by using the keyboards
      */
     private void moveByKeys(){
-
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             addForce(new Vector3(-100,0,0));
-//            moveBall(new Vector2(150, 0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -151,9 +146,17 @@ public class Ball extends BoundingSphere {
         setVelocity(new Vector3(-force.x, 0, -force.y));
     }
 
+    public void move(Vector2 force) {
+        addForce(new Vector3(force.x, 0, force.y));
+    }
+
     public Vector2 calculateForce(Vector2 distance, float time) {
         float inverseTime = 1 / time;
-        return new Vector2(distance.scl(mass * inverseTime));
+        Vector2 oldVelocity = new Vector2(velocity.x, velocity.z);
+        Vector2 updatedVelocity = distance.cpy().scl(inverseTime);
+        Vector2 updatedAcceleration = updatedVelocity.cpy().sub(oldVelocity).scl(inverseTime);
+//        move(updatedAcceleration.cpy().scl(mass));
+        return new Vector2(updatedAcceleration.scl(mass));
     }
 
     public void dispose(){
