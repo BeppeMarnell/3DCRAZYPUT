@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class AStarAlgorithm {
+
     private static int DEFAULT_HV_COST = 10; // Horizontal - Vertical Cost
     private static int DEFAULT_DIAGONAL_COST = 14;
     private int hvCost;
@@ -18,19 +19,22 @@ public class AStarAlgorithm {
     private Coordinate finalCoordinate;
 
     public AStarAlgorithm(int rows, int cols, Coordinate initialCoordinate, Coordinate finalCoordinate, int hvCost, int diagonalCost) {
+        //set costs
         this.hvCost = hvCost;
         this.diagonalCost = diagonalCost;
+
+        //set initial and final pos
         setInitialCoordinate(initialCoordinate);
         setFinalCoordinate(finalCoordinate);
+
+        //set the field to search
         this.searchArea = new Coordinate[rows][cols];
-        this.openList = new PriorityQueue<Coordinate>(new Comparator<Coordinate>() {
-            @Override
-            public int compare(Coordinate Coordinate0, Coordinate Coordinate1) {
-                return Coordinate0.getF() < Coordinate1.getF() ? -1 : Coordinate0.getF() > Coordinate1.getF() ? 1 : 0;
-            }
-        });
+
+        this.openList = new PriorityQueue<>((Coordinate0, Coordinate1)
+                -> Coordinate0.getF() < Coordinate1.getF() ? -1 : Coordinate0.getF() > Coordinate1.getF() ? 1 : 0);
+
         setCoordinates();
-        this.closedList = new ArrayList<Coordinate>();
+        this.closedList = new ArrayList<>();
     }
 
     public AStarAlgorithm(int rows, int cols, Coordinate initialCoordinate, Coordinate finalCoordinate) {
@@ -66,11 +70,11 @@ public class AStarAlgorithm {
                 addAdjacentCoordinates(currentCoordinate);
             }
         }
-        return new ArrayList<Coordinate>();
+        return new ArrayList<>();
     }
 
     private List<Coordinate> getPath(Coordinate currentCoordinate) {
-        List<Coordinate> path = new ArrayList<Coordinate>();
+        List<Coordinate> path = new ArrayList<>();
         path.add(currentCoordinate);
         Coordinate parent;
         while ((parent = currentCoordinate.getParent()) != null) {

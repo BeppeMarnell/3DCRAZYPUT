@@ -1,7 +1,5 @@
 package com.mygdx.game.Bott;
 
-import com.mygdx.game.WObjects.Map;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,8 +28,8 @@ public class AlgorithmMap {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_BLUE = "\u001B[34m";
 
-    public AlgorithmMap(Map map){
-        this.map = map.getArrayMap(3);
+    public AlgorithmMap(int[][] map){
+        this.map = map;
         this.visited = new boolean[this.map.length][this.map[0].length];
         setStartAndEnd();
     }
@@ -40,16 +38,10 @@ public class AlgorithmMap {
      * Finds the start(ball) and the end(hole) coordinates.
      */
     public void setStartAndEnd(){
-        for(int i = 0; i<map.length; i++){
-            for(int j = 0; j<map[0].length; j++){
-                if(map[i][j]==7){
-                   this.start = new Coordinate(i,j);
-                }
-                else if(map[i][j]==9){
-                    this.end = new Coordinate(i,j);
-                }
-            }
-        }
+        for(int i = 0; i<map.length; i++)
+            for(int j = 0; j<map[0].length; j++)
+                if(map[i][j]==7) this.start = new Coordinate(i,j);
+                else if(map[i][j]==9) this.end = new Coordinate(i,j);
     }
 
 
