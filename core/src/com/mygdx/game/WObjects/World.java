@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
+import com.mygdx.game.Utils.Helper;
 
 import java.util.ArrayList;
 
@@ -99,51 +100,63 @@ public class World {
 //        ball.addForce(new Vector3(-100, 0, 0));
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              Bot bot = new Bot(map);
-             moveBot(bot, 2);
+             moveBot(bot, 1);
 
         }
     }
     
      public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
-      /* try {
+       try {
            int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
            int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
-           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
-           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14); // y coordinate for the algorithm
+           int x1 = 3*(int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
+           int y1 = 3*(int) Helper.map(getBallPos().y, -56, 56, 0, 14); // y coordinate for the algorithm
            Vector2 Start = new Vector2(startX, startY);
            Vector2 AlgorithmStart = new Vector2(x1,y1);
 
            bot.updateStart(AlgorithmStart); //Updates the start
            bot.updatePath(); //Updates the path
 
-           int endX = (int)Helper.map(bot.getBFS_Path().get(1).x, 0,20,-80,80); //gets the x coordinate in the path
-           int endY = (int)Helper.map(bot.getBFS_Path().get(1).y, 0, 14, -56, 56); // gets the y coordinate in the path
+           int endX = (int)Helper.map(bot.getASTAR_Path().get(0).x/3, 0,20,-80,80); //gets the x coordinate in the path
+           int endY = (int)Helper.map(bot.getASTAR_Path().get(1).y/3, 0, 14, -56, 56); // gets the y coordinate in the path
            Vector2 End = new Vector2(endX, endY); //Build the end Vector(the point where the ball should be hit towards)
 
-           Vector2 Direction = new Vector2(End.sub(Start)); //To get the right direction we subtract the end and ball vectors
+           Vector2 Direction = new Vector2(End.x - Start.x, End.y - Start.y); //To get the right direction we subtract the end and ball vectors
+
+           System.out.println("Ball Pos:  "+startX+"   "+startY);
+           System.out.println("Next Point:"+bot.getASTAR_Path().get(0).x/3+"   "+ bot.getASTAR_Path().get(0).y/3);
+           System.out.println("Start:     "+Start.x +"   "+Start.y);
+           System.out.println("End:       "+End.x+"   "+End.y);
+           System.out.println("Direction: " + Direction.x + "  "+Direction.y );
 
            ball.moveBall(Direction.scl(n));
        }
 
        //If the path is empty, it means the ball and the hole are in a straight line. So the end Vector is the position of the hole.
        catch (Exception e){
-           int startX = (int)getBallPos().x;
-           int startY = (int)getBallPos().y;
-           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
-           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
+           int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
+           int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
+           int x1 = 3*(int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
+           int y1 = 3*(int) Helper.map(getBallPos().y, -56, 56, 0, 14); // y coordinate for the algorithm
            Vector2 Start = new Vector2(startX, startY);
            Vector2 AlgorithmStart = new Vector2(x1,y1);
 
-           bot.updateStart(AlgorithmStart);
-           bot.updatePath();
+           bot.updateStart(AlgorithmStart); //Updates the start
+           bot.updatePath(); //Updates the path
 
-           Vector2 End = new Vector2(map.getHolePos());
+           Vector2 End = new Vector2(map.getHolePos().scl(3));
 
-           Vector2 Direction = new Vector2(End.sub(Start));
+           Vector2 Direction = new Vector2(End.x - Start.x, End.y - Start.y); //To get the right direction we subtract the end and ball vectors
+
+           System.out.println("Ball Pos:  "+startX+"   "+startY);
+           System.out.println("Next Point:"+bot.getASTAR_Path().get(0).x/3+"   "+ bot.getASTAR_Path().get(0).y/3);
+           System.out.println("Start:     "+ Start.x +"   "+Start.y);
+           System.out.println("End:       "+End.x+"   "+End.y);
+           System.out.println("Direction: " + Direction.x + "  "+Direction.y );
 
            ball.moveBall(Direction.scl(n));
        }
-*/
+
     }
 
 
