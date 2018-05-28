@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
-import com.mygdx.game.Utils.Helper;
 
 import java.util.ArrayList;
 
@@ -29,6 +28,7 @@ public class World {
     private CollisionDetector collisionDetector;
     
     private Club club;
+    private Bot bot;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -44,7 +44,7 @@ public class World {
         ball = new Ball(map.getInitBallPos(),map);
 
         //Hole
-        hole = new Hole(map.getHolePos(), map);
+        hole = new Hole(map.getHolePosTransl(), map);
 
         //TREES and WALLS
         trees = new ArrayList<>();
@@ -68,6 +68,9 @@ public class World {
 
         // Instantiate the collision detector
         collisionDetector = new CollisionDetector(ball);
+
+        //initialize the bot
+        bot = new Bot(map);
     }
 
     public void update(float deltaTime){
@@ -75,7 +78,7 @@ public class World {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
-        ball.update(deltaTime);
+        if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
     }
 
     public void render(ModelBatch batch, Environment environment){
@@ -94,58 +97,16 @@ public class World {
         //render the trees
         for(Tree t: trees) t.render(batch, environment);
         
-        //render the club
-        club.render(batch, environment, ball);
+        //render the club only when the bot is not moving the ball
+        if(!bot.movingBall) club.render(batch, environment, ball);
         
          if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
-             Bot bot = new Bot(map);
-             moveBot(bot, 2);
-
+             //calculate the path with the selected method and move the ball
+             bot.CalculateAStar(map.getArrayMap(3, new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
+
+        if(bot.movingBall)bot.act(ball);
     }
-    
-     public void moveBot(Bot bot, float n) throws IndexOutOfBoundsException{
-       /*try {
-           int startX = (int)getBallPos().x; //Real-game 'x' coordinate for the ball
-           int startY = (int)getBallPos().y; //Real-game 'y' coordinate for the ball
-           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20); // x coordinate for the algorithm
-           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14); // y coordinate for the algorithm
-           Vector2 Start = new Vector2(startX, startY);
-           Vector2 AlgorithmStart = new Vector2(x1,y1);
-
-           bot.updateStart(AlgorithmStart); //Updates the start
-           bot.updatePath(); //Updates the path
-
-           int endX = (int)Helper.map(bot.getBFS_Path().get(1).x, 0,20,-80,80); //gets the x coordinate in the path
-           int endY = (int)Helper.map(bot.getBFS_Path().get(1).y, 0, 14, -56, 56); // gets the y coordinate in the path
-           Vector2 End = new Vector2(endX, endY); //Build the end Vector(the point where the ball should be hit towards)
-
-           Vector2 Direction = new Vector2(End.sub(Start)); //To get the right direction we subtract the end and ball vectors
-
-           ball.moveBall(Direction.scl(n));
-       }
-
-       //If the path is empty, it means the ball and the hole are in a straight line. So the end Vector is the position of the hole.
-       catch (Exception e){
-           int startX = (int)getBallPos().x;
-           int startY = (int)getBallPos().y;
-           int x1 = (int) Helper.map(getBallPos().x, -80, 80, 0, 20);
-           int y1 = (int) Helper.map(getBallPos().y, -56, 56, 0, 14);
-           Vector2 Start = new Vector2(startX, startY);
-           Vector2 AlgorithmStart = new Vector2(x1,y1);
-
-           bot.updateStart(AlgorithmStart);
-           bot.updatePath();
-
-           Vector2 End = new Vector2(map.getHolePos());
-
-           Vector2 Direction = new Vector2(End.sub(Start));
-
-           ball.moveBall(Direction.scl(n));
-       }
-*/
-    }
-
 
     public void dispose(){
         ball.dispose();

@@ -22,12 +22,6 @@ public class Ball extends BoundingSphere {
      * z axis = y
      */
 
-    //enum to set up the world state
-    public enum BallState { Moving, Stopped, }
-    public enum MovingState { Up, Down, Straight, }
-    //Ball state
-    private BallState state;
-    private MovingState movement;
 
     private Model model;
     private ModelInstance ballInstance;
@@ -67,9 +61,6 @@ public class Ball extends BoundingSphere {
 
         //copy the instance of the map
         this.map = map;
-
-        //set the ball state
-        state = BallState.Stopped;
     }
 
     /**
@@ -87,18 +78,19 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
+        if (state == BodyState.Moving) {
+            move3DBall();
+            integrate(deltaTime);
+        }
 
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-            velocity.setZero();
-            state = BallState.Stopped;
-        } //else state = BallState.Moving;
+            clearForces();
+//            velocity.setZero();
+            state = BodyState.Stopped;
+        } //else state = BodyState.Moving;
 
         moveByKeys();
 
-        if (state == BallState.Moving) {
-            move3DBall();
-            integrate(deltaTime, movement);
-        }
     }
 
     /**
@@ -106,16 +98,18 @@ public class Ball extends BoundingSphere {
      */
     private void move3DBall(){
 //        Apply the physic to the 3D object
+        float err = 0.001f;
+
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
         mu = map.getFriction(new Vector2(position.x, position.y));
 
-        if (oldPos.y > position.y) {
-            movement = MovingState.Down;
-        } else if (oldPos.y < position.y) {
-            movement = MovingState.Up;
+        if (oldPos.y - position.y > err) {
+            movement = Direction.Down;
+        } else if (position.y - oldPos.y > err) {
+            movement = Direction.Up;
         } else {
-            movement = MovingState.Straight;
+            movement = Direction.Straight;
         }
 
         //in order to move the ball i've to apply the translation amount
@@ -127,24 +121,19 @@ public class Ball extends BoundingSphere {
      * Move the ball by using the keyboards
      */
     private void moveByKeys(){
-
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            state = BallState.Moving;
             addForce(new Vector3(-100,0,0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            state = BallState.Moving;
             addForce(new Vector3(100,0,0));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            state = BallState.Moving;
             addForce(new Vector3(0,0,100));
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            state = BallState.Moving;
             addForce(new Vector3(0,0,-100));
         }
     }
@@ -152,14 +141,17 @@ public class Ball extends BoundingSphere {
     /**
      * Move the ball assigning a force
      */
-    public void moveBall(Vector2 force){
-        state = BallState.Moving;
-        setVelocity(new Vector3(-force.x, 0, -force.y));
+    public void move(Vector2 force) {
+        state = BodyState.Moving;
+        addForce(new Vector3(force.x, 0, force.y));
     }
 
     public Vector2 calculateForce(Vector2 distance, float time) {
         float inverseTime = 1 / time;
-        return new Vector2(distance.scl(mass * inverseTime));
+        Vector2 oldVelocity = new Vector2(velocity.x, velocity.z);
+        Vector2 updatedVelocity = distance.cpy().scl(inverseTime);
+        Vector2 updatedAcceleration = updatedVelocity.cpy().sub(oldVelocity).scl(inverseTime);
+        return new Vector2(updatedAcceleration.scl(mass));
     }
 
     public void dispose(){
@@ -171,7 +163,7 @@ public class Ball extends BoundingSphere {
      * @return boolean value
      */
     public boolean isStopped(){
-        if(state ==BallState.Stopped)return true;
+        if(state == BodyState.Stopped)return true;
         else return false;
     }
 }

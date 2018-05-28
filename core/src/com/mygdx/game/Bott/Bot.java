@@ -1,6 +1,8 @@
 package com.mygdx.game.Bott;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Utils.Helper;
+import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
@@ -8,59 +10,97 @@ import java.util.List;
 
 public class Bot {
 
-    public AlgorithmMap algorithmMap;
-    List<Coordinate> BFS_Path;
-    List<Coordinate> ASTAR_Path;
+    private Map mapO;
 
-
+    public boolean movingBall;
+    private ArrayList<MoveTo> solutionPath;
+    private int solutionIndex;
 
     public Bot(Map map){
-        algorithmMap = new AlgorithmMap(map);
-        BFS(algorithmMap);
-        aStar(algorithmMap);
-
+        //copy an instance of the map to calculate heights
+        this.mapO = map;
+        movingBall = false;
+        solutionPath = new ArrayList<>();
+        solutionIndex = 0;
     }
 
-     private void BFS(AlgorithmMap algorithmMap){
-        BreadthFirstSearch breadthFirstSearch = new BreadthFirstSearch();
-        List<Coordinate> solvedPath = breadthFirstSearch.BreadFirstSearchSolve(algorithmMap);
-        List<Coordinate> finalPath = separateShot(solvedPath);
-        BFS_Path = finalPath;
-        System.out.println("Solved: "+solvedPath.size()+ "   "+ "Final : "+ finalPath.size());
-        algorithmMap.printPath(solvedPath);
-        //algorithmMap.printPath(finalPath); //Comment this for not printing
-        algorithmMap.reset();
-    }
+    public void CalculateAStar(int[][] map){
+        //reset to initial state of the path
+        ArrayList<Vector2> path = new ArrayList<>();
+        solutionPath.clear();
+        solutionIndex = 0;
 
-    private void aStar(AlgorithmMap algorithmMap){
+        //set up AStar algorithm
+        AlgorithmMap algorithmMap = new AlgorithmMap(map);
         AStarAlgorithm aStarAlgorithm =
                 new AStarAlgorithm(algorithmMap.map.length, algorithmMap.map[0].length, algorithmMap.start,algorithmMap.end);
 
-        for(int i =0; i < algorithmMap.map.length; i++){
-            for(int j = 0; j < algorithmMap.map[0].length; j++){
+        for(int i =3; i < algorithmMap.map.length-4; i++){
+            for(int j = 3; j < algorithmMap.map[0].length-4; j++){
                 if(algorithmMap.map[i][j]==1){
-                    aStarAlgorithm.setBlock(i,j);
+                    aStarAlgorithm.setBlock(i+1, j);
+                    aStarAlgorithm.setBlock(i,j+1);
+                    aStarAlgorithm.setBlock(i-1,j);
+                    aStarAlgorithm.setBlock(i,j-1);
                 }
             }
         }
 
-        List<Coordinate> path = aStarAlgorithm.findPath();
-        List<Coordinate> finalPath = separateShot(path);
-       // algorithmMap.printPath(finalPath); //Comment this for not printing
-        ASTAR_Path = finalPath;
+        //get the list of coordinates
+        List<Coordinate> finalPath = separateShot(aStarAlgorithm.findPath());
+        //algorithmMap.printPath(finalPath); //uncomment to see the printed
         algorithmMap.reset();
 
-    }
-    public void updateStart(Vector2 start){
-        algorithmMap.setStart((int)start.x, (int)start.y);
+        int division = map.length/20;
+
+        //add the start
+        float x = Helper.map(algorithmMap.getStart().x, 0, 20*division - division/2,-80, 80);
+        float y = Helper.map(algorithmMap.getStart().y, 0, 14*division - division/2,-56, 56);
+        path.add(new Vector2(x, y));
+
+        for(Coordinate c: finalPath){
+            //translate array coordinates to world coordinates
+            x = Helper.map(c.x, 0, 20*division - division/2,-80, 80);
+            y = Helper.map(c.y, 0, 14*division - division/2,-56, 56);
+            path.add(new Vector2(x, y));
+
+        }
+        //add the hole position
+        path.add(Map.getHolePosTransl());
+
+        //calculate the solution vectors
+        for(int i=1; i<path.size(); i++){
+          //  float diffHeigh = Math.abs(mapO.getHeight(path.get(i).cpy(),0) - mapO.getHeight(path.get(i).cpy(),0));
+
+            solutionPath.add(new MoveTo(path.get(i).cpy().sub(path.get(i-1).cpy()), 10));
+        }
+
+        //for(Vector2 c: path)System.out.println(c.toString());
+
+        //set true to start moving the ball to the hole
+        movingBall = true;
     }
 
-    public void updatePath(){
-        BFS(algorithmMap);
-        aStar(algorithmMap);
+    /**
+     * Each time the ball updates its position referred to the solution
+     * array calculated
+     */
+    public void act(Ball ball){
+        //if i've finished the directions then the ball has arrived (supposed to)
+        if(solutionIndex == solutionPath.size()){
+            movingBall = false;
+            return;
+        }
+
+        //move the ball in the direction and decrease the iterations
+        ball.move(solutionPath.get(solutionIndex).to.cpy().scl(210f));
+        solutionPath.get(solutionIndex).iter--;
+
+        //if the iteration is done then i switch to the next
+        if(solutionPath.get(solutionIndex).iter == 0) {
+            solutionIndex++;
+        }
     }
-
-
 
     /**
      * Method which removes the nodes in a straight path.
@@ -68,8 +108,11 @@ public class Bot {
      * @return the path with points.
      * @throws IndexOutOfBoundsException if the maze hasn't a solution.
      */
-    public  List<Coordinate> separateShot(List<Coordinate> path) throws IndexOutOfBoundsException {
-        try { List<Coordinate> shotsLV = new ArrayList<>();
+    public  List<Coordinate> separateShot(List<Coordinate> path){
+        //initialize the array
+        List<Coordinate> shotsLV = new ArrayList<>();
+
+        try {
             Coordinate origin = path.get(0);
             double slope;
 
@@ -87,55 +130,32 @@ public class Bot {
                     }
                 }
             }
-
+        } catch (Exception e ){
+            System.out.println("No Solution!");
+        }finally {
             return shotsLV;
         }
-        catch (Exception e ){
-            System.out.println("No Solution!");
-            List<Coordinate> emptyList = new ArrayList<>();
-            return emptyList;
-        }
-
-
     }
 
     public  double calculateSlope(Coordinate c1, Coordinate c2) {
-        if (calculateX(c1, c2) != 0)
-            return calculateY(c1, c2)/(calculateX(c1, c2));
+        if ((c2.x - c1.x) != 0)
+            return (c2.y - c1.y)/(c2.x - c1.x);
         else
             return -1;
     }
 
-    public  double calculateY(Coordinate c1, Coordinate c2) {
-        return (c2.y - c1.y);
+    public Vector2 calculateForce(Vector2 distanceTo, float time) {
+        float inverseTime = 1 / time;
+        return new Vector2(distanceTo.scl(Ball.MASS * inverseTime));
     }
 
-    public  double calculateX(Coordinate c1, Coordinate c2) {
-        return (c2.x - c1.x);
-    }
+    class MoveTo{
+        public int iter;
+        public Vector2 to;
 
-    public List<Vector2> toVector2(List<Coordinate> path){
-       List<Vector2> vector2s = new ArrayList<>();
-        for(int i = path.size()-1; i>-1; i--){
-            Vector2 cur = new Vector2(path.get(i).x, path.get(i).y);
-            vector2s.add(cur);
-        }
-        return vector2s;
-    }
-
-    public void printVector(List<Vector2> pathInVector){
-        for(int i = 0; i<pathInVector.size(); i++){
-            System.out.println(pathInVector.get(i).x+ " : "+ pathInVector.get(i).y);
+        public MoveTo(Vector2 to, int iter){
+            this.iter = iter;
+            this.to = to;
         }
     }
-
-
-    public List<Coordinate> getBFS_Path() {
-        return BFS_Path;
-    }
-
-    public List<Coordinate> getASTAR_Path() {
-        return ASTAR_Path;
-    }
-
 }
