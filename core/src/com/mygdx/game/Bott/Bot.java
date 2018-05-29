@@ -47,7 +47,7 @@ public class Bot {
         }
 
         //get the list of coordinates
-        List<Coordinate> finalPath = separateShot(aStarAlgorithm.findPath());
+        List<Coordinate> finalPath =aStarAlgorithm.findPath();
         //algorithmMap.printPath(finalPath); //uncomment to see the printed
         algorithmMap.reset();
 
@@ -70,9 +70,14 @@ public class Bot {
 
         //calculate the solution vectors
         for(int i=1; i<path.size(); i++){
-          //  float diffHeigh = Math.abs(mapO.getHeight(path.get(i).cpy(),0) - mapO.getHeight(path.get(i).cpy(),0));
 
             solutionPath.add(new MoveTo(path.get(i).cpy().sub(path.get(i-1).cpy()), 10));
+
+            //calculate the scalar multiplicand
+            float scalarM = forceToPoint(path.get(i-1).cpy(), path.get(i).cpy());
+            System.out.println(scalarM);
+
+            solutionPath.get(i-1).to.scl(scalarM);
         }
 
         //for(Vector2 c: path)System.out.println(c.toString());
@@ -88,12 +93,13 @@ public class Bot {
     public void act(Ball ball){
         //if i've finished the directions then the ball has arrived (supposed to)
         if(solutionIndex == solutionPath.size()){
+            System.out.println("ARRIVED");
             movingBall = false;
             return;
         }
 
         //move the ball in the direction and decrease the iterations
-        ball.move(solutionPath.get(solutionIndex).to.cpy().scl(210f));
+        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),250));
         solutionPath.get(solutionIndex).iter--;
 
         //if the iteration is done then i switch to the next
@@ -147,6 +153,25 @@ public class Bot {
     public Vector2 calculateForce(Vector2 distanceTo, float time) {
         float inverseTime = 1 / time;
         return new Vector2(distanceTo.scl(Ball.MASS * inverseTime));
+    }
+
+    public float forceToPoint(Vector2 from, Vector2 to){
+        //first vector starting from the intial position
+        Vector2 ballPos = new Vector2( 0 , mapO.getHeight(new Vector2(from.x, from.y),0));
+
+        //final point is the distance between the two points
+        Vector2 posTo = new Vector2( from.cpy().dst(to), mapO.getHeight(new Vector2(to.x, to.y),0));
+
+        //calculate the angle
+        float angle = Helper.angleBetweenPoints(ballPos, posTo);
+
+        //remove marginal errors
+        if(angle < 0.1)angle =0;
+
+        float force = Ball.MASS*9.81f*(float)Math.sin(angle) +
+                Ball.MASS*9.81f*(float)Math.cos(angle)*mapO.getFriction(new Vector2(from.x, from.y));
+
+        return Math.abs(force*360);
     }
 
     class MoveTo{

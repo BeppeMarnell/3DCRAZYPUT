@@ -78,7 +78,7 @@ public class Club {
 
         if(clubC.overlaps(ballC)){
             //calculate direction and throw the ball
-            Vector2 dir = new Vector2(new Vector2(ball.getPosition().cpy().x,ball.getPosition().cpy().z).sub(pos)).scl(1000f);
+            Vector2 dir = new Vector2(new Vector2(ball.getPosition().cpy().x,ball.getPosition().cpy().z).sub(pos)).scl(2000f);
 
             ball.move(dir);
         }

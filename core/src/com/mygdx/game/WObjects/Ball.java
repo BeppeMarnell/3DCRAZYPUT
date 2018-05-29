@@ -85,9 +85,8 @@ public class Ball extends BoundingSphere {
 
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
             clearForces();
-//            velocity.setZero();
             state = BodyState.Stopped;
-        } //else state = BodyState.Moving;
+        }
 
         moveByKeys();
 
@@ -97,8 +96,8 @@ public class Ball extends BoundingSphere {
      * This method moves the position of the 3D instance, do not change it
      */
     private void move3DBall(){
-//        Apply the physic to the 3D object
-        float err = 0.001f;
+        //Apply the physic to the 3D object
+        float err = 0.005f;
 
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
         position.y = map.getHeight(new Vector2(position.x, position.z), RAD);

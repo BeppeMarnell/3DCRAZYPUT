@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Assets;
 import com.mygdx.game.Utils.BiCubicSplineFast;
 import com.mygdx.game.Utils.HeightField;
 import com.mygdx.game.Utils.Helper;
