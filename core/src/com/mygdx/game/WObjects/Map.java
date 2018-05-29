@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Assets;
 import com.mygdx.game.Utils.BiCubicSplineFast;
 import com.mygdx.game.Utils.HeightField;
 import com.mygdx.game.Utils.Helper;
@@ -19,19 +18,15 @@ import com.mygdx.game.Utils.Helper;
 public class Map {
 
     /**
-     * 1 Ball
-     * 2 Grass terrain, friction 0.5f;
-     * 3 Dirt terrain, friction 0.7f;
-     * 4 Sand terrain, friction 0.9f;
-     * 5 Water
-     * 6 Wall
-     * 7 Tree
-     * 8 Hole
+     * Class containing all the information about the map
+     * 3D map between -80 and 80 on the x axis
+     * -56 and 56 on the z axis
+     * y axis used for the height
      */
 
     public WorldObject[][] mapObjects;
     private WorldObject ball;
-    private WorldObject hole;
+    private static WorldObject hole;
 
     //spline interpolation object
     private BiCubicSplineFast bSpline;
@@ -44,8 +39,15 @@ public class Map {
 
     private float magnitude;
 
-    public Vector2 getHolePos(){
-        return new Vector2((int)hole.getPos().x, (int)hole.getPos().y);
+    private Vector2 getHolePos(){
+        return new Vector2((int)hole.getPos().x, 13 - (int)hole.getPos().y);
+    }
+
+    public  static Vector2 getHolePosTransl(){
+        float x = Helper.map((int)hole.getPos().x, 1, 18,-72, 64);
+        float y = Helper.map((int)hole.getPos().y, 1, 12,40, -48);
+
+        return new Vector2(x +4f, y+4f);
     }
 
     public Vector2 getInitBallPos(){
@@ -215,16 +217,39 @@ public class Map {
         int i = (int)(pos.x +80)/8;
         int j = (int)(pos.y+56)/8;
 
-         if(i == getHolePos().x && (13-j) == getHolePos().y){
-             Assets.Scored();
+         if(i == getHolePos().x && j == getHolePos().y){
+             //Assets.Scored();
              return true;
          }
          return false;
     }
 
     /**
-     * s
-     * et a debug mode for the map, without textures
+     * Helper method to translate the map into a array map readable by the bot
+     * @return
+     */
+   public int[][] getArrayMap(int n, Vector2 ballPos){
+        //Increments the Map Array 
+       
+        int[][] map = new int[n*20][n*14];
+
+        //Convert the walls, trees, and water
+        for(int i=0; i<map.length; i++)
+            for (int j = 0; j < map[0].length; j++)
+                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
+                        || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
+
+        //Convert hole and ball position
+        int x = (int)Helper.map(ballPos.x, -80, 80,0, 20)*n+n/2;
+        int y = (int )Helper.map(ballPos.y, -56, 56,0, 14)*n+n/2;
+        map[x][y] = 7;
+        map[n*(int)getHolePos().x + n/2][n*((int)getHolePos().y) +n/2] = 9;
+
+        return map;
+    }
+
+    /**
+     * set a debug mode for the map, without textures
      * @param debugMode
      */
     public void setDebugMode(boolean debugMode) {
@@ -242,30 +267,6 @@ public class Map {
 
         if (debugMode) ground.material = new Material(new ColorAttribute(ColorAttribute.Diffuse, Color.BROWN));
         else ground.material = new Material(TextureAttribute.createDiffuse(texture));
-    }
-
-    /**
-     * Helper method to translate the map into a array map readable by the bot
-     * @return
-     */
-   public int[][] getArrayMap(int n){
-        //Increments the Map Array 
-       
-        int[][] map = new int[n*20][n*14];
-
-        //Convert the walls, trees, and water
-        for(int i=0; i<map.length; i++)
-            for (int j = 0; j < map[0].length; j++)
-                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
-                        || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
-
-        //Convert hole and ball position
-        float x = Helper.map(getInitBallPos().x, -80, 80,0, 20);
-        float y = Helper.map(getInitBallPos().y, -56, 56,0, 14);
-        map[n*(int)x][n*(int)y] = 7;
-        map[n*(int)getHolePos().x][n*(13-(int)getHolePos().y)] = 9;
-
-        return map;
     }
 
     public void dispose(){

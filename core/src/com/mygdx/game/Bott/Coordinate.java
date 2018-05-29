@@ -104,7 +104,4 @@ public class Coordinate extends Vector2 {
 
     public boolean isBlock(){ return isBlock; }
 
-
-
-
 }

@@ -29,14 +29,7 @@ public class Hole {
         model = loader.loadModel(Gdx.files.internal("hole/flagBlue.obj"));
         hole = new ModelInstance(model);
 
-        //find the exact position in the map
-        Vector2 translPos = new Vector2();
-
-        translPos.x = Helper.map(pos.x, 1, 18,-72, 64);
-        translPos.y = Helper.map(pos.y, 1, 12,40, -48);
-
-        hole.transform.translate(translPos.x +4f,
-                map.getHeight(new Vector2(translPos.x+4 ,translPos.y+4), -0.5f),translPos.y +4f ) ;
+        hole.transform.translate(pos.x, map.getHeight(new Vector2(pos.x ,pos.y), -0.5f),pos.y ) ;
         hole.transform.scl(2f);
     }
 

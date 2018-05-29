@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -21,6 +20,11 @@ import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
 
 public class MyGdxGame extends ApplicationAdapter {
+
+	/**
+	 * Main class of the game
+	 */
+
 	private ModelBatch modelBatch;
 	private Camera cam;
 	private Camera cam2;
@@ -181,6 +185,4 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		return ret;
 	}
-
-
 }

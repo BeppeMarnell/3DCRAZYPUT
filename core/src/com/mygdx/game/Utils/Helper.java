@@ -1,5 +1,9 @@
 package com.mygdx.game.Utils;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+
 public class Helper {
 
     /**
@@ -49,5 +53,20 @@ public class Helper {
         if (closest < min) { return min; }
         if (closest > max) { return max; }
         return closest;
+    }
+
+    public static float angleBetweenPoints(Vector2 vec1, Vector2 vec2){
+        Vector2 one;
+        Vector2 two;
+
+        if(vec1.x > vec2.x){
+            one = vec1.cpy();
+            two = vec2.cpy();
+        }else {
+            one = vec2.cpy();
+            two = vec1.cpy();
+        }
+
+        return  Math.abs(MathUtils.radDeg * MathUtils.atan2((one.y-two.y),(one.x-two.x)));
     }
 }
