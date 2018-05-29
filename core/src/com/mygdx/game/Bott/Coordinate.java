@@ -39,8 +39,14 @@ public class Coordinate extends Vector2 {
      *Methods below used by A* algorithm.
      */
 
+    /**
+     * Since the algorithm works on a grid,
+     * we choose the Manhattan distance.
+     * @param finalCoordinate
+     */
     public void calculateHeuristic( Coordinate finalCoordinate ){
-        this.h = Math.abs(finalCoordinate.getX() - getX()) + Math.abs(finalCoordinate.getY() - getY()) +1000;
+
+        this.h = Math.abs(finalCoordinate.getX() - getX()) + Math.abs(finalCoordinate.getY() - getY());
 
     }
 
