@@ -113,7 +113,7 @@ public class World {
         if(bot.movingBall)bot.act(ball);
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
-            bot.calculateForce(new Vector2(Ball.))
+            //bot.calculateForce(new Vector2(Ball.));
         }
     }
 
