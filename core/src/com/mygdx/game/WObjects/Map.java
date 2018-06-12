@@ -43,7 +43,7 @@ public class Map {
         return new Vector2((int)hole.getPos().x, 13 - (int)hole.getPos().y);
     }
 
-    public  static Vector2 getHolePosTransl(){
+    public Vector2 getHolePosTransl(){
         float x = Helper.map((int)hole.getPos().x, 1, 18,-72, 64);
         float y = Helper.map((int)hole.getPos().y, 1, 12,40, -48);
 
