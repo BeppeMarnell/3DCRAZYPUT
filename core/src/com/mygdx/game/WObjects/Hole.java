@@ -20,16 +20,15 @@ public class Hole {
 
     /**
      * Create a hole in a specific position of the map
-     * @param pos the position values has to be between 0-19 and 0-13
      * @param map pass a copy of the map
      */
-    public Hole(Vector2 pos, Map map){
+    public Hole(Map map){
         //tree
         ModelLoader loader = new ObjLoader();
         model = loader.loadModel(Gdx.files.internal("hole/flagBlue.obj"));
         hole = new ModelInstance(model);
 
-        hole.transform.translate(pos.x, map.getHeight(new Vector2(pos.x ,pos.y), -0.5f),pos.y ) ;
+        hole.transform.translate(map.getHolePosTransl().x, map.getHeight(map.getHolePosTransl(), -0.5f),map.getHolePosTransl().y ) ;
         hole.transform.scl(2f);
     }
 
