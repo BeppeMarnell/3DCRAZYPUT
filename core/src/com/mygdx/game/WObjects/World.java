@@ -46,10 +46,10 @@ public class World {
         //generate the rest of the world objects
 
         //BALL
-        ball = new Ball(map.getInitBallPos(),map);
+        ball = new Ball(map);
 
         //Hole
-        hole = new Hole(map.getHolePosTransl(), map);
+        hole = new Hole(map);
 
         //TREES and WALLS
         trees = new ArrayList<>();
