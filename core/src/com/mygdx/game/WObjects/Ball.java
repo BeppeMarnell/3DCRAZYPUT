@@ -37,11 +37,11 @@ public class Ball extends BoundingSphere {
 
     /**
      * Initialize the ball 3d and add the position to it
-     * @param initPos
+     * @param map
      */
-    public Ball(Vector2 initPos, Map map){
-        super(new Vector3(initPos.x, map.getHeight(initPos, RAD), initPos.y), MASS, RAD);
-
+    public Ball(Map map){
+        super(new Vector3(map.getInitBallPos().x, map.getHeight(map.getInitBallPos(), RAD), map.getInitBallPos().y), MASS, RAD);
+        
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
         if(!debugMode)
