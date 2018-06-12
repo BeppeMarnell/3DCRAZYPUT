@@ -35,13 +35,10 @@ public class Bot {
         AStarAlgorithm aStarAlgorithm =
                 new AStarAlgorithm(algorithmMap.map.length, algorithmMap.map[0].length, algorithmMap.start,algorithmMap.end);
 
-        for(int i =3; i < algorithmMap.map.length-4; i++){
+        for(int i =0; i < algorithmMap.map.length; i++){
             for(int j = 3; j < algorithmMap.map[0].length-4; j++){
                 if(algorithmMap.map[i][j]==1){
-                    aStarAlgorithm.setBlock(i+1, j);
-                    aStarAlgorithm.setBlock(i,j+1);
-                    aStarAlgorithm.setBlock(i-1,j);
-                    aStarAlgorithm.setBlock(i,j-1);
+                    aStarAlgorithm.setBlock(i, j);
                 }
             }
         }
