@@ -182,7 +182,9 @@ public class RigidBody {
     }
 
     private void updateGravity() {
+        System.out.println("Updating gravity");
         addForce(gravity);
+        System.out.println("====== " + totalForce);
     }
 
     private void updateFriction() {

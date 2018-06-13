@@ -100,8 +100,12 @@ public class Ball extends BoundingSphere {
         float err = 0.005f;
 
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
-        position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
-        mu = map.getFriction(new Vector2(position.x, position.y));
+        float height = map.getHeight(new Vector2(position.x, position.z), RAD);
+        if (position.y < height) {
+            position.y = height;
+        }
+
+        mu = map.getFriction(new Vector2(position.x, position.z));
 
         if (oldPos.y - position.y > err) {
             movement = Direction.Down;
@@ -134,6 +138,13 @@ public class Ball extends BoundingSphere {
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             addForce(new Vector3(0,0,-100));
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
+            addForce(new Vector3(0,100,0));
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
+            addForce(new Vector3(0,-100,0));
         }
     }
 
