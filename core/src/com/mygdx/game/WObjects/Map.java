@@ -43,17 +43,25 @@ public class Map {
         return new Vector2((int)hole.getPos().x, 13 - (int)hole.getPos().y);
     }
 
-    public Vector2 getHolePosTransl(){
+    public Vector2 getHolePosTranslV2(){
         float x = Helper.map((int)hole.getPos().x, 1, 18,-72, 64);
         float y = Helper.map((int)hole.getPos().y, 1, 12,40, -48);
 
         return new Vector2(x +4f, y+4f);
     }
 
-    public Vector2 getInitBallPos(){
+    public Vector2 getInitBallPosV2(){
         float x = Helper.map((int)ball.getPos().x, 1, 18,-72, 64);
         float y = Helper.map((int)ball.getPos().y, 1, 12,40, -48);
         return new Vector2(x + 4f, y + 4f);
+    }
+
+    public Vector3 getInitBallPosV3(){
+        return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
+    }
+
+    public Vector3 getInitHolePosV3(){
+        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
     }
 
     /**
@@ -228,7 +236,7 @@ public class Map {
      * Helper method to translate the map into a array map readable by the bot
      * @return
      */
-   public int[][] getArrayMap(int n, Vector2 ballPos){
+    public int[][] getArrayMap(int n, Vector2 ballPos){
         //Increments the Map Array 
        
         int[][] map = new int[n*20][n*14];

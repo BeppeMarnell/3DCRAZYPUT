@@ -5,15 +5,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.BoundingSphere;
 import com.mygdx.game.WObjects.Map;
 
+import java.util.ArrayList;
+
 public class BallCrom extends BoundingSphere {
-    /**
-     * IMPORTANT
-     * Because the map is over the y axis,
-     * the game axes are :
-     * x axis = x
-     * y axis = z
-     * z axis = y
-     */
 
     //get a copy of the map
     private Map map;
@@ -21,16 +15,33 @@ public class BallCrom extends BoundingSphere {
     //radius
     public static final float RAD = 1f;
     public static final float MASS = 2f;
+
+    //every index is an iteration's direction
+    private ArrayList<GeneDirection> chromosome;
+    private float fitness;
+
+
+    private int iterations;
+
     /**
      * Initialize the ball 3d and add the position to it
      * @param map
      */
     public BallCrom(Map map){
-        super(new Vector3(map.getInitBallPos().x, map.getHeight(map.getInitBallPos(), RAD), map.getInitBallPos().y), MASS, RAD);
+        super(new Vector3(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y), MASS, RAD);
 
-        //copy the instance of the map
+        //initialize stuff
         this.map = map;
+        iterations = 0;
+
+        //initialize with the first direction into the chromosome
+        chromosome = new ArrayList<>();
+        chromosome.add(new GeneDirection());
+
+        //first fitness
+        fitness = position.dst(map.getInitHolePosV3());
     }
+
     /**
      * Update the position of the ball
      */
@@ -83,5 +94,16 @@ public class BallCrom extends BoundingSphere {
     public boolean isStopped(){
         if(state == BodyState.Stopped)return true;
         else return false;
+    }
+
+    public void resetBall(){
+        //reset position to zero
+        position.set(map.getInitBallPosV3());
+
+        //reset iterations
+        iterations = 0;
+
+        //set fitness to zero
+        fitness = 0;
     }
 }

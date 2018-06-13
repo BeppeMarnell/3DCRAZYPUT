@@ -63,7 +63,7 @@ public class Bot {
 
         }
         //add the hole position
-        path.add(mapO.getHolePosTransl());
+        path.add(mapO.getHolePosTranslV2());
 
         //calculate the solution vectors
         for(int i=1; i<path.size(); i++){

@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
-import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Utils.Helper;
 
 public class Hole {
     /**
@@ -28,7 +26,7 @@ public class Hole {
         model = loader.loadModel(Gdx.files.internal("hole/flagBlue.obj"));
         hole = new ModelInstance(model);
 
-        hole.transform.translate(map.getHolePosTransl().x, map.getHeight(map.getHolePosTransl(), -0.5f),map.getHolePosTransl().y ) ;
+        hole.transform.translate(map.getHolePosTranslV2().x, map.getHeight(map.getHolePosTranslV2(), -0.5f),map.getHolePosTranslV2().y ) ;
         hole.transform.scl(2f);
     }
 

@@ -40,7 +40,7 @@ public class Ball extends BoundingSphere {
      * @param map
      */
     public Ball(Map map){
-        super(new Vector3(map.getInitBallPos().x, map.getHeight(map.getInitBallPos(), RAD), map.getInitBallPos().y), MASS, RAD);
+        super(new Vector3(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y), MASS, RAD);
 
         //create the ball object
         ModelBuilder modelBuilder = new ModelBuilder();
@@ -57,7 +57,7 @@ public class Ball extends BoundingSphere {
 
         ballInstance = new ModelInstance(model);
 
-        ballInstance.transform.translate(map.getInitBallPos().x, map.getHeight(map.getInitBallPos(), RAD), map.getInitBallPos().y);
+        ballInstance.transform.translate(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y);
 
         //copy the instance of the map
         this.map = map;
