@@ -9,12 +9,12 @@ class GeneDirection{
 
     public GeneDirection(){
         this.dir = new Vector2().setToRandomDirection(); // normalized
-        force = MathUtils.random()*5;
+        force = MathUtils.random()*100;
     }
 
     public GeneDirection(Vector2 dir){
         this.dir = dir.cpy().nor(); // normalized
-        force = MathUtils.random()*5;
+        force = MathUtils.random()*100;
     }
 
     public GeneDirection setGenDirections(GeneDirection gen){
