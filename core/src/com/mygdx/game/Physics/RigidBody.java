@@ -5,9 +5,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
 import com.mygdx.game.Physics.Rotation.AQuaternion;
+import com.mygdx.game.Utils.Helper;
 
 public class RigidBody {
     protected static final float G = 9.81f;
+
 
     //enum to set up the world state
     public enum BodyState { Moving, Stopped, }
@@ -17,6 +19,7 @@ public class RigidBody {
     protected Direction movement;
 
     protected Vector3 position;
+    protected Vector3 weight;
     protected Vector3 velocity;
     // Old velocity required for Velocity Verlet Integration
     protected Vector3 oldVelocity;
@@ -35,10 +38,12 @@ public class RigidBody {
     protected AMatrix3 inverseInertiaTensorWorld;
     protected AMatrix4 inertiaTensor;
     protected float mu;
+    protected float kineticMu;
     protected float inverseMass;
     protected float mass;
     protected float damping;
     protected float radius;
+    protected Vector3 actingForce;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
@@ -63,6 +68,9 @@ public class RigidBody {
         this.radius = radius;
         state = BodyState.Stopped;
         movement = Direction.Straight;
+        weight = new Vector3(0, -G * mass, 0);
+
+        kineticMu = 0.6f;
 
 //        generateInertiaTensorSphere();
     }
@@ -95,6 +103,7 @@ public class RigidBody {
         Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
         position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
+        System.out.println("Vel: " + velocity + " pos: " + position + " acc: " + acceleration);
 
 ////        angularAcceleration = inverseInertiaTensorWorld.transform(totalTorque);
 //        angularAcceleration = inertiaTensor.transform(totalTorque);
@@ -170,8 +179,8 @@ public class RigidBody {
     }
 
     protected void updateForces() {
-        update2DGravity();
-//        updateGravity();
+//        update2DGravity();
+        updateGravity();
         updateDrag(0.5f, 0.3f);
         updateFriction();
     }
@@ -182,17 +191,23 @@ public class RigidBody {
     }
 
     private void updateGravity() {
-        System.out.println("Updating gravity");
-        addForce(gravity);
-        System.out.println("====== " + totalForce);
+//        System.out.println("Updating gravity");
+        addForce(gravity.cpy().scl(mass));
+//        System.out.println("====== " + totalForce);
     }
 
     private void updateFriction() {
 //        float f = G * mu * mass * 1 / position.y;
 //        Vector2 fr = new Vector2(position.x, position.z);
 //        fr.nor().scl(G * mu * mass);
-        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(-G * (1/position.y) * mu * mass));
-        else addForce(velocity.cpy().nor().scl(mass * G * (1/position.y) * mu));
+//        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(-G * (1/position.y) * mu * mass));
+//        else addForce(velocity.cpy().nor().scl(mass * G * (1/position.y) * mu));
+//        Vector3 nPos = position.cpy().add(velocity.cpy().nor().scl(2));
+//        float angle = Helper.angleBetweenPoints(new Vector2(position.x, position.y), new Vector2(nPos.x, nPos.y));
+//        System.out.println("========== npos: " + nPos + " ang: " + angle + " cos: " + Math.cos(angle));
+
+        addForce(gravity.cpy().scl(mass * mu));
+
 //        System.out.println("========= " + f + " " + fr);
 //        Vector2 tmpPosition = new Vector2(velocity.x, velocity.y);
 //        tmpPosition.scl(mass * G * (1 / position.y));
@@ -236,5 +251,21 @@ public class RigidBody {
 
     public Vector3 getAcceleration() {
         return acceleration;
+    }
+
+    public Vector3 getWeight() {
+        return weight;
+    }
+
+    public float getMu() {
+        return mu;
+    }
+
+    public float getKineticMu() {
+        return kineticMu;
+    }
+
+    public void setActingForce(Vector3 actingForce) {
+        this.actingForce = actingForce;
     }
 }
