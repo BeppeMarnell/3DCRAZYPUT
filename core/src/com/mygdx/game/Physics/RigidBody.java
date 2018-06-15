@@ -44,6 +44,7 @@ public class RigidBody {
     protected float damping;
     protected float radius;
     protected Vector3 actingForce;
+    protected Vector3 lastOrientation;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
@@ -268,4 +269,17 @@ public class RigidBody {
     public void setActingForce(Vector3 actingForce) {
         this.actingForce = actingForce;
     }
+
+    public Vector3 getOldVelocity() {
+        return oldVelocity;
+    }
+
+    public Vector3 getLastOrientation() {
+        return lastOrientation;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
 }
+
