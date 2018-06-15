@@ -1,8 +1,6 @@
-package com.mygdx.game.Physics.ForceDepartment;
+package com.mygdx.game.Physics.ForceDepartment.ForceManagement;
 
 import com.mygdx.game.Physics.ForceDepartment.ForceCollection.Force;
-import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceDatabase;
-import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceCalculator;
 import com.mygdx.game.Physics.RigidBody;
 
 public class ForceManager {

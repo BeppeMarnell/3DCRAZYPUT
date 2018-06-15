@@ -192,30 +192,11 @@ public class RigidBody {
     }
 
     private void updateGravity() {
-//        System.out.println("Updating gravity");
         addForce(gravity.cpy().scl(mass));
-//        System.out.println("====== " + totalForce);
     }
 
     private void updateFriction() {
-//        float f = G * mu * mass * 1 / position.y;
-//        Vector2 fr = new Vector2(position.x, position.z);
-//        fr.nor().scl(G * mu * mass);
-//        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(-G * (1/position.y) * mu * mass));
-//        else addForce(velocity.cpy().nor().scl(mass * G * (1/position.y) * mu));
-//        Vector3 nPos = position.cpy().add(velocity.cpy().nor().scl(2));
-//        float angle = Helper.angleBetweenPoints(new Vector2(position.x, position.y), new Vector2(nPos.x, nPos.y));
-//        System.out.println("========== npos: " + nPos + " ang: " + angle + " cos: " + Math.cos(angle));
-
         addForce(gravity.cpy().scl(mass * mu));
-
-//        System.out.println("========= " + f + " " + fr);
-//        Vector2 tmpPosition = new Vector2(velocity.x, velocity.y);
-//        tmpPosition.scl(mass * G * (1 / position.y));
-//        friction.set(tmpPosition.x, 0, tmpPosition.y);
-//        System.out.println("============= Friction: " + friction);
-//        totalForce.sub(friction);
-//        velocity.scl(mu);
     }
 
     private void updateDrag(float k1, float k2) {

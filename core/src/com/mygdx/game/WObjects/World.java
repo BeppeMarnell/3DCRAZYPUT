@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
+import com.mygdx.game.Physics.ForceDepartment.ForceCollection.*;
+import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
 import com.mygdx.game.Physics.RigidBody;
 import com.mygdx.game.Utils.Helper;
 
@@ -31,6 +33,8 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
+    private ForceManager forceManager;
+    private Force[] forces;
     
     private Club club;
     private Bot bot;
@@ -76,6 +80,11 @@ public class World {
 
         //initialize the bot
         bot = new Bot(map);
+
+
+        forceManager = new ForceManager();
+        forces = new Force[]{new Gravity(), new Normal(), new StaticFriction(), new KineticFriction(), new Perpendicular()};
+        forceManager.add(ball, forces);
     }
 
     public void update(float deltaTime){
@@ -83,6 +92,8 @@ public class World {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
+
+//        forceManager.manage(ball);
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
     }
 
