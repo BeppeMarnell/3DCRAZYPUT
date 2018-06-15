@@ -3,7 +3,6 @@ package com.mygdx.game.Physics.ForceDepartment.ForceManagement;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.ForceDepartment.ForceCollection.*;
 import com.mygdx.game.Physics.RigidBody;
-import com.mygdx.game.Utils.Helper;
 
 public class ForceCalculator implements ForceVisitor {
     private RigidBody body;
@@ -12,7 +11,6 @@ public class ForceCalculator implements ForceVisitor {
     private Vector3 staticFriction;
     private Vector3 kineticFriction;
     private Vector3 perpendicularForce;
-    private float angle;
 
     public ForceCalculator() {
         body = null;
@@ -20,31 +18,35 @@ public class ForceCalculator implements ForceVisitor {
 
     @Override
     public void visit(Gravity force) {
-        Vector3 pastPoint = body.getPosition().sub(body.getRadius());
-        Vector3 futurePoint = body.getPosition().add(body.getRadius());
-        angle = Helper.angleBetweenPoints3D(pastPoint, futurePoint);
-        gravity = body.getWeight().scl((float) Math.cos(angle));
+        float theta_cos = (float) Math.cos(body.getSlopeAngle());
+        gravity = body.getWeight().cpy().scl(theta_cos);
+        System.out.println("++++ Gravity: " + gravity);
     }
 
     @Override
     public void visit(Normal force) {
         normal = gravity.cpy().scl(-1);
+        System.out.println("++++ Normal: " + normal);
     }
 
     @Override
     public void visit(StaticFriction force) {
-        staticFriction = normal.cpy().scl(body.getMu());
+        if (body.getState() == RigidBody.BodyState.Stopped) staticFriction = normal.cpy().scl(body.getMu());
+        System.out.println("++++ staticFr: " + staticFriction);
     }
 
     @Override
     public void visit(KineticFriction force) {
         // Only if body in moving state otherwise only static
-        kineticFriction = normal.cpy().scl(body.getKineticMu());
+        if (body.getState() == RigidBody.BodyState.Moving) kineticFriction = normal.cpy().scl(body.getKineticMu());
+        System.out.println("++++ kineticFr: " + kineticFriction);
     }
 
     @Override
     public void visit(Perpendicular force) {
-        perpendicularForce = body.getWeight().scl((float) Math.sin(angle));
+        float theta_sin = (float) Math.sin(body.getSlopeAngle());
+        perpendicularForce = body.getWeight().cpy().scl(theta_sin);
+        System.out.println("++++ Perpf: " + perpendicularForce);
     }
 
     public void setBody(RigidBody body) {
@@ -52,6 +54,6 @@ public class ForceCalculator implements ForceVisitor {
     }
 
     public void setActingForce() {
-        body.setActingForce(perpendicularForce.sub(staticFriction));
+        body.setActingForce(perpendicularForce.cpy().sub(staticFriction));
     }
 }

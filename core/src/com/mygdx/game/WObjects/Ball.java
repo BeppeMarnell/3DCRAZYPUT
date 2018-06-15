@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.BoundingSphere;
+import com.mygdx.game.Utils.Helper;
 
 public class Ball extends BoundingSphere {
     /**
@@ -100,6 +101,16 @@ public class Ball extends BoundingSphere {
         float err = 0.005f;
 
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
+
+        Vector3 futurePos = position.cpy().add(lastNormalizedVelocity.cpy().add(radius));
+        Vector3 pastPos = position.cpy().add(lastNormalizedVelocity.cpy().sub(radius));
+        futurePos.y = map.getHeight(new Vector2(futurePos.x, futurePos.z), RAD);
+        pastPos.y = map.getHeight(new Vector2(pastPos.x, pastPos.z), RAD);
+        slopeAngle = Helper.angleBetweenPoints3D(futurePos, pastPos);
+        System.out.println("pastp: " + pastPos + " fp: " + futurePos + " ang: " + slopeAngle);
+
+
+
         float height = map.getHeight(new Vector2(position.x, position.z), RAD);
         if (position.y < height) {
             position.y = height;

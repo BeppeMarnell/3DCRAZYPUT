@@ -1,11 +1,9 @@
 package com.mygdx.game.Physics;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
 import com.mygdx.game.Physics.Rotation.AQuaternion;
-import com.mygdx.game.Utils.Helper;
 
 public class RigidBody {
     protected static final float G = 9.81f;
@@ -44,7 +42,8 @@ public class RigidBody {
     protected float damping;
     protected float radius;
     protected Vector3 actingForce;
-    protected Vector3 lastOrientation;
+    protected Vector3 lastNormalizedVelocity;
+    protected float slopeAngle;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
@@ -72,6 +71,7 @@ public class RigidBody {
         weight = new Vector3(0, -G * mass, 0);
 
         kineticMu = 0.6f;
+        lastNormalizedVelocity = new Vector3();
 
 //        generateInertiaTensorSphere();
     }
@@ -103,6 +103,7 @@ public class RigidBody {
         oldVelocity.set(velocity);
         Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
+        lastNormalizedVelocity = newVelocity.nor();
         position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
         System.out.println("Vel: " + velocity + " pos: " + position + " acc: " + acceleration);
 
@@ -255,12 +256,29 @@ public class RigidBody {
         return oldVelocity;
     }
 
-    public Vector3 getLastOrientation() {
-        return lastOrientation;
+    public Vector3 getLastNormalizedVelocity() {
+        return lastNormalizedVelocity;
     }
 
     public float getRadius() {
         return radius;
+    }
+
+    public Vector3 getActingForce() {
+        return actingForce;
+    }
+
+    public void setAcceleration(Vector3 acceleration) {
+        this.acceleration = acceleration;
+
+    }
+
+    public float getSlopeAngle() {
+        return slopeAngle;
+    }
+
+    public BodyState getState() {
+        return state;
     }
 }
 

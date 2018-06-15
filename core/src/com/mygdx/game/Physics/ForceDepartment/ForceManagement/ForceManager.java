@@ -17,11 +17,14 @@ public class ForceManager {
     }
 
     public void manage(RigidBody body) {
+        System.out.println("[!] Managing forces");
         calculator.setBody(body);
         Force[] forces = db.getForces(body);
         for (Force f : forces) {
             f.accept(calculator);
-            calculator.setActingForce();
         }
+        System.out.println("[!!] Setting acting force ... ");
+        calculator.setActingForce();
+        System.out.print(body.getActingForce());
     }
 }

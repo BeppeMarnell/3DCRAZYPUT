@@ -13,6 +13,8 @@ import com.mygdx.game.Bott.Bot;
 import com.mygdx.game.Physics.CollisionDetector;
 import com.mygdx.game.Physics.ForceDepartment.ForceCollection.*;
 import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Euler;
+import com.mygdx.game.Physics.MovementDepartment.MovementManager;
 import com.mygdx.game.Physics.RigidBody;
 import com.mygdx.game.Utils.Helper;
 
@@ -35,6 +37,7 @@ public class World {
     private CollisionDetector collisionDetector;
     private ForceManager forceManager;
     private Force[] forces;
+    private MovementManager movementManager;
     
     private Club club;
     private Bot bot;
@@ -85,6 +88,8 @@ public class World {
         forceManager = new ForceManager();
         forces = new Force[]{new Gravity(), new Normal(), new StaticFriction(), new KineticFriction(), new Perpendicular()};
         forceManager.add(ball, forces);
+
+        movementManager = new MovementManager(new Euler());
     }
 
     public void update(float deltaTime){
@@ -93,7 +98,9 @@ public class World {
         }
 
 
-//        forceManager.manage(ball);
+        forceManager.manage(ball);
+//        movementManager.manage(ball, forceManager, deltaTime);
+
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
     }
 
