@@ -81,7 +81,7 @@ public class World {
         bot = new Bot(map);
 
         //create the genetic bot
-        genBot = new Genetic3D(map);
+        //genBot = new Genetic3D(map);
     }
 
     public void update(float deltaTime){
@@ -113,12 +113,12 @@ public class World {
         
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              //calculate the path with the selected method and move the ball
-             bot.CalculateAStar(map.getArrayMap(3, new Vector2(ball.getPosition().x,ball.getPosition().z)));
+             bot.CalculateAStar(map.getArrayMap(1, new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
 
         if(bot.movingBall)bot.act(ball);
 
-        genBot.update(walls, batch, environment);
+        //genBot.update(walls, batch, environment);
     }
 
     public void dispose(){
