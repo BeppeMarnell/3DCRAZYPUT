@@ -6,17 +6,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
-import com.mygdx.game.Bott.GenBot.Genetic3D;
+import com.mygdx.game.Bott.GenBot.Genetic2D;
 import com.mygdx.game.Physics.CollisionDetector;
-import com.mygdx.game.Physics.RigidBody;
-import com.mygdx.game.Utils.Helper;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class World {
@@ -36,7 +31,7 @@ public class World {
     private Club club;
     private Bot bot;
 
-    private Genetic3D genBot;
+    private Genetic2D genBot;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -81,7 +76,7 @@ public class World {
         bot = new Bot(map);
 
         //create the genetic bot
-        //genBot = new Genetic3D(map);
+        //genBot = new Genetic2D(map);
     }
 
     public void update(float deltaTime){

@@ -1,30 +1,25 @@
 package com.mygdx.game.Bott.GenBot;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.Physics.CollisionDetector;
+import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
-import com.mygdx.game.WObjects.Wall;
-import org.lwjgl.Sys;
+import com.mygdx.game.WObjects.WorldObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class Genetic3D {
+public class Genetic2D {
 
-    //copy of the map
-    Map map;
+    //set the end
+    private Vector2 end;
+    private ArrayList<CromWall> cromWalls;
 
-    //Array list of Balls
-    public ArrayList<BallCrom> ballCroms;
-
-    static final float mutationRate = 0.8f;
-    static final int sonRate = 10;
+    private ArrayList<BallCrom> ballCroms;
+    private final float mutationRate = 0.8f;
+    private final int sonRate = 10;
 
     private boolean reached = false;
 
@@ -34,54 +29,34 @@ public class Genetic3D {
     int ballIter = 1;
     int gen = 0;
 
-    //temporary
-    ArrayList<CollisionDetector> detectors;
-
-    /**
-     * Constructor of the genetic algorithm class
-     * @param map copy instance of the map
-     */
-    public Genetic3D(Map map){
-
-        //load flyweight assets
-        FlyWeightAsset.load();
-
-        this.map = map;
-
+    public Genetic2D(Map map){
         //create an initial population
         ballCroms = new ArrayList<>();
-        //put all the ball in the physic engine
-        detectors = new ArrayList<>();
-        create(100);
+        create(200);
+
+        //create obstacles
+        cromWalls = new ArrayList<>();
+        createObstacles(map);
     }
 
-    public void update(ArrayList<Wall> walls, ModelBatch batch, Environment env){
-
-        //update collision
-        for(CollisionDetector cD: detectors){
-            for (Wall w : walls) {
-                cD.collidesWithWall(w, Gdx.graphics.getDeltaTime());
-            }
-        }
-
-        //setting a backup
-        if(Gdx.input.isKeyJustPressed(Input.Keys.F))reached = true;
-        if(iter> 100000)reached = true;
+    public void update(SpriteBatch batch){
+        //setting backup
+        if(iter> 2000)reached = true;
 
         if(!reached){
 
             boolean stopped = true;
             for (BallCrom b: ballCroms){
                 //move all the ball
-                b.update(Gdx.graphics.getDeltaTime());
+                b.update(cromWalls);
                 if(!b.isStopped()) stopped = false;
 
                 //see if fitness <10 then reached = true
-                if(b.getFitness() <10) reached = true;
+                if(b.getFitness() <20) reached = true;
             }
 
             //only if all the balls have stopped then assign a new velocity
-            if(stopped) for (BallCrom b: ballCroms)b.nextDir();
+            if(stopped) for (BallCrom b: ballCroms)b.nextVel();
 
             iter++;
 
@@ -98,7 +73,7 @@ public class Genetic3D {
                 //reset values of the ball
                 b.resetBall();
                 //assign the velocity to begin with in the next generation
-                b.nextDir();
+                b.nextVel();
             }
 
             System.out.println("Generation: "+gen+" ,iterations :" + iter + " ,medium iter per ball: "+ ballIter);
@@ -111,12 +86,7 @@ public class Genetic3D {
             gen++;
 
             reached = false;
-
-            //after the reproduction is done, attach the collision detection
-            for(int i=0; i<ballCroms.size(); i++) detectors.set(i, new CollisionDetector(ballCroms.get(i)));
         }
-
-        for (BallCrom b: ballCroms) b.render(batch, env);
     }
 
     //Method to actuate the genetic algorithm
@@ -125,14 +95,16 @@ public class Genetic3D {
         //SELECTION
 
         //sort the list by fitness
-        Collections.sort(ballCroms, (o1, o2) -> {
+        Collections.sort(ballCroms, new Comparator<BallCrom>() {
+            @Override
+            public int compare(BallCrom o1, BallCrom o2) {
+                if (o1.getFitness()> o2.getFitness())
+                    return 1;
+                if (o1.getFitness()< o2.getFitness())
+                    return -1;
 
-            if (o1.getFitness()> o2.getFitness())
-                return 1;
-            if (o1.getFitness()< o2.getFitness())
-                return -1;
-
-            return 0;
+                return 0;
+            }
         });
 
 
@@ -142,11 +114,12 @@ public class Genetic3D {
 
             //REPRODUCTION
             //chose the parents and reproduce
-            BallCrom child = new BallCrom(map);
+            BallCrom child = new BallCrom(end);
             child.setChromosome(reproduce(i));
 
             //add the child to the array
             ballCroms.add(child);
+
         }
     }
 
@@ -171,11 +144,33 @@ public class Genetic3D {
     }
 
     /**
-     * create a n amount of balls
+     * create the amount of ballCroms
      * @param amount
      */
     private void create(int amount) {
-        for(int i=0; i<amount; i++) ballCroms.add(new BallCrom(map));
-        for(int i=0; i<amount; i++) detectors.add(new CollisionDetector(ballCroms.get(i)));
+        for(int i=0; i<amount; i++) ballCroms.add(new BallCrom(end));
+    }
+
+    public void dispose(){
+        for (BallCrom b: ballCroms)b.dispose();
+    }
+
+    private void createObstacles(Map map){
+        //create the obstacle that are needed for the genetic and store them
+        for(int i=0; i<map.mapObjects.length; i++) {
+            for (int j = 0; j < map.mapObjects[0].length; j++) {
+                if(map.mapObjects[i][j].getType() == WorldObject.ObjectType.Wall || map.mapObjects[i][j].getType() == WorldObject.ObjectType.Tree){
+                    //create a wall in a specified position
+
+                    float x = Helper.map(i, 0,19, 0, 640);
+                    float y = Helper.map(j, 0,13, 0, 448);
+                    cromWalls.add(new CromWall(x +16,y +16));
+                }
+            }
+        }
+
+        //set the end point
+        end = new Vector2(Helper.map(map.getHolePosTranslV2().x, -80,80, 0, 640),
+                Helper.map(map.getHolePosTranslV2().y, -56,56, 0, 448));
     }
 }

@@ -1,25 +1,41 @@
 package com.mygdx.game.Bott.GenBot;
 
-import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Physics.BoundingSphere;
-import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
 
-public class BallCrom extends BoundingSphere {
+public class BallCrom {
+    /** 1st PHASE
+     * 1 option arraylist of (Vector2, timesteps) with a equal speed for each frame //kinda real time thing
+     * - give random direction every step
+     * - select the best fitness and add that one in the population (fitness = distance between the player and final position
+     * - give random directions again
+     */
 
-    private ModelInstance ballInstance;
+    /** 2nd PHASE
+     * - each step apply a counter force (friction) to the velocity
+     * - when the ball is stopped a random direction is applied
+     * - select the best fitness and add that one in the population (fitness = distance between the player and final position
+     * - the chromosome is the aggregation of directions after the ball stops
+     * - each ball stores its chromosomes to use it in the next generation
+     * - each generation is called when all the ball are stopped
+     * - adding a child means to remove from the population the lowest fitness
+     */
 
-    //get a copy of the map
-    private Map map;
+    /**
+     * - give random directions and random velocities
+     */
 
-    //radius
-    public static final float RAD = 1f;
-    public static final float MASS = 2f;
+    private Circle circle;
 
-    private float MAXVEL = 5000f;
+    private Vector2 pos;
+    private Vector2 vel;
+
+    private Vector2 end;
+
+    static float MAX_VELOCITY = 10f;
+    static float FRICTION = 1.7f;
 
     //every index is an iteration's direction
     private ArrayList<GeneDirection> chromosome;
@@ -27,125 +43,116 @@ public class BallCrom extends BoundingSphere {
 
     private int iterations;
 
-    /**
-     * Initialize the ball 3d and add the position to it
-     * @param map
-     */
-    public BallCrom(Map map){
-        super(new Vector3(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y), MASS, RAD);
+    private boolean collides;
 
-        //create the ball object
+    public BallCrom(Vector2 end){
+        //circe
+        circle= new Circle(0,0,4f);
 
-        ballInstance = new ModelInstance(FlyWeightAsset.model);
+        //init pos
+        pos = new Vector2();
 
-        ballInstance.transform.translate(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y);
-
-        //initialize stuff
-        this.map = map;
-        iterations = 0;
+        //fitness and chromosome
+        fitness = 0;
+        chromosome = new ArrayList<>();
 
         //initialize with the first direction into the chromosome
-        chromosome = new ArrayList<>();
         chromosome.add(new GeneDirection());
 
+        //initialise the end of the path
+        this.end = end.cpy();
+
         //first fitness
-        this.fitness = position.dst(map.getInitHolePosV3());
+        fitness = pos.dst(end.cpy());
 
-        //move the ball
-        nextDir();
+        iterations = 0;
+
+        //velocity
+        vel = new Vector2(chromosome.get(0).getGetDirection().cpy().scl(MAX_VELOCITY));
+        // take the first vector iteration multiplied a random float between 0 and 10
+
+        collides = false;
     }
 
-    /**
-     * Update the position of the ball
-     */
-    public void update(float deltaTime){
-        //move the ball with keys
-        if (state == BodyState.Moving) {
-            move3DBall();
-            integrate(deltaTime);
+    public void update(ArrayList<CromWall> cromWalls){
+        //update the circle position
+        circle.x = pos.x; circle.y = pos.y;
+
+        //check for collision
+        collides = false;
+        for(CromWall w: cromWalls) if(w.isColliding(circle))collides = true;
+
+        //update only if the ball is not colliding
+        if(!collides){
+            //add the velocity to the position
+            pos.add(vel.cpy());
+
+            //after moving calculate the fitness
+            fitness = pos.dst(end.cpy());
+
+            //at the end apply a force that decrease the velocity until 0
+            if(Math.abs(vel.x) < 0.5f && Math.abs(vel.y) < 0.5f) vel.setZero();
+            else vel.scl(1/FRICTION); // else apply friction
+
+        }else{
+            vel.setZero();
         }
-
-        if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-            clearForces();
-            state = BodyState.Stopped;
-        }
-
-        //after moving calculate the fitness
-        fitness = position.dst(map.getInitHolePosV3());
-
-        //in case the ball is out the it returns to the origin
-        if(outOfBox()) position = map.getInitBallPosV3();
     }
 
-    /**
-     * This method moves the position of the 3D instance, do not change it
-     */
-    private void move3DBall(){
-        //Apply the physic to the 3D object
-        float err = 0.005f;
+    public void nextVel(){
 
-        Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
-        position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
-        mu = map.getFriction(new Vector2(position.x, position.y));
-
-        if (oldPos.y - position.y > err) {
-            movement = Direction.Down;
-        } else if (position.y - oldPos.y > err) {
-            movement = Direction.Up;
-        } else {
-            movement = Direction.Straight;
-        }
-
-        //in order to move the ball i've to apply the translation amount
-        ballInstance.transform.setTranslation(position);
-        ballInstance.calculateTransforms();
-    }
-
-    /**
-     * Move the ball assigning a force
-     */
-    public void move(Vector2 force) {
-        state = BodyState.Moving;
-        addForce(new Vector3(force.x, 0, force.y));
-    }
-
-
-    public void nextDir(){
         //retrieve the direction only if the chromosome size is enough long as the iterations
         if(iterations +1 < chromosome.size()){
+            //set to zero and add the direction
+            vel.setZero();
 
             //retrieve the direction to the right iteration
-            move(chromosome.get(iterations).getGetDirection().scl(MAXVEL));
+            vel.add(chromosome.get(iterations).getGetDirection().cpy().scl(MAX_VELOCITY));
         }else{
             //add the new direction to the chromosome
             //in this case the chromosome is not enough big
-            //and adjust the random direction
-            chromosome.add(new GeneDirection().adjGenDirections(chromosome.get(iterations)));
 
-            move(chromosome.get(iterations+1).getGetDirection().scl(MAXVEL));
+            GeneDirection newDir = new GeneDirection();
+
+            //adjust the random direction to a smooth increment referred to the previous one
+            newDir.adjGenDirections(chromosome.get(iterations).getGetDirection());
+
+            //adjust the direction towards the hole (optionally)
+            //newDir.adjGenDirections(end.scl(-1f));
+
+            //add the direction to the chromosome
+            chromosome.add(newDir);
+
+            //set to zero and add the direction
+            vel.setZero();
+            vel.add(chromosome.get(iterations+1).getGetDirection().scl(MAX_VELOCITY));
         }
 
         //increase iterations
         iterations++;
     }
 
-    /**
-     * render the 3D ball with a specific environment
-     * @param batch
-     * @param environment
-     */
-    public void render(ModelBatch batch, Environment environment){
-        //render the ball
-        batch.render(ballInstance, environment);
+    public void resetBall(){
+        //reset position to zero
+        pos.setZero();
+
+        //reset iterations
+        iterations = 0;
+
+        //set fitness to zero
+        fitness = 0;
     }
 
-    /**
-     * Call the method to know if the ball is stopped
-     * @return boolean value
-     */
     public boolean isStopped(){
-        if(state == BodyState.Stopped)return true;
-        else return false;
+        return vel.isZero();
+    }
+
+    public float getFitness() {
+        return fitness;
+    }
+
+    public ArrayList<GeneDirection> getChromosome() {
+        return chromosome;
     }
 
     public void setChromosome(ArrayList<GeneDirection> chromosome) {
@@ -158,36 +165,9 @@ public class BallCrom extends BoundingSphere {
         }
     }
 
-    public float getFitness() {
-        if(fitness == Float.NaN){
-            position.set(map.getInitBallPosV3());
-            fitness = position.dst(map.getInitHolePosV3());
-
-        }
-        return fitness;
-    }
-
-    public ArrayList<GeneDirection> getChromosome() {
-        return chromosome;
-    }
-
     public int getIterations() {
         return iterations;
     }
 
-    public void resetBall(){
-        //reset position to zero
-        position.set(map.getInitBallPosV3());
-
-        //reset iterations
-        iterations = 0;
-
-        //set fitness to zero
-        fitness = 0;
-    }
-
-    public boolean outOfBox(){
-        if((position.x > -72 && position.x < 72)&&(position.z > -48 && position.y < 48)) return false;
-        else return true;
-    }
+    public void dispose(){}
 }

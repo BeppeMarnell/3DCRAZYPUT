@@ -9,12 +9,12 @@ class GeneDirection{
 
     public GeneDirection(){
         this.dir = new Vector2().setToRandomDirection(); // normalized
-        force = MathUtils.random()*100;
+        force = MathUtils.random()*5;
     }
 
     public GeneDirection(Vector2 dir){
         this.dir = dir.cpy().nor(); // normalized
-        force = MathUtils.random()*100;
+        force = MathUtils.random()*5;
     }
 
     public GeneDirection setGenDirections(GeneDirection gen){
@@ -24,8 +24,8 @@ class GeneDirection{
         return this;
     }
 
-    public GeneDirection adjGenDirections(GeneDirection gen){
-        this.dir = dir.sub(gen.dir.cpy()).nor();
+    public GeneDirection adjGenDirections(Vector2 gen){
+        this.dir = dir.sub(gen.cpy()).nor();
         return this;
     }
 
@@ -37,4 +37,3 @@ class GeneDirection{
         this.dir.setToRandomDirection();
     }
 }
-
