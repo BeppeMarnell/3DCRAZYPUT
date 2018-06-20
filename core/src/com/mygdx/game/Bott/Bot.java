@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
-import org.lwjgl.Sys;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import java.util.ArrayList;
 import java.util.List;
