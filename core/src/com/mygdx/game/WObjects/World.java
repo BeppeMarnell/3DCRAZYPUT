@@ -6,16 +6,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
+import com.mygdx.game.Bott.GenBot.Genetic2D;
 import com.mygdx.game.Physics.CollisionDetector;
-import com.mygdx.game.Physics.RigidBody;
-import com.mygdx.game.Utils.Helper;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class World {
@@ -34,6 +30,8 @@ public class World {
     
     private Club club;
     private Bot bot;
+
+    private Genetic2D genBot;
 
     /**
      * INITIALIZE ALL THE COMPONENTS OF THE MAP
@@ -76,6 +74,9 @@ public class World {
 
         //initialize the bot
         bot = new Bot(map);
+
+        //create the genetic bot
+        //genBot = new Genetic2D(map);
     }
 
     public void update(float deltaTime){
@@ -97,24 +98,23 @@ public class World {
         hole.render(batch, environment);
 
         //render the walls
-        for(Wall w: walls) w.render(batch, environment);
+        //for(Wall w: walls) w.render(batch, environment);
 
         //render the trees
-        for(Tree t: trees) t.render(batch, environment);
+        //for(Tree t: trees) t.render(batch, environment);
         
         //render the club only when the bot is not moving the ball
         if(!bot.movingBall) club.render(batch, environment, ball);
         
-         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
+        if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              //calculate the path with the selected method and move the ball
-             bot.CalculateAStar(map.getArrayMap(3, new Vector2(ball.getPosition().x,ball.getPosition().z)));
+             bot.CalculateAStar(map.getArrayMap(1, new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
 
         if(bot.movingBall)bot.act(ball);
+      
+        genBot.update(walls, batch, environment);
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.C)){
-            //bot.calculateForce(new Vector2(Ball.));
-        }
     }
 
     public void dispose(){

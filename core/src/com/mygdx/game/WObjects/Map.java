@@ -64,6 +64,14 @@ public class Map {
         return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
     }
 
+    public Vector3 getInitBallPosV3(){
+        return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
+    }
+
+    public Vector3 getInitHolePosV3(){
+        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
+    }
+
     /**
      * main constructor to load the map
      * @param paths
@@ -236,7 +244,7 @@ public class Map {
      * Helper method to translate the map into a array map readable by the bot
      * @return
      */
-   public int[][] getArrayMap(int n, Vector2 ballPos){
+    public int[][] getArrayMap(int n, Vector2 ballPos){
         //Increments the Map Array 
        
         int[][] map = new int[n*20][n*14];
