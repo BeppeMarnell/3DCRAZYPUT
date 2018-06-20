@@ -12,7 +12,7 @@ public class CollisionDetector {
     private Obstacle obstacle;
     private CollisionSolver collisionSolver;
 
-    public CollisionDetector(BoundingSphere ball) {
+    public CollisionDetector(Ball ball) {
         this.ball = ball;
         collisionSolver = new CollisionSolver(ball);
     }

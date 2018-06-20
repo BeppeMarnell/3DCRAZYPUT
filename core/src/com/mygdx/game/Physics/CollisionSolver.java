@@ -8,10 +8,10 @@ public class CollisionSolver {
     private float penetration;
     private Vector3 normal;
     private Obstacle obstacle;
-    private BoundingSphere ball;
+    private Ball ball;
     private float totalInverseMass;
 
-    public CollisionSolver(BoundingSphere ball) {
+    public CollisionSolver(Ball ball) {
         this.ball = ball;
     }
 
@@ -33,7 +33,7 @@ public class CollisionSolver {
 
         if (normalizedVelocity < 0) {
             // calculate difference in velocity
-            float restitution = Math.min(Ball.ELASTICITY, obstacle.getElasticity());
+            float restitution = Math.min(ball.ELASTICITY, obstacle.getElasticity());
 
             float updatedNormalizedVelocity = -normalizedVelocity * restitution;
 
