@@ -98,10 +98,10 @@ public class World {
         hole.render(batch, environment);
 
         //render the walls
-        //for(Wall w: walls) w.render(batch, environment);
+        for(Wall w: walls) w.render(batch, environment);
 
         //render the trees
-        //for(Tree t: trees) t.render(batch, environment);
+        for(Tree t: trees) t.render(batch, environment);
         
         //render the club only when the bot is not moving the ball
         if(!bot.movingBall) club.render(batch, environment, ball);
@@ -113,7 +113,7 @@ public class World {
 
         if(bot.movingBall)bot.act(ball);
       
-        genBot.update(walls, batch, environment);
+        //genBot.update(walls, batch, environment);
 
     }
 

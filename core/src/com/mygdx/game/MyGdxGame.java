@@ -144,7 +144,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		world.render(modelBatch, environment);
 
 		//render the water
-		//water.render(Gdx.graphics.getDeltaTime(), modelBatch);
+		water.render(Gdx.graphics.getDeltaTime(), modelBatch);
 
 		modelBatch.end();
 
