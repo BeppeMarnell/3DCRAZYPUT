@@ -55,6 +55,14 @@ public class Map {
         float y = Helper.map((int)ball.getPos().y, 1, 12,40, -48);
         return new Vector2(x + 4f, y + 4f);
     }
+    
+    public Vector3 getInitBallPosV3(){
+        return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
+    }
+
+    public Vector3 getInitHolePosV3(){
+        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
+    }
 
     public Vector3 getInitBallPosV3(){
         return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);

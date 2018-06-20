@@ -112,8 +112,9 @@ public class World {
         }
 
         if(bot.movingBall)bot.act(ball);
+      
+        genBot.update(walls, batch, environment);
 
-        //genBot.update(walls, batch, environment);
     }
 
     public void dispose(){
