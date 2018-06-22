@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
@@ -114,6 +115,8 @@ public class World {
         if(bot.movingBall)bot.act(ball);
       
         //genBot.update(walls, batch, environment);
+
+        for(ModelInstance mI: bot.rectanglepoints)batch.render(mI,environment);
 
     }
 

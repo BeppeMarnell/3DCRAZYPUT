@@ -45,12 +45,12 @@ public class BallCrom {
 
     private boolean collides;
 
-    public BallCrom(Vector2 end){
+    public BallCrom(Vector2 start, Vector2 end){
         //circe
         circle= new Circle(0,0,4f);
 
         //init pos
-        pos = new Vector2();
+        pos = start;
 
         //fitness and chromosome
         fitness = 0;
@@ -168,6 +168,4 @@ public class BallCrom {
     public int getIterations() {
         return iterations;
     }
-
-    public void dispose(){}
 }

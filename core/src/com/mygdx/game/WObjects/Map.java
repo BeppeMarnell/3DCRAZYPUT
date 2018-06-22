@@ -60,18 +60,6 @@ public class Map {
         return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
     }
 
-    public Vector3 getInitHolePosV3(){
-        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
-    }
-
-    public Vector3 getInitBallPosV3(){
-        return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
-    }
-
-    public Vector3 getInitHolePosV3(){
-        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
-    }
-
     /**
      * main constructor to load the map
      * @param paths
