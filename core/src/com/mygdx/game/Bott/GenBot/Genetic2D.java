@@ -1,23 +1,28 @@
 package com.mygdx.game.Bott.GenBot;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
+import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.WorldObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.Callable;
 
-public class Genetic2D {
+public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
 
     //set the end
     private Vector2 end;
+    private Vector2 start;
+
     private ArrayList<CromWall> cromWalls;
 
     private ArrayList<BallCrom> ballCroms;
+
+    private ArrayList<GeneDirection> bestChrom;
+
     private final float mutationRate = 0.8f;
     private final int sonRate = 10;
 
@@ -29,17 +34,43 @@ public class Genetic2D {
     int ballIter = 1;
     int gen = 0;
 
-    public Genetic2D(Map map){
+    int millisec;
+
+    @Override
+    public ArrayList<GeneDirection> call() {
+
+        long oldT = new java.util.Date().getTime();
+        long diff = new java.util.Date().getTime() - oldT;
+
+        while(diff < millisec){
+
+            //run the genetic algorithm
+            update();
+
+            //calculate the time passed
+            diff = new java.util.Date().getTime() - oldT;
+        }
+
+        return bestChrom;
+    }
+
+    public Genetic2D(Map map,  Vector2 ballPos, int millisec){
         //create an initial population
         ballCroms = new ArrayList<>();
         create(200);
 
         //create obstacles
         cromWalls = new ArrayList<>();
+        bestChrom = new ArrayList<>();
         createObstacles(map);
+
+        start = getBallposTranl(ballPos);
+
+        //set the millisecond time
+        this.millisec = millisec;
     }
 
-    public void update(SpriteBatch batch){
+    public void update(){
         //setting backup
         if(iter> 2000)reached = true;
 
@@ -64,6 +95,9 @@ public class Genetic2D {
             //in case it's reached start with the next generation
             //reproduce
             draw();
+
+            //get the best chromosome
+            bestChrom = new ArrayList<>(ballCroms.get(0).getChromosome());
 
             //get ball iterations
             ballIter = ballCroms.get(0).getIterations();
@@ -114,7 +148,7 @@ public class Genetic2D {
 
             //REPRODUCTION
             //chose the parents and reproduce
-            BallCrom child = new BallCrom(end);
+            BallCrom child = new BallCrom(start ,end);
             child.setChromosome(reproduce(i));
 
             //add the child to the array
@@ -148,11 +182,7 @@ public class Genetic2D {
      * @param amount
      */
     private void create(int amount) {
-        for(int i=0; i<amount; i++) ballCroms.add(new BallCrom(end));
-    }
-
-    public void dispose(){
-        for (BallCrom b: ballCroms)b.dispose();
+        for(int i=0; i<amount; i++) ballCroms.add(new BallCrom(start ,end));
     }
 
     private void createObstacles(Map map){
@@ -172,5 +202,12 @@ public class Genetic2D {
         //set the end point
         end = new Vector2(Helper.map(map.getHolePosTranslV2().x, -80,80, 0, 640),
                 Helper.map(map.getHolePosTranslV2().y, -56,56, 0, 448));
+    }
+
+    private Vector2 getBallposTranl(Vector2 Ballpos){
+        float x = Helper.map(Ballpos.x, -80,80, 0, 640);
+        float y = Helper.map(Ballpos.y, -56,56, 0, 448);
+
+        return new Vector2(x,y);
     }
 }

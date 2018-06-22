@@ -1,7 +1,16 @@
 package com.mygdx.game.Bott;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
@@ -22,6 +31,9 @@ public class Bot {
     //calculate path from the algorithm
     private ArrayList<Vector2> path;
 
+    //model instances
+    public ArrayList<ModelInstance> rectanglepoints;
+
     public Bot(Map map){
         //copy an instance of the map to calculate heights
         this.mapO = map;
@@ -29,6 +41,11 @@ public class Bot {
         solutionPath = new ArrayList<>();
         solutionIndex = 1;
         path = new ArrayList<>();
+
+
+        rectanglepoints = new ArrayList<>();
+
+        setRectanglepoint();
     }
 
     public void CalculateAStar(int[][] map){
@@ -49,21 +66,23 @@ public class Bot {
             }
         }
 
+
         //get the list of coordinates
         List<Coordinate> finalPath = aStarAlgorithm.findPath();
+
         algorithmMap.printPath(finalPath); //uncomment to see the printed
         algorithmMap.reset();
 
 
         //add the start
-        float x = Helper.map(algorithmMap.getStart().x, 0, 20,-80, 80);
-        float y = Helper.map(algorithmMap.getStart().y, 0, 14,-56, 56);
+        float x = Helper.map(algorithmMap.getStart().x, 0, 19,-76, 76);
+        float y = Helper.map(algorithmMap.getStart().y, 0, 13,-52, 52);
         path.add(new Vector2(x, y));
 
         for(Coordinate c: finalPath){
             //translate array coordinates to world coordinates
-            x = Helper.map(c.x, 0, 20,-80, 80);
-            y = Helper.map(c.y, 0, 14,-56, 56);
+            x = Helper.map(c.x, 0, 19,-76, 76);
+            y = Helper.map(c.y, 0, 13,-52, 52);
             path.add(new Vector2(x, y));
 
         }
@@ -86,6 +105,8 @@ public class Bot {
 
         //set true to start moving the ball to the hole
         movingBall = true;
+
+        setRectanglepoint();
     }
 
     /**
@@ -101,7 +122,7 @@ public class Bot {
         }
 
         //move the ball in the direction
-        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),4));
+        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),3));
         // decrease the number of iterations for that solutionIndex
         solutionPath.get(solutionIndex).iter--;
 
@@ -136,13 +157,18 @@ public class Bot {
         return Math.abs(force);
     }
 
-    class MoveTo{
-        public int iter;
-        public Vector2 to;
+    private void setRectanglepoint(){
+        ModelBuilder modelBuilder = new ModelBuilder();
 
-        public MoveTo(Vector2 to, int iter){
-            this.iter = iter;
-            this.to = to;
+
+
+        Model model = modelBuilder.createBox(9, 8, 9, GL20.GL_LINES, new Material(ColorAttribute.createDiffuse(Color.YELLOW)),
+              VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+        for(int i =0; i < path.size(); i++){
+            ModelInstance instance = new ModelInstance(model);
+            instance.transform.translate(path.get(i).x,6 ,path.get(i).y);
+            rectanglepoints.add(instance);
         }
     }
 }
