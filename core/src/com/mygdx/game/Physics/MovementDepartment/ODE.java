@@ -8,13 +8,13 @@ public abstract class ODE {
 
     public abstract void solve(MovementManager mm);
 
-    protected Vector3 calculateAcceleration(ForceManager fm, RigidBody body, Vector3 position, float dt) {
+    protected Vector3 calculateAcceleration(ForceManager fm, RigidBody body, Vector3 position) {
         body.setPosition(position);
-        fm.manage(dt);
+        fm.manage();
         return body.getActingForce().scl(body.getInverseMass());
     }
 
     protected Vector3 calculateAcceleration(RigidBody body) {
-        return body.getActingForce().scl(body.getInverseMass());
+        return body.getActingForce().cpy().scl(body.getInverseMass());
     }
 }

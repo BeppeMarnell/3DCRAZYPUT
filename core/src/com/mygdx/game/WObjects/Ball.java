@@ -78,6 +78,8 @@ public class Ball extends BoundingSphere {
      */
     public void render(ModelBatch batch, Environment environment){
         //render the ball
+        ballInstance.transform.setTranslation(position);
+        ballInstance.calculateTransforms();
         batch.render(ballInstance, environment);
     }
 
@@ -86,16 +88,9 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
-
         if (state == BodyState.Moving) {
             move3DBall();
             integrate(deltaTime);
-//            lastVelocity = velocity;
-        }
-
-        if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-//            clearForces();
-//            state = BodyState.Stopped;
         }
 
 //        moveByKeys();
@@ -108,78 +103,29 @@ public class Ball extends BoundingSphere {
      */
     private void move3DBall(){
         //Apply the physic to the 3D object
-        float err = 0.005f;
 
-        Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
-//        System.out.println("=== Last velocity: " + lastVelocity);
-
-//        Vector3 frontPos = position.cpy().add(modifiedVelocity.cpy().nor().scl(2));
-//        Vector3 sidePos = position.cpy().add(modifiedVelocity.cpy().rotate(new Vector3(0, 1, 0), 90).nor().scl(2));
-//        frontPos = position.cpy().add(lastVelocity.cpy().nor().scl(2));
-//        sidePos = position.cpy().add(lastVelocity.cpy().rotate(new Vector3(0, 1, 0), 90).nor().scl(2));
         frontPos = position.cpy().add(0, 0, 3);
         sidePos = position.cpy().add(3, 0, 0);
         frontPos.y = map.getHeight(new Vector2(frontPos.x, frontPos.z), RAD);
         sidePos.y = map.getHeight(new Vector2(sidePos.x, sidePos.z), RAD);
-        System.out.println("=============== fp: " + frontPos + " sp: " + sidePos + " norvel: " + velocity.cpy().nor());
-//        Vector3 normal = frontPos.cpy().crs(sidePos).nor();
         float height = map.getHeight(new Vector2(position.x, position.z), RAD);
 
         if (position.y - height > 1) {
+//            state = BodyState.Flying;
             updateGravity();
         }
 
         if (position.y < height) {
             position.y = height;
+//            state = BodyState.Moving;
         }
 
         mu = map.getFriction(new Vector2(position.x, position.z));
-        kineticMu = mu - 0.1f;
-
-        if (oldPos.y - position.y > err) {
-            movement = Direction.Down;
-        } else if (position.y - oldPos.y > err) {
-            movement = Direction.Up;
-        } else {
-            movement = Direction.Straight;
-        }
+        kineticMu = mu - 0.2f;
 
         //in order to move the ball i've to apply the translation amount
         ballInstance.transform.setTranslation(position);
         ballInstance.calculateTransforms();
-    }
-
-    /**
-     * Move the ball by using the keyboards
-     */
-    private void moveByKeys(){
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            addForce(new Vector3(-100,0,0));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            addForce(new Vector3(100,0,0));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            addForce(new Vector3(0,0,100));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            addForce(new Vector3(0,0,-100));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.NUMPAD_8)) {
-            addForce(new Vector3(0,100,0));
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
-            addForce(new Vector3(0,-100,0));
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-            lastVelocity = velocity.cpy();
-            velocity.setZero();
-            state = BodyState.Stopped;
-        }
     }
 
     /**
@@ -190,14 +136,6 @@ public class Ball extends BoundingSphere {
         addForce(new Vector3(force.x, 0, force.y));
     }
 
-    public Vector2 calculateForce(Vector2 distance, float time) {
-        float inverseTime = 1 / time;
-        Vector2 oldVelocity = new Vector2(velocity.x, velocity.z);
-        Vector2 updatedVelocity = distance.cpy().scl(inverseTime);
-        Vector2 updatedAcceleration = updatedVelocity.cpy().sub(oldVelocity).scl(inverseTime);
-        return new Vector2(updatedAcceleration.scl(mass));
-    }
-
     public void dispose(){
         model.dispose();
     }
@@ -206,12 +144,4 @@ public class Ball extends BoundingSphere {
      * Call the method to know if the ball is stopped
      * @return boolean value
      */
-    public boolean isStopped(){
-        if(state == BodyState.Stopped)return true;
-        else return false;
-    }
-
-    public Vector3 getNormal() {
-        return normal;
-    }
 }

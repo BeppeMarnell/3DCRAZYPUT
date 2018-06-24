@@ -9,7 +9,7 @@ import com.mygdx.game.Physics.RigidBody;
 import com.mygdx.game.WObjects.Map;
 
 public class ForceManager {
-    public final static Force[] forces = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction()};
+    public final static Force[] forces = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction(), new Drag()};
     private ForceCalculator calculator;
     private float time;
     private RigidBody[] bodies;
@@ -19,12 +19,12 @@ public class ForceManager {
     }
 
     //TODO: throw exception "No body found")
-    public void manage(float dt) {
+    public void manage() {
         inputController();
         time += 1;
-        if (time == 20) {
+        if (time == 10) {
             time = 0;
-            System.out.print("[*] Managing forces: ");
+            System.out.println("[*] Managing forces: ");
             for (Force f : forces) {
                 f.accept(calculator);
             }

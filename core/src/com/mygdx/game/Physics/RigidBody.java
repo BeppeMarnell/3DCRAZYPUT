@@ -10,9 +10,25 @@ import com.mygdx.game.Physics.State.State;
 public class RigidBody {
     protected static final float G = 9.81f;
 
+    public void setFrontPosition(Vector3 frontPosition) {
+        this.frontPos = frontPosition;
+    }
+
+    public void setSidePosition(Vector3 sidePos) {
+        this.sidePos = sidePos;
+    }
+
+    public void setMu(float mu) {
+        this.mu = mu;
+    }
+
+    public void setKineticMu(float kineticMu) {
+        this.kineticMu = kineticMu;
+    }
+
 
     //enum to set up the world state
-    public enum BodyState { Moving, Stopped, }
+    public enum BodyState { Moving, Stopped, Flying}
     public enum Direction { Up, Down, Straight, }
     //Ball state
     protected BodyState state;
@@ -101,8 +117,6 @@ public class RigidBody {
     }
 
     protected void integrate(float dt) {
-//        updateForces();
-//        updateGravity();
         velocityVerletIntegration(dt);
 //        eulerIntegration(dt);
 //        semiImplicitEulerIntegration(dt);
@@ -219,36 +233,13 @@ public class RigidBody {
     protected void clearForces() {
         totalForce.setZero();
         totalTorque.setZero();
-        appliedForce.setZero();
     }
 
-    protected void updateForces() {
-        update2DGravity();
-        updateGravity();
-        updateDrag(0.5f, 0.3f);
-//        updateFriction();
-    }
-
-    private void update2DGravity() {
-        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(G * position.y));
-        else addForce(velocity.cpy().nor().scl(-G * position.y));
-    }
 
     protected void updateGravity() {
         addForce(gravity.cpy().scl(mass));
     }
 
-    private void updateFriction() {
-        addForce(gravity.cpy().scl(mass * mu));
-    }
-
-    private void updateDrag(float k1, float k2) {
-        Vector3 force = velocity.cpy();
-        float drag = force.len();
-        drag = k1 * drag + k2 * drag * drag;
-        force.nor().scl(-drag);
-        addForce(force);
-    }
 
     public Vector3 getVelocity() {
         return velocity;
@@ -369,6 +360,11 @@ public class RigidBody {
 
     public void setLastVelocity(Vector3 lastVelocity) {
         this.lastVelocity = lastVelocity;
+    }
+
+    public boolean isStopped(){
+        if(state == BodyState.Stopped)return true;
+        else return false;
     }
 }
 

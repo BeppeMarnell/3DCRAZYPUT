@@ -88,7 +88,8 @@ public class World {
 
         forceManager = new ForceManager(map);
         forceManager.setBody(ball);
-        movementManager = new MovementManager(new Euler());
+        movementManager = new MovementManager(new Euler(), map);
+        movementManager.setBody(ball);
     }
 
     public void update(float deltaTime){
@@ -96,10 +97,8 @@ public class World {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
-
-        forceManager.manage(deltaTime);
-
-//        movementManager.manage(ball, forceManager, deltaTime);
+        forceManager.manage();
+//        movementManager.manage(forceManager, deltaTime);
 
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
     }

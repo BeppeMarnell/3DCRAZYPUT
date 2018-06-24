@@ -9,18 +9,18 @@ import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
 
 public class ForceCalculator implements ForceVisitor {
+    private final static float DRAG1 = 0.47f;
+    private final static float DRAG2 = 0.48f;
     private RigidBody body;
     private Vector3 gravity;
     private Vector3 normal;
     private Vector3 staticFriction;
     private Vector3 kineticFriction;
     private Vector3 perpendicularForce;
-    private Vector3 actingForce;
+    private Vector3 totalForce;
     private Vector3 hitForce;
-    private Vector3 storedForce;
     private float theta;
     private Map map;
-    private boolean signHasChanged;
 
     public ForceCalculator(Map map) {
         body = null;
@@ -30,34 +30,32 @@ public class ForceCalculator implements ForceVisitor {
         staticFriction = new Vector3();
         kineticFriction = new Vector3();
         perpendicularForce = new Vector3();
-        actingForce = new Vector3();
+        totalForce = new Vector3();
         hitForce = new Vector3();
         theta = 0;
-        signHasChanged = false;
     }
 
     @Override
     public void visit(Gravity force) {
         // TODO: if ball is in flying state, add gravity to the acting force
         gravity = body.getWeight().cpy();
+        if (body.getState() == RigidBody.BodyState.Flying) {
+//            body.getTotalForce().add(gravity);
+        }
         System.out.println("+ Gravity: " + gravity + " - " + gravity.len());
     }
 
     @Override
     public void visit(Normal force) {
-//        normal = body.getFrontPos().cpy().crs(body.getSidePos()).nor();
         normal = body.getFrontPos().cpy().crs(body.getSidePos().cpy()).nor();
         if (normal.y < 0) normal.scl(-1);
         theta = (float) Math.toDegrees(Math.acos(normal.cpy().y));
-//        normal.scl(body.getWeight().cpy().scl(-1));
         body.setNormal(normal);
         System.out.println("+ Normal: " + normal + " - " + normal.len() + " ang: " + theta);
     }
 
     @Override
     public void visit(Perpendicular force) {
-//        perpendicularForce = (gravity.cpy().nor().add(normal)).scl(-body.getWeight().y * (float) Math.abs(Math.sin(Math.toRadians(theta))));
-//        perpendicularForce = (gravity.cpy().add(normal)).nor().scl(-body.getWeight().y * (float) Math.abs(Math.sin(Math.toRadians(theta))));
         Vector3 projection = normal.cpy().scl(gravity.cpy().dot(normal));
         perpendicularForce = gravity.cpy().sub(projection);
         System.out.println("+ Perpf: " + perpendicularForce + " - " + perpendicularForce.len() + " sin " + Math.abs(Math.sin(Math.toRadians(theta))));
@@ -67,7 +65,6 @@ public class ForceCalculator implements ForceVisitor {
     public void visit(StaticFriction force) {
         if (body.getState() == RigidBody.BodyState.Stopped) {
             staticFriction = perpendicularForce.cpy().nor().scl(body.getMu() * body.getWeight().y);
-//            staticFriction = perpendicularForce.cpy().scl(body.getMu() * body.getWeight().y);
         }
         System.out.println("+ staticFr: " + staticFriction + " - " + staticFriction.len());
     }
@@ -75,13 +72,16 @@ public class ForceCalculator implements ForceVisitor {
     @Override
     public void visit(KineticFriction force) {
         if (body.getState() == RigidBody.BodyState.Moving) {
-//            kineticFriction = body.getVelocity().cpy().nor().scl(body.getKineticMu() * body.getWeight().y);
-//            kineticFriction = (hitForce.cpy().sub(perpendicularForce)).nor().scl(body.getKineticMu() * body.getWeight().y);
-//            kineticFriction = (hitForce.cpy().add(perpendicularForce)).nor().scl(body.getKineticMu() * body.getWeight().y);
-//            kineticFriction = (hitForce.cpy().add(perpendicularForce)).scl(body.getKineticMu() * body.getWeight().y);
-            kineticFriction = actingForce.cpy().nor().scl(body.getKineticMu() * body.getWeight().y);
+            kineticFriction = totalForce.cpy().nor().scl(body.getKineticMu() * body.getWeight().y);
         }
         System.out.println("+ kineticFr: " + kineticFriction + " - " + kineticFriction.len());
+    }
+
+    @Override
+    public void visit(Drag force) {
+        float drag = body.getVelocity().cpy().len();
+        drag = DRAG1 * drag + DRAG2 * drag;
+        totalForce.add(body.getVelocity().cpy().nor().scl(-drag));
     }
 
     public void setBody(RigidBody body) {
@@ -90,48 +90,46 @@ public class ForceCalculator implements ForceVisitor {
 
     public void setActingForce() {
         if (body.getState() == RigidBody.BodyState.Stopped) {
-            actingForce = hitForce.cpy().add(perpendicularForce);
-            System.out.println("[**] Resting acting force: " + actingForce + " " + actingForce.len());
-            if (actingForce.len() > staticFriction.len()) {
-                actingForce.y = 0;
-                System.out.println("Moving");
-                actingForce.add(staticFriction);
-                body.setTotalForce(actingForce.cpy());
+            totalForce = hitForce.cpy().add(perpendicularForce);
+//            System.out.println("[**] Resting acting force: " + totalForce + " " + totalForce.len());
+            if (totalForce.len() > staticFriction.len()) {
+//                totalForce.y = 0;
+//                System.out.println("Moving");
+                totalForce.add(staticFriction);
+                body.setTotalForce(totalForce.cpy());
                 body.setState(RigidBody.BodyState.Moving);
             }
         } else if (body.getState() == RigidBody.BodyState.Moving) {
-            actingForce.add(hitForce.cpy().add(perpendicularForce));
-            System.out.println("[**] Moving acting force: " + actingForce + " " + actingForce.len());
-            if (actingForce.len() < kineticFriction.len()) {
-                actingForce.y = 0;
-                System.out.println("Stopping");
+            totalForce.add(hitForce.cpy().add(perpendicularForce));
+//            System.out.println("[**] Moving acting force: " + totalForce + " " + totalForce.len());
+            if (totalForce.len() < kineticFriction.len()) {
+//                totalForce.y = 0;
+//                System.out.println("Stopping");
                 body.setState(RigidBody.BodyState.Stopped);
                 body.getTotalForce().setZero();
                 body.getVelocity().setZero();
             } else {
-                actingForce.add(kineticFriction);
-                body.setTotalForce(actingForce.cpy());
+                totalForce.add(kineticFriction);
+                body.setTotalForce(totalForce.cpy());
             }
         }
         hitForce.setZero();
+        System.out.println("+ totalF: " + body.getTotalForce() + " " +  body.getTotalForce().len());
     }
-
 
 
     public void drawForces(ShapeRenderer shapeRenderer) {
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(normal.scl(4)), 3, Color.YELLOW, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(actingForce), 3, Color.PURPLE, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(perpendicularForce.cpy()), 3, Color.CYAN, shapeRenderer);
-//        Helper.DrawDebugLine(body.getPosition(), body.getFrontPos(), 2, Color.RED, shapeRenderer);
-//        Helper.DrawDebugLine(body.getPosition(), body.getSidePos(), 2, Color.BLACK, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(staticFriction), 2, Color.CHARTREUSE, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(kineticFriction), 2, Color.RED, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(hitForce), 2, Color.BLACK, shapeRenderer);
+        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(normal.cpy().scl(1.5f)), 3, Color.YELLOW, shapeRenderer);
+        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(totalForce), 3, Color.CYAN, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(perpendicularForce.cpy()), 3, Color.CYAN, shapeRenderer);
+        Helper.DrawDebugLine(body.getPosition(), body.getFrontPos(), 2, Color.RED, shapeRenderer);
+        Helper.DrawDebugLine(body.getPosition(), body.getSidePos(), 2, Color.BLACK, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(staticFriction), 2, Color.CHARTREUSE, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(kineticFriction), 2, Color.RED, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(hitForce), 2, Color.BLACK, shapeRenderer);
     }
 
     public void setHitForce(Vector3 hitForce) {
-        System.out.println("[*} Setting hit force: " + hitForce);
-//        body.setState(RigidBody.BodyState.Moving);
         this.hitForce = hitForce;
     }
 }
