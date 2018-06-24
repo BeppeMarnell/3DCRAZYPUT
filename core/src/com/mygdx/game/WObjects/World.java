@@ -3,9 +3,11 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -36,7 +38,6 @@ public class World {
     private Wall[] borders;
     private CollisionDetector collisionDetector;
     private ForceManager forceManager;
-    private Force[] forces;
     private MovementManager movementManager;
     
     private Club club;
@@ -85,10 +86,8 @@ public class World {
         bot = new Bot(map);
 
 
-        forceManager = new ForceManager();
-        forces = new Force[]{new Gravity(), new Normal(), new StaticFriction(), new KineticFriction(), new Perpendicular()};
-        forceManager.add(ball, forces);
-
+        forceManager = new ForceManager(map);
+        forceManager.setBody(ball);
         movementManager = new MovementManager(new Euler());
     }
 
@@ -98,7 +97,8 @@ public class World {
         }
 
 
-        forceManager.manage(ball);
+        forceManager.manage(deltaTime);
+
 //        movementManager.manage(ball, forceManager, deltaTime);
 
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
@@ -151,6 +151,8 @@ public class World {
         return new Vector2(ball.getPosition().x, ball.getPosition().z);
     }
 
+
+
     public boolean isThrowMode(){
         return club.throwMode;
     }
@@ -169,4 +171,13 @@ public class World {
             walls.add(borders[i]);
         }
     }
+
+    public Ball getBall() {
+        return ball;
+    }
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        forceManager.draw(shapeRenderer);
+    }
+
 }

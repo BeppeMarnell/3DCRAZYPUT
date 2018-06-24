@@ -1,30 +1,78 @@
 package com.mygdx.game.Physics.ForceDepartment.ForceManagement;
 
-import com.mygdx.game.Physics.ForceDepartment.ForceCollection.Force;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Physics.ForceDepartment.ForceCollection.*;
 import com.mygdx.game.Physics.RigidBody;
+import com.mygdx.game.WObjects.Map;
 
 public class ForceManager {
-    private ForceDatabase db;
+    public final static Force[] forces = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction()};
     private ForceCalculator calculator;
+    private float time;
+    private RigidBody[] bodies;
 
-    public ForceManager() {
-        db = new ForceDatabase();
-        calculator = new ForceCalculator();
+    public ForceManager(Map map) {
+        calculator = new ForceCalculator(map);
     }
 
-    public void add(RigidBody body, Force[] forces) {
-        db.add(body, forces);
-    }
-
-    public void manage(RigidBody body) {
-        System.out.println("[!] Managing forces");
-        calculator.setBody(body);
-        Force[] forces = db.getForces(body);
-        for (Force f : forces) {
-            f.accept(calculator);
+    //TODO: throw exception "No body found")
+    public void manage(float dt) {
+        inputController();
+        time += 1;
+        if (time == 20) {
+            time = 0;
+            System.out.print("[*] Managing forces: ");
+            for (Force f : forces) {
+                f.accept(calculator);
+            }
+            calculator.setActingForce();
         }
-        System.out.println("[!!] Setting acting force ... ");
-        calculator.setActingForce();
-        System.out.print(body.getActingForce());
     }
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        calculator.drawForces(shapeRenderer);
+    }
+
+    public void inputController() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            calculator.setHitForce(new Vector3(-100,0,0));
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            calculator.setHitForce(new Vector3(100,0,0));
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            calculator.setHitForce(new Vector3(0,0,100));
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            calculator.setHitForce(new Vector3(0,0,-100));
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_8)) {
+            calculator.setHitForce(new Vector3(0,100,0));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_2)) {
+            calculator.setHitForce(new Vector3(0,-100,0));
+        }
+//        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+//            lastVelocity = velocity.cpy();
+//            velocity.setZero();
+//            state = BodyState.Stopped;
+//        }
+
+    }
+
+    public void setBodies(RigidBody[] bodies) {
+        this.bodies = bodies;
+    }
+
+    public void setBody(RigidBody body) {
+        calculator.setBody(body);
+    }
+
 }

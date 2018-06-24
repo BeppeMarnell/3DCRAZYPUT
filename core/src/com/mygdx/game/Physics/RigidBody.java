@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
 import com.mygdx.game.Physics.Rotation.AQuaternion;
+import com.mygdx.game.Physics.State.Motion;
+import com.mygdx.game.Physics.State.State;
 
 public class RigidBody {
     protected static final float G = 9.81f;
@@ -15,6 +17,14 @@ public class RigidBody {
     //Ball state
     protected BodyState state;
     protected Direction movement;
+
+    // Starting State pattern implementation
+    State motion;
+    State idle;
+    State flight;
+    State trackingState;
+
+
 
     protected Vector3 position;
     protected Vector3 weight;
@@ -42,11 +52,17 @@ public class RigidBody {
     protected float damping;
     protected float radius;
     protected Vector3 actingForce;
-    protected Vector3 lastNormalizedVelocity;
+    protected Vector3 lastTotalForce;
     protected float slopeAngle;
+    protected Vector3 appliedForce;
+    protected Vector3 lastVelocity;
+    protected Vector3 frontPos;
+    protected Vector3 sidePos;
+    private Vector3 normal;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
+        motion = new Motion(this);
         this.position = position;
         this.mass = mass;
         velocity = new Vector3();
@@ -68,26 +84,41 @@ public class RigidBody {
         this.radius = radius;
         state = BodyState.Stopped;
         movement = Direction.Straight;
-        weight = new Vector3(0, -G * mass, 0);
+        weight = new Vector3(0, -G * mass, 0); // (Newtons)
+        frontPos = new Vector3();
+        sidePos = new Vector3();
 
         kineticMu = 0.6f;
-        lastNormalizedVelocity = new Vector3();
+        mu = 0.7f;
+        lastTotalForce = new Vector3();
+        appliedForce = new Vector3();
+        lastVelocity = velocity.cpy();
+        normal = new Vector3();
+        frontPos = position.cpy().add(10, 0, 0);
+        sidePos = position.cpy().add(0, 0, -10);
 
 //        generateInertiaTensorSphere();
     }
 
     protected void integrate(float dt) {
-        updateForces();
+//        updateForces();
+//        updateGravity();
         velocityVerletIntegration(dt);
+//        eulerIntegration(dt);
 //        semiImplicitEulerIntegration(dt);
 //        updateMatrices();
         clearForces();
     }
 
     private void eulerIntegration(float dt) {
-        acceleration.set(totalForce.scl(inverseMass));
+        acceleration.set(totalForce.cpy().scl(inverseMass));
+//        velocity.add(acceleration.cpy().scl(dt)).scl(mu);
+        velocity.add(acceleration.cpy().scl(dt));
         position.add(velocity.cpy().scl(dt));
-        velocity.add(acceleration.cpy().scl(dt)).scl(mu);
+        if (velocity.len() != 0 || lastVelocity.len() == 0) {
+            lastVelocity.set(velocity.cpy());
+        }
+        System.out.println("Vel: " + velocity + " pos: " + position + " acc: " + acceleration);
     }
 
     private void semiImplicitEulerIntegration(float dt) {
@@ -97,15 +128,21 @@ public class RigidBody {
     }
 
     private void velocityVerletIntegration(float dt) {
+//        System.out.println(",,,,,,,,,,,,,,,,, tForce: " + totalForce);
+//        if (totalForce.x != 0 || totalForce.z != 0) lastTotalForce = totalForce.cpy();
+//        System.out.println(",,,,,,,,,,,,,,,,, lastForce: " + lastTotalForce);
 //        oldAcceleration.set(acceleration);
         acceleration.set(totalForce.cpy().scl(inverseMass));
 //        oldAcceleration.add(totalForce.cpy().scl(inverseMass));
         oldVelocity.set(velocity);
+
+//        lastTotalForce = velocity.nor();
         Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
-        lastNormalizedVelocity = newVelocity.nor();
         position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
-        System.out.println("Vel: " + velocity + " pos: " + position + " acc: " + acceleration);
+        System.out.println("========== p: " + position + " v: " + velocity + " a: " + acceleration);
+        System.out.println("===== tf: " + totalForce + " ltf: " + lastTotalForce);
+
 
 ////        angularAcceleration = inverseInertiaTensorWorld.transform(totalTorque);
 //        angularAcceleration = inertiaTensor.transform(totalTorque);
@@ -161,8 +198,12 @@ public class RigidBody {
     }
 
     public void addForce(Vector3 force) {
-        state = BodyState.Moving;
+//        state = BodyState.Moving;
+//        lastTotalForce.set(totalForce);
         totalForce.add(force);
+//        totalForce.set(force);
+//        lastTotalForce.set(force);
+//        System.out.println("!!!!!!!!!!!!!******************* setting last total force inside addForce() to: " + lastTotalForce);
     }
 
     protected void addForceAtPoint(Vector3 force, Vector3 point) {
@@ -178,13 +219,14 @@ public class RigidBody {
     protected void clearForces() {
         totalForce.setZero();
         totalTorque.setZero();
+        appliedForce.setZero();
     }
 
     protected void updateForces() {
-//        update2DGravity();
+        update2DGravity();
         updateGravity();
         updateDrag(0.5f, 0.3f);
-        updateFriction();
+//        updateFriction();
     }
 
     private void update2DGravity() {
@@ -192,7 +234,7 @@ public class RigidBody {
         else addForce(velocity.cpy().nor().scl(-G * position.y));
     }
 
-    private void updateGravity() {
+    protected void updateGravity() {
         addForce(gravity.cpy().scl(mass));
     }
 
@@ -256,8 +298,8 @@ public class RigidBody {
         return oldVelocity;
     }
 
-    public Vector3 getLastNormalizedVelocity() {
-        return lastNormalizedVelocity;
+    public Vector3 getLastTotalForce() {
+        return lastTotalForce;
     }
 
     public float getRadius() {
@@ -279,6 +321,54 @@ public class RigidBody {
 
     public BodyState getState() {
         return state;
+    }
+
+    public Vector3 getAppliedForce() {
+        return appliedForce;
+    }
+
+    public void setAppliedForce(Vector3 appliedForce) {
+        this.appliedForce = appliedForce;
+    }
+
+    public void setTotalForce(Vector3 totalForce) {
+        this.totalForce = totalForce;
+    }
+
+    public Vector3 getTotalForce() {
+        return totalForce;
+    }
+
+    public void setState(BodyState state) {
+        this.state = state;
+    }
+
+    public void setLastTotalForce(Vector3 lastTotalForce) {
+        this.lastTotalForce = lastTotalForce;
+    }
+
+    public Vector3 getLastVelocity() {
+        return lastVelocity;
+    }
+
+    public Vector3 getFrontPos() {
+        return frontPos;
+    }
+
+    public Vector3 getSidePos() {
+        return sidePos;
+    }
+
+    public Vector3 getNormal() {
+        return normal;
+    }
+
+    public void setNormal(Vector3 normal) {
+        this.normal = normal;
+    }
+
+    public void setLastVelocity(Vector3 lastVelocity) {
+        this.lastVelocity = lastVelocity;
     }
 }
 

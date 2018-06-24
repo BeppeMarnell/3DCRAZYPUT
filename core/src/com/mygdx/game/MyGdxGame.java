@@ -4,10 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -15,6 +12,8 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
@@ -24,6 +23,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	/**
 	 * Main class of the game
 	 */
+
+	private ShapeRenderer shapeRenderer;
 
 	private ModelBatch modelBatch;
 	private Camera cam;
@@ -37,6 +38,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	public boolean tracking = false;
+	public boolean displayWorldForces = true;
 	private int initPos = 0;
 
 	private Map map;
@@ -49,6 +51,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+	    shapeRenderer = new ShapeRenderer();
+
 		magnitude = readSettings();
 
 		modelBatch = new ModelBatch();
@@ -125,6 +129,7 @@ public class MyGdxGame extends ApplicationAdapter {
 				initPos++;
 			}
 			cam.update();
+			shapeRenderer.setProjectionMatrix(cam.combined);
 		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -143,10 +148,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		//render all the objects in the world
 		world.render(modelBatch, environment);
 
+
 		//render the water
 		water.render(Gdx.graphics.getDeltaTime(), modelBatch);
 
 		modelBatch.end();
+
+		//display world forces
+		if (displayWorldForces) world.draw(shapeRenderer);
 
 		//show the frame rate
 		batch.begin();

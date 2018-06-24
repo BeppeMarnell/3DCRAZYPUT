@@ -2,6 +2,7 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -23,7 +24,6 @@ public class Ball extends BoundingSphere {
      * z axis = y
      */
 
-
     private Model model;
     private ModelInstance ballInstance;
     //get a copy of the map
@@ -36,15 +36,18 @@ public class Ball extends BoundingSphere {
     public static final float MASS = 2f;
     public static final float ELASTICITY = 0.3f;
 
+    public Vector3 normal;
+    public Vector3 perpforce;
+
     /**
      * Initialize the ball 3d and add the position to it
      * @param map
      */
     public Ball(Map map){
         super(new Vector3(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y), MASS, RAD);
+        ModelBuilder modelBuilder = new ModelBuilder();
 
         //create the ball object
-        ModelBuilder modelBuilder = new ModelBuilder();
         if(!debugMode)
             model = modelBuilder.createSphere(2, 2, 2,15,15,
                     new Material(ColorAttribute.createDiffuse(Color.WHITE)),
@@ -60,8 +63,12 @@ public class Ball extends BoundingSphere {
 
         ballInstance.transform.translate(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y);
 
+        normal = position.cpy().add(0, 10, 0);
+
+
         //copy the instance of the map
         this.map = map;
+        perpforce = new Vector3();
     }
 
     /**
@@ -79,17 +86,20 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
+
         if (state == BodyState.Moving) {
             move3DBall();
             integrate(deltaTime);
+//            lastVelocity = velocity;
         }
 
         if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-            clearForces();
-            state = BodyState.Stopped;
+//            clearForces();
+//            state = BodyState.Stopped;
         }
 
-        moveByKeys();
+//        moveByKeys();
+
 
     }
 
@@ -101,22 +111,30 @@ public class Ball extends BoundingSphere {
         float err = 0.005f;
 
         Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
+//        System.out.println("=== Last velocity: " + lastVelocity);
 
-        Vector3 futurePos = position.cpy().add(lastNormalizedVelocity.cpy().add(radius));
-        Vector3 pastPos = position.cpy().add(lastNormalizedVelocity.cpy().sub(radius));
-        futurePos.y = map.getHeight(new Vector2(futurePos.x, futurePos.z), RAD);
-        pastPos.y = map.getHeight(new Vector2(pastPos.x, pastPos.z), RAD);
-        slopeAngle = Helper.angleBetweenPoints3D(futurePos, pastPos);
-        System.out.println("pastp: " + pastPos + " fp: " + futurePos + " ang: " + slopeAngle);
-
-
-
+//        Vector3 frontPos = position.cpy().add(modifiedVelocity.cpy().nor().scl(2));
+//        Vector3 sidePos = position.cpy().add(modifiedVelocity.cpy().rotate(new Vector3(0, 1, 0), 90).nor().scl(2));
+//        frontPos = position.cpy().add(lastVelocity.cpy().nor().scl(2));
+//        sidePos = position.cpy().add(lastVelocity.cpy().rotate(new Vector3(0, 1, 0), 90).nor().scl(2));
+        frontPos = position.cpy().add(0, 0, 3);
+        sidePos = position.cpy().add(3, 0, 0);
+        frontPos.y = map.getHeight(new Vector2(frontPos.x, frontPos.z), RAD);
+        sidePos.y = map.getHeight(new Vector2(sidePos.x, sidePos.z), RAD);
+        System.out.println("=============== fp: " + frontPos + " sp: " + sidePos + " norvel: " + velocity.cpy().nor());
+//        Vector3 normal = frontPos.cpy().crs(sidePos).nor();
         float height = map.getHeight(new Vector2(position.x, position.z), RAD);
+
+        if (position.y - height > 1) {
+            updateGravity();
+        }
+
         if (position.y < height) {
             position.y = height;
         }
 
         mu = map.getFriction(new Vector2(position.x, position.z));
+        kineticMu = mu - 0.1f;
 
         if (oldPos.y - position.y > err) {
             movement = Direction.Down;
@@ -157,6 +175,11 @@ public class Ball extends BoundingSphere {
         if(Gdx.input.isKeyPressed(Input.Keys.NUMPAD_2)) {
             addForce(new Vector3(0,-100,0));
         }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+            lastVelocity = velocity.cpy();
+            velocity.setZero();
+            state = BodyState.Stopped;
+        }
     }
 
     /**
@@ -186,5 +209,9 @@ public class Ball extends BoundingSphere {
     public boolean isStopped(){
         if(state == BodyState.Stopped)return true;
         else return false;
+    }
+
+    public Vector3 getNormal() {
+        return normal;
     }
 }

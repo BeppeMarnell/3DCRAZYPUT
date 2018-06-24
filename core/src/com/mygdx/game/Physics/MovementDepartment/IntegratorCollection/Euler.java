@@ -11,7 +11,7 @@ public class Euler extends ODE {
     public void solve(MovementManager mm) {
         Vector3 velocity = mm.getBody().getVelocity();
         Vector3 position = mm.getBody().getPosition();
-        velocity.add(calculateAcceleration(mm.getFm(), mm.getBody()).scl(mm.getDt()));
+        velocity.add(calculateAcceleration(mm.getBody()).scl(mm.getDt()));
         mm.getBody().setVelocity(velocity);
         mm.getBody().setPosition(position.add(velocity.scl(mm.getDt())));
     }

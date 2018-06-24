@@ -1,6 +1,11 @@
 package com.mygdx.game.Utils;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -77,7 +82,7 @@ public class Helper {
             two = vec1.cpy();
         }
 
-        return  Math.abs(MathUtils.radDeg * MathUtils.atan2((one.y-two.y),(one.x-two.x)));
+        return  (MathUtils.radDeg * MathUtils.atan2((one.y-two.y),(one.x-two.x)));
     }
 
     /**
@@ -93,5 +98,31 @@ public class Helper {
         //translate the distance between the two 3D point as distance in a 2D normalized context
         Vector2 to = new Vector2(vec1.dst(vec2), vec2.y); // 
         return  angleBetweenPoints(from, to);
+    }
+
+    public static Vector3 getSlopeNormal(Vector3 v1, Vector3 v2) {
+        Vector3 normal = v1.crs(v2);
+        return normal;
+    }
+
+
+    public static void DrawDebugLine(Vector3 start, Vector3 end, int lineWidth, Color color, ShapeRenderer debugRenderer)
+    {
+        Gdx.gl.glLineWidth(lineWidth);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debugRenderer.setColor(color);
+        debugRenderer.line(start, end);
+        debugRenderer.end();
+        Gdx.gl.glLineWidth(1);
+    }
+
+    public static void DrawDebugLine(Vector3 start, Vector3 end, ShapeRenderer debugRenderer)
+    {
+        Gdx.gl.glLineWidth(2);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Line);
+        debugRenderer.setColor(Color.BLACK);
+        debugRenderer.line(start, end);
+        debugRenderer.end();
+        Gdx.gl.glLineWidth(1);
     }
 }
