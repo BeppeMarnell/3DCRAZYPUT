@@ -60,10 +60,6 @@ public class Map {
         return new Vector3(this.getInitBallPosV2().x,getHeight(getInitBallPosV2(),Ball.RAD), getInitBallPosV2().y);
     }
 
-    public Vector3 getInitHolePosV3(){
-        return new Vector3(this.getHolePosTranslV2().x,getHeight(getHolePosTranslV2(),Ball.RAD), getHolePosTranslV2().y);
-    }
-
     /**
      * main constructor to load the map
      * @param paths
@@ -236,22 +232,22 @@ public class Map {
      * Helper method to translate the map into a array map readable by the bot
      * @return
      */
-   public int[][] getArrayMap(int n, Vector2 ballPos){
+    public int[][] getArrayMap( Vector2 ballPos){
         //Increments the Map Array 
        
-        int[][] map = new int[n*20][n*14];
+        int[][] map = new int[20][14];
 
         //Convert the walls, trees, and water
         for(int i=0; i<map.length; i++)
             for (int j = 0; j < map[0].length; j++)
-                if(mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Tree || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Water
-                        || mapObjects[i/n][j/n].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
+                if(mapObjects[i][j].getType() == WorldObject.ObjectType.Tree || mapObjects[i][j].getType() == WorldObject.ObjectType.Water
+                        || mapObjects[i][j].getType() == WorldObject.ObjectType.Wall) map[i][j] = 1;
 
         //Convert hole and ball position
-        int x = (int)Helper.map(ballPos.x, -80, 80,0, 20)*n+n/2;
-        int y = (int )Helper.map(ballPos.y, -56, 56,0, 14)*n+n/2;
+        int x = (int)Helper.map(ballPos.x, -80, 80,0, 20);
+        int y = (int )Helper.map(ballPos.y, -56, 56,0, 14);
         map[x][y] = 7;
-        map[n*(int)getHolePos().x + n/2][n*((int)getHolePos().y) +n/2] = 9;
+        map[(int)getHolePos().x][(int)getHolePos().y] = 9;
 
         return map;
     }
