@@ -17,6 +17,7 @@ public class MovementManager {
     }
 
     public void manage(float dt) {
+        fm.inputController();
         this.dt = dt;
         if (!body.isStopped()) {
             move();
@@ -48,6 +49,7 @@ public class MovementManager {
         this.fm = fm;
         this.body = fm.getBody();
         this.map = fm.getMap();
+        ode.setFm(fm);
     }
 
     public void setOde(ODE ode) {
@@ -56,10 +58,6 @@ public class MovementManager {
 
     public RigidBody getBody() {
         return body;
-    }
-
-    public ForceManager getFm() {
-        return fm;
     }
 
     public void setBody(RigidBody body) {

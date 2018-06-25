@@ -3,25 +3,19 @@ package com.mygdx.game.WObjects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
-import com.mygdx.game.Physics.CollisionDetector;
-import com.mygdx.game.Physics.ForceDepartment.ForceCollection.*;
+import com.mygdx.game.Physics.CollisionDepartment.CollisionDetector;
 import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
 import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Euler;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Midpoint;
 import com.mygdx.game.Physics.MovementDepartment.MovementManager;
-import com.mygdx.game.Physics.RigidBody;
-import com.mygdx.game.Utils.Helper;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class World {
@@ -88,8 +82,8 @@ public class World {
 
         forceManager = new ForceManager(map);
         forceManager.setBody(ball);
-        movementManager = new MovementManager(new Euler());
-        movementManager.setBody(ball);
+//        movementManager = new MovementManager(new Euler());
+        movementManager = new MovementManager(new Midpoint());
         movementManager.setForceManager(forceManager);
     }
 
@@ -98,7 +92,7 @@ public class World {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
-        forceManager.manage();
+//        forceManager.manage(10);
         movementManager.manage(deltaTime);
 
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);

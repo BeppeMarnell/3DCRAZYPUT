@@ -37,7 +37,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	public boolean tracking = false;
-	public boolean displayWorldForces = false;
+	public boolean displayWorldForces = true;
 	private int initPos = 0;
 
 	private Map map;

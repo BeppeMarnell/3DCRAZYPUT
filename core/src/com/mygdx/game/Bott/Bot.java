@@ -99,7 +99,7 @@ public class Bot {
         }
 
         //move the ball in the direction and decrease the iterations
-        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),250));
+//        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),250));
         solutionPath.get(solutionIndex).iter--;
 
         //if the iteration is done then i switch to the next

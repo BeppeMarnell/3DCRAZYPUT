@@ -19,10 +19,10 @@ public class ForceManager {
     }
 
     //TODO: throw exception "No body found")
-    public void manage() {
-        inputController();
+    public void manage(float dt) {
+//        inputController();
         time += 1;
-        if (time == 10) {
+        if (time == dt) {
             time = 0;
 //            System.out.println("[*] Managing forces: ");
             for (Force f : forces) {
@@ -37,11 +37,6 @@ public class ForceManager {
     }
 
     public void inputController() {
-        if (Gdx.input.isButtonPressed(Input.Keys.F)) {
-
-
-        }
-
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
             calculator.setHitForce(new Vector3(-100,0,0));
         }

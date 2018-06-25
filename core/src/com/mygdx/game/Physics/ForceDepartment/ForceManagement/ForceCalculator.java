@@ -105,7 +105,7 @@ public class ForceCalculator implements ForceVisitor {
         } else if (body.getState() == RigidBody.BodyState.Moving) {
 
 
-            totalTorque.add(new Vector3(0, 0, 1).crs(totalForce));
+//            totalTorque.add(new Vector3(0, 0, 1).crs(totalForce));
 //            System.out.println("=== torq: " + totalTorque);
 
             totalForce.add(hitForce.cpy().add(perpendicularForce));
@@ -138,6 +138,7 @@ public class ForceCalculator implements ForceVisitor {
     }
 
     public void setHitForce(Vector3 hitForce) {
+        body.setState(RigidBody.BodyState.Moving);
         this.hitForce = hitForce;
     }
 
