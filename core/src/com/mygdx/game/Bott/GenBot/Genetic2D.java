@@ -3,9 +3,9 @@ package com.mygdx.game.Bott.GenBot;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Utils.Helper;
-import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.WorldObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,7 +24,7 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
     private ArrayList<GeneDirection> bestChrom;
 
     private final float mutationRate = 0.8f;
-    private final int sonRate = 10;
+    private final int sonRate = 80;
 
     private boolean reached = false;
 
@@ -57,14 +57,15 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
     public Genetic2D(Map map,  Vector2 ballPos, int millisec){
         //create an initial population
         ballCroms = new ArrayList<>();
-        create(200);
+        start = getBallposTranl(ballPos);
+        end = getBallposTranl(map.getHolePosTranslV2());
+
+        create(400);
 
         //create obstacles
         cromWalls = new ArrayList<>();
         bestChrom = new ArrayList<>();
         createObstacles(map);
-
-        start = getBallposTranl(ballPos);
 
         //set the millisecond time
         this.millisec = millisec;
@@ -72,7 +73,7 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
 
     public void update(){
         //setting backup
-        if(iter> 2000)reached = true;
+        if(iter> 1000)reached = true;
 
         if(!reached){
 
@@ -96,11 +97,16 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
             //reproduce
             draw();
 
-            //get the best chromosome
-            bestChrom = new ArrayList<>(ballCroms.get(0).getChromosome());
-
             //get ball iterations
             ballIter = ballCroms.get(0).getIterations();
+
+            //get the best chromosome
+            bestChrom.clear();
+            for(int i=0; i<ballIter ; i++){
+                bestChrom.add(ballCroms.get(0).getChromosome().get(i));
+            }
+            //add number of iter
+            bestChrom.add(new GeneDirection(new Vector2(iter, iter)));
 
             //set position of the population to 0 and iteration
             for (BallCrom b: ballCroms){
@@ -153,7 +159,6 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
 
             //add the child to the array
             ballCroms.add(child);
-
         }
     }
 
@@ -193,20 +198,20 @@ public class Genetic2D implements Callable<ArrayList<GeneDirection>> {
                     //create a wall in a specified position
 
                     float x = Helper.map(i, 0,19, 0, 640);
-                    float y = Helper.map(j, 0,13, 0, 448);
-                    cromWalls.add(new CromWall(x +16,y +16));
+                    float y = Helper.map(j, 13,0, 0, 448);
+                    cromWalls.add(new CromWall(x,y));
                 }
             }
         }
 
         //set the end point
-        end = new Vector2(Helper.map(map.getHolePosTranslV2().x, -80,80, 0, 640),
-                Helper.map(map.getHolePosTranslV2().y, -56,56, 0, 448));
+        end = new Vector2(Helper.map(map.getHolePosTranslV2().x, -76,76, 0, 640),
+                Helper.map(map.getHolePosTranslV2().y, 52,-52, 0, 448));
     }
 
     private Vector2 getBallposTranl(Vector2 Ballpos){
-        float x = Helper.map(Ballpos.x, -80,80, 0, 640);
-        float y = Helper.map(Ballpos.y, -56,56, 0, 448);
+        float x = Helper.map(Ballpos.x, -76,76, 32, 640);
+        float y = Helper.map(Ballpos.y, 52,-52, 0, 448);
 
         return new Vector2(x,y);
     }
