@@ -22,6 +22,7 @@ public class MovementManager {
         if (!body.isStopped()) {
             move();
             ode.solve(this);
+            ode.clear();
         }
     }
 

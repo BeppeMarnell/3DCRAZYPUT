@@ -66,6 +66,8 @@ public class CollisionSolver {
             // update the velocity
             ball.setVelocity(newVelocity);
 
+            //TODO: Check collisions at high force, probably you need the switch the sign of totalForce from Force Calculator
+            ball.isCollided(true);
         }
     }
 

@@ -5,7 +5,7 @@ import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
 import com.mygdx.game.Physics.RigidBody;
 
 public abstract class ODE {
-    protected final static float DT = 10;
+    protected final static float DT = 15;
     private ForceManager fm;
     protected Vector3 position;
     protected Vector3 velocity;
@@ -26,4 +26,14 @@ public abstract class ODE {
     public void setFm(ForceManager fm) {
         this.fm = fm;
     }
+
+    protected void clear() {
+        position = null;
+        velocity = null;
+        acceleration = null;
+        predictedAcceleration = null;
+        predictedVelocity = null;
+        predictedPosition = null;
+    }
+
 }

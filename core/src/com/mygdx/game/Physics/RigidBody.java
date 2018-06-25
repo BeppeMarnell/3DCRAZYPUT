@@ -34,6 +34,7 @@ public class RigidBody {
     protected float mass;
     protected float radius;
     protected float slopeAngle;
+    protected boolean isCollided;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
@@ -55,6 +56,7 @@ public class RigidBody {
         normal = new Vector3();
         kineticMu = 0.6f;
         mu = 0.7f;
+        isCollided = false;
     }
 
     public Vector3 getAcceleration() {
@@ -169,6 +171,14 @@ public class RigidBody {
 
     public Vector3 getTmpPosition() {
         return tmpPosition;
+    }
+
+    public void isCollided(boolean b) {
+        isCollided = b;
+    }
+
+    public boolean isCollided() {
+        return isCollided;
     }
 }
 

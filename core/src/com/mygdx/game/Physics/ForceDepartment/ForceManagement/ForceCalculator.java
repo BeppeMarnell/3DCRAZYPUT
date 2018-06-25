@@ -92,6 +92,10 @@ public class ForceCalculator implements ForceVisitor {
     }
 
     public void setActingForce() {
+//        if (body.isCollided()) {
+//            totalForce.setZero();
+//            body.isCollided(false);
+//        }
         if (body.getState() == RigidBody.BodyState.Stopped) {
             totalForce = hitForce.cpy().add(perpendicularForce);
 //            System.out.println("[**] Resting acting force: " + totalForce + " " + totalForce.len());

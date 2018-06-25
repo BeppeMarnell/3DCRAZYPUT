@@ -42,7 +42,7 @@ public class ForceManager {
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            calculator.setHitForce(new Vector3(100,0,0));
+            calculator.setHitForce(new Vector3(500,0,0));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {

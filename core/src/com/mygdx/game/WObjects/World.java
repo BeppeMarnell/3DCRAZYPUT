@@ -14,6 +14,7 @@ import com.mygdx.game.Physics.CollisionDepartment.CollisionDetector;
 import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
 import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Euler;
 import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Midpoint;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.RungeKutta4;
 import com.mygdx.game.Physics.MovementDepartment.MovementManager;
 
 import java.util.ArrayList;
@@ -82,8 +83,9 @@ public class World {
 
         forceManager = new ForceManager(map);
         forceManager.setBody(ball);
-//        movementManager = new MovementManager(new Euler());
-        movementManager = new MovementManager(new Midpoint());
+        movementManager = new MovementManager(new Euler());
+//        movementManager = new MovementManager(new RungeKutta4());
+//        movementManager = new MovementManager(new Midpoint());
         movementManager.setForceManager(forceManager);
     }
 
