@@ -18,8 +18,6 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
-import sun.jvm.hotspot.utilities.Interval;
-import java.time.Instant;
 
 public class MyGdxGame extends ApplicationAdapter {
 

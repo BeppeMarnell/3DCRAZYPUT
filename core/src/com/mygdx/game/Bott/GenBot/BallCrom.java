@@ -33,8 +33,9 @@ public class BallCrom {
     private Vector2 vel;
 
     private Vector2 end;
+    private Vector2 start;
 
-    static float MAX_VELOCITY = 10f;
+    static float MAX_VELOCITY = 4f;
     static float FRICTION = 1.7f;
 
     //every index is an iteration's direction
@@ -50,7 +51,8 @@ public class BallCrom {
         circle= new Circle(0,0,4f);
 
         //init pos
-        pos = start;
+        this.start = start;
+        pos = new Vector2(start.cpy());
 
         //fitness and chromosome
         fitness = 0;
@@ -75,6 +77,8 @@ public class BallCrom {
     }
 
     public void update(ArrayList<CromWall> cromWalls){
+
+
         //update the circle position
         circle.x = pos.x; circle.y = pos.y;
 
@@ -97,6 +101,9 @@ public class BallCrom {
         }else{
             vel.setZero();
         }
+
+        //check if the ball is out of bounds
+        if(pos.x< 0 || pos.x> 640 || pos.y <0 || pos.y> 480)collides = true;
     }
 
     public void nextVel(){
@@ -134,7 +141,7 @@ public class BallCrom {
 
     public void resetBall(){
         //reset position to zero
-        pos.setZero();
+        pos.set(start);
 
         //reset iterations
         iterations = 0;

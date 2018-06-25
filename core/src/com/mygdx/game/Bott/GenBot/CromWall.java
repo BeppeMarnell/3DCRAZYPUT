@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 public class CromWall {
     //set position inside it
     private Rectangle rec;
-    private final float width = 32;
+    private final float width = 36;
 
     public CromWall(float x, float y){
         //set a rectangle

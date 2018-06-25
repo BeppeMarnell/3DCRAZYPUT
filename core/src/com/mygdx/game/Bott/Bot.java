@@ -10,12 +10,13 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Bot {
@@ -42,7 +43,6 @@ public class Bot {
         solutionIndex = 1;
         path = new ArrayList<>();
 
-
         rectanglepoints = new ArrayList<>();
 
         setRectanglepoint();
@@ -65,6 +65,7 @@ public class Bot {
                 }
             }
         }
+
 
 
         //get the list of coordinates
@@ -99,6 +100,61 @@ public class Bot {
             //System.out.println(scalarM);
 
             solutionPath.get(i-1).to.scl(scalarM);
+        }
+
+        //for(Vector2 c: path)System.out.println(c.toString());
+
+        //set true to start moving the ball to the hole
+        movingBall = true;
+
+        setRectanglepoint();
+    }
+
+    public void CalculateBeadthFirst(int[][] map){
+        //reset to initial state of the path
+        solutionPath.clear();
+        solutionIndex = 1;
+
+        //set up AStar algorithm
+        AlgorithmMap algorithmMap = new AlgorithmMap(map);
+        BreadthFirstSearch breadthFirstAlgorithm = new BreadthFirstSearch();
+
+
+        //get the list of coordinates
+        List<Coordinate> finalPath = breadthFirstAlgorithm.BreadFirstSearchSolve(algorithmMap);
+        Collections.reverse(finalPath);
+
+        algorithmMap.printPath(finalPath); //uncomment to see the printed
+        algorithmMap.reset();
+
+
+        //add the start
+        float x = Helper.map(algorithmMap.getStart().x, 0, 19,-76, 76);
+        float y = Helper.map(algorithmMap.getStart().y, 0, 13,-52, 52);
+        path.add(new Vector2(x, y));
+
+        for(Coordinate c: finalPath){
+            //translate array coordinates to world coordinates
+            x = Helper.map(c.x, 0, 19,-76, 76);
+            y = Helper.map(c.y, 0, 13,-52, 52);
+            path.add(new Vector2(x, y));
+
+        }
+        //add the hole position
+        path.add(mapO.getHolePosTranslV2());
+
+        //calculate the solution vectors
+        for(int i=1; i<path.size(); i++){
+
+            solutionPath.add(new MoveTo(path.get(i).cpy().sub(path.get(i-1).cpy()), 10));
+
+            //calculate the scalar multiplicand
+            float scalarM = forceToPoint(path.get(i-1).cpy(), path.get(i).cpy());
+            //System.out.println(scalarM);
+
+            solutionPath.get(i-1).to.scl(scalarM);
+
+            System.out.println(solutionPath.get(i-1).to.toString());
         }
 
         //for(Vector2 c: path)System.out.println(c.toString());
