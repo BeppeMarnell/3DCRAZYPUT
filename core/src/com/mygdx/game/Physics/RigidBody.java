@@ -1,5 +1,6 @@
 package com.mygdx.game.Physics;
 
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.Rotation.AMatrix3;
 import com.mygdx.game.Physics.Rotation.AMatrix4;
@@ -24,6 +25,10 @@ public class RigidBody {
 
     public void setKineticMu(float kineticMu) {
         this.kineticMu = kineticMu;
+    }
+
+    public void setSlopeAngle(float slopeAngle) {
+        this.slopeAngle = slopeAngle;
     }
 
 
@@ -58,9 +63,10 @@ public class RigidBody {
     protected Vector3 rotation;
     protected AQuaternion orientation;
     protected AMatrix4 transform;
-    protected AMatrix4 inverseInertiaTensor;
-    protected AMatrix3 inverseInertiaTensorWorld;
-    protected AMatrix4 inertiaTensor;
+//    protected AMatrix4 inverseInertiaTensor;
+//    protected AMatrix3 inverseInertiaTensorWorld;
+    protected Matrix3 inverseInertiaTensor;
+    protected Matrix3 inertiaTensor;
     protected float mu;
     protected float kineticMu;
     protected float inverseMass;
@@ -78,6 +84,8 @@ public class RigidBody {
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
+        float tensorSphereCoefficient = 2 / 5 * mass * radius * radius;
+        inverseInertiaTensor = new Matrix3(new float[]{1/tensorSphereCoefficient, 0, 0, 0, 1/tensorSphereCoefficient, 0, 0, 0, 1/tensorSphereCoefficient});
         motion = new Motion(this);
         this.position = position;
         this.mass = mass;
@@ -93,8 +101,8 @@ public class RigidBody {
         friction = new Vector3();
         totalForce = new Vector3();
         totalTorque = new Vector3();
-        inverseInertiaTensorWorld = new AMatrix3();
-        inverseInertiaTensor = new AMatrix4();
+//        inverseInertiaTensorWorld = new AMatrix3();
+//        inverseInertiaTensor = new AMatrix4();
         orientation = new AQuaternion();
         transform = new AMatrix4();
         this.radius = radius;
@@ -148,24 +156,24 @@ public class RigidBody {
 //        oldAcceleration.set(acceleration);
         acceleration.set(totalForce.cpy().scl(inverseMass));
 //        oldAcceleration.add(totalForce.cpy().scl(inverseMass));
-        oldVelocity.set(velocity);
+        oldVelocity.set(velocity.cpy());
 
 //        lastTotalForce = velocity.nor();
         Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
         velocity.set(newVelocity);
         position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
-        System.out.println("========== p: " + position + " v: " + velocity + " a: " + acceleration);
-        System.out.println("===== tf: " + totalForce + " ltf: " + lastTotalForce);
+//        System.out.println("========== p: " + position + " v: " + velocity + " a: " + acceleration);
+//        System.out.println("===== tf: " + totalForce + " ltf: " + lastTotalForce);
 
 
 ////        angularAcceleration = inverseInertiaTensorWorld.transform(totalTorque);
-//        angularAcceleration = inertiaTensor.transform(totalTorque);
+//        angularAcceleration.set(totalTorque.cpy().mul(inverseInertiaTensor));
 ////        System.out.println("iitw: " + inertiaTensor + " " + totalTorque);
-//        oldRotation.set(rotation);
+//        oldRotation.set(rotation.cpy());
 //        rotation.add(angularAcceleration.cpy().scl(dt));
 //        Vector3 newRotation = (oldRotation.cpy().add(rotation.cpy())).scl(0.5f);
 //        orientation.updateByScaledVector(newRotation, dt);
-////        System.out.println("========= " + angularAcceleration + " " + orientation);
+//        System.out.println("========= " + angularAcceleration + " " + orientation);
 
     }
 
@@ -179,35 +187,9 @@ public class RigidBody {
         transform.set(position, orientation);
     }
 
-    private void generateInertiaTensor() {
-        float[] updatedData = new float[9];
-        updatedData[0] = transform.val[0] * inverseInertiaTensor.val[0] + transform.val[1] * inverseInertiaTensor.val[3] + transform.val[2] * inverseInertiaTensor.val[6];
-        updatedData[1] = transform.val[0] * inverseInertiaTensor.val[1] + transform.val[1] * inverseInertiaTensor.val[4] + transform.val[2] * inverseInertiaTensor.val[7];
-        updatedData[2] = transform.val[0] * inverseInertiaTensor.val[2] + transform.val[1] * inverseInertiaTensor.val[5] + transform.val[2] * inverseInertiaTensor.val[8];
-        updatedData[3] = transform.val[4] * inverseInertiaTensor.val[0] + transform.val[5] * inverseInertiaTensor.val[3] + transform.val[6] * inverseInertiaTensor.val[6];
-        updatedData[4] = transform.val[4] * inverseInertiaTensor.val[1] + transform.val[5] * inverseInertiaTensor.val[4] + transform.val[6] * inverseInertiaTensor.val[7];
-        updatedData[5] = transform.val[4] * inverseInertiaTensor.val[2] + transform.val[5] * inverseInertiaTensor.val[5] + transform.val[6] * inverseInertiaTensor.val[8];
-        updatedData[6] = transform.val[8] * inverseInertiaTensor.val[0] + transform.val[9] * inverseInertiaTensor.val[3] + transform.val[10] * inverseInertiaTensor.val[6];
-        updatedData[7] = transform.val[8] * inverseInertiaTensor.val[1] + transform.val[9] * inverseInertiaTensor.val[4] + transform.val[10] * inverseInertiaTensor.val[7];
-        updatedData[8] = transform.val[8] * inverseInertiaTensor.val[2] + transform.val[9] * inverseInertiaTensor.val[5] + transform.val[10] * inverseInertiaTensor.val[8];
-
-        float[] data = new float[9];
-        data[0] = updatedData[0] * transform.val[0] + updatedData[1] * transform.val[1] + updatedData[2] * transform.val[2];
-        data[1] = updatedData[0] * transform.val[4] + updatedData[1] * transform.val[5] + updatedData[2] * transform.val[6];
-        data[2] = updatedData[0] * transform.val[8] + updatedData[1] * transform.val[9] + updatedData[2] * transform.val[10];
-        data[3] = updatedData[3] * transform.val[0] + updatedData[4] * transform.val[1] + updatedData[5] * transform.val[2];
-        data[4] = updatedData[3] * transform.val[4] + updatedData[4] * transform.val[5] + updatedData[5] * transform.val[6];
-        data[5] = updatedData[3] * transform.val[8] + updatedData[4] * transform.val[9] + updatedData[5] * transform.val[10];
-        data[6] = updatedData[6] * transform.val[0] + updatedData[7] * transform.val[1] + updatedData[8] * transform.val[2];
-        data[7] = updatedData[6] * transform.val[4] + updatedData[7] * transform.val[5] + updatedData[8] * transform.val[6];
-        data[8] = updatedData[6] * transform.val[8] + updatedData[7] * transform.val[9] + updatedData[8] * transform.val[10];
-
-        inverseInertiaTensorWorld.set(data).inv();
-    }
-
     private void generateInertiaTensorSphere() {
         float data = (2f / 5f) * mass * radius * radius;
-        inertiaTensor = new AMatrix4(new float[]{data, 0, 0, 0, 0, data, 0, 0, 0, 0, data, 0, 0, 0, 0, data});
+//        inertiaTensor = new AMatrix4(new float[]{data, 0, 0, 0, 0, data, 0, 0, 0, 0, data, 0, 0, 0, 0, data});
 //        inverseInertiaTensor.set(inertiaTensor.inv());
     }
 

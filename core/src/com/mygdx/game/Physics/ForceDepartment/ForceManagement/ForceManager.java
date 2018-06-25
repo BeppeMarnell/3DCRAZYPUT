@@ -24,7 +24,7 @@ public class ForceManager {
         time += 1;
         if (time == 10) {
             time = 0;
-            System.out.println("[*] Managing forces: ");
+//            System.out.println("[*] Managing forces: ");
             for (Force f : forces) {
                 f.accept(calculator);
             }
@@ -37,6 +37,11 @@ public class ForceManager {
     }
 
     public void inputController() {
+        if (Gdx.input.isButtonPressed(Input.Keys.F)) {
+
+
+        }
+
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
             calculator.setHitForce(new Vector3(-100,0,0));
         }
@@ -73,6 +78,18 @@ public class ForceManager {
 
     public void setBody(RigidBody body) {
         calculator.setBody(body);
+    }
+
+    public RigidBody[] getBodies() {
+        return bodies;
+    }
+
+    public RigidBody getBody() {
+        return calculator.getBody();
+    }
+
+    public Map getMap() {
+        return calculator.getMap();
     }
 
 }

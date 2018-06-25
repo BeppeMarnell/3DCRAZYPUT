@@ -15,6 +15,6 @@ public abstract class ODE {
     }
 
     protected Vector3 calculateAcceleration(RigidBody body) {
-        return body.getActingForce().cpy().scl(body.getInverseMass());
+        return body.getTotalForce().cpy().scl(body.getInverseMass());
     }
 }

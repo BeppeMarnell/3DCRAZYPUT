@@ -29,12 +29,12 @@ public class Ball extends BoundingSphere {
     //get a copy of the map
     private Map map;
 
-    private boolean debugMode = false;
+    private boolean debugMode = true;
 
     //radius
     public static final float RAD = 1f;
-    public static final float MASS = 2f;
-    public static final float ELASTICITY = 0.3f;
+    public static final float MASS = 1f; // kg
+    public static final float ELASTICITY = 0.4f;
 
     public Vector3 normal;
     public Vector3 perpforce;
@@ -49,12 +49,12 @@ public class Ball extends BoundingSphere {
 
         //create the ball object
         if(!debugMode)
-            model = modelBuilder.createSphere(2, 2, 2,15,15,
+            model = modelBuilder.createSphere(RAD * 2, RAD * 2, RAD * 2,15,15,
                     new Material(ColorAttribute.createDiffuse(Color.WHITE)),
                     VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                             VertexAttributes.Usage.TextureCoordinates);
         else
-            model = modelBuilder.createSphere(2, 2, 2,15,15, GL20.GL_LINES,
+            model = modelBuilder.createSphere(RAD * 2, RAD * 2, RAD * 2,15,15, GL20.GL_LINES,
                     new Material(ColorAttribute.createDiffuse(Color.WHITE)),
                     VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                             VertexAttributes.Usage.TextureCoordinates);
@@ -88,10 +88,10 @@ public class Ball extends BoundingSphere {
      */
     public void update(float deltaTime){
         //move the ball with keys
-        if (state == BodyState.Moving) {
-            move3DBall();
-            integrate(deltaTime);
-        }
+//        if (state == BodyState.Moving) {
+//            move3DBall();
+//            integrate(deltaTime);
+//        }
 
 //        moveByKeys();
 
@@ -126,6 +126,8 @@ public class Ball extends BoundingSphere {
         //in order to move the ball i've to apply the translation amount
         ballInstance.transform.setTranslation(position);
         ballInstance.calculateTransforms();
+        Vector3 axisOfRotation = velocity.cpy().crs(new Vector3(0, -1, 0));
+//        ballInstance.transform.rotate(axisOfRotation, 30);
     }
 
     /**

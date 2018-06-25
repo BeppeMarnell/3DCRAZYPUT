@@ -12,13 +12,11 @@ public class MovementManager {
     private Map map;
     private float dt;
 
-    public MovementManager(ODE ode, Map map) {
+    public MovementManager(ODE ode) {
         this.ode = ode;
-        this.map = map;
     }
 
-    public void manage(ForceManager fm, float dt) {
-        this.fm = fm;
+    public void manage(float dt) {
         this.dt = dt;
         if (!body.isStopped()) {
             move();
@@ -39,6 +37,7 @@ public class MovementManager {
 
         if (body.getPosition().y < height) {
             body.getPosition().y = height;
+            body.setState(RigidBody.BodyState.Moving);
         }
 
         body.setMu(map.getFriction(new Vector2(body.getPosition().x, body.getPosition().z)));
@@ -47,6 +46,8 @@ public class MovementManager {
 
     public void setForceManager(ForceManager fm) {
         this.fm = fm;
+        this.body = fm.getBody();
+        this.map = fm.getMap();
     }
 
     public void setOde(ODE ode) {

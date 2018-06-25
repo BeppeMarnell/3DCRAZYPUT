@@ -88,8 +88,9 @@ public class World {
 
         forceManager = new ForceManager(map);
         forceManager.setBody(ball);
-        movementManager = new MovementManager(new Euler(), map);
+        movementManager = new MovementManager(new Euler());
         movementManager.setBody(ball);
+        movementManager.setForceManager(forceManager);
     }
 
     public void update(float deltaTime){
@@ -98,7 +99,7 @@ public class World {
         }
 
         forceManager.manage();
-//        movementManager.manage(forceManager, deltaTime);
+        movementManager.manage(deltaTime);
 
         if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
     }
