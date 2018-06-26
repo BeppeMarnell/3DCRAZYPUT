@@ -9,4 +9,5 @@ public interface ForceVisitor {
     void visit(KineticFriction force);
     void visit(Perpendicular force);
     void visit(Drag drag);
+    void visit(Total total);
 }

@@ -13,6 +13,10 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
@@ -48,8 +52,22 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private Water water;
 
+	private Stage stage;
+	private Table table;
+
 	@Override
 	public void create () {
+
+
+
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+
+		table = new Table();
+		table.setFillParent(true);
+		stage.addActor(table);
+		table.setDebug(true);
+
 	    shapeRenderer = new ShapeRenderer();
 
 		magnitude = readSettings();
@@ -92,12 +110,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		water = new Water(environment);
 		water.setDebugMode(false);
 
+
 		//initialize assets
 		//Assets.init();
+
 	}
 
 	@Override
 	public void render () {
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	    stage.act(Gdx.graphics.getDeltaTime());
+	    stage.draw();
 
 		//update the camera only if the player is not throwing the ball
 		if(!world.isThrowMode()) {
@@ -135,6 +158,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1,1,1,0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+		stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+
 		//update the world
 		world.update(Gdx.graphics.getDeltaTime());
 
@@ -168,12 +193,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) tracking = false;
 		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) tracking = true;
 	}
+
+	public void resize(int width, int height) {
+//		stage.getViewport().update(width, height, false);
+	}
 	
 	@Override
 	public void dispose () {
 		modelBatch.dispose();
 		map.dispose();
 		world.dispose();
+		stage.dispose();
 	}
 
 	public float readSettings(){

@@ -27,6 +27,7 @@ public class RigidBody {
     protected Vector3 totalForce;
     protected Vector3 normal;
     protected Vector3 tmpPosition;
+    protected Vector3 tmpVelocity;
     protected Matrix3 inverseInertiaTensor;
     protected float mu;
     protected float kineticMu;
@@ -113,6 +114,7 @@ public class RigidBody {
     public BodyState getState() {
         return state;
     }
+
     public void setState(BodyState state) {
         this.state = state;
     }
@@ -124,6 +126,7 @@ public class RigidBody {
     public Vector3 getSidePos() {
         return sidePos;
     }
+
     public boolean isStopped(){
         if(state == BodyState.Stopped)return true;
         else return false;
@@ -179,6 +182,14 @@ public class RigidBody {
 
     public boolean isCollided() {
         return isCollided;
+    }
+
+    public void setTmpVelocity(Vector3 tmpVelocity) {
+        this.tmpVelocity = tmpVelocity;
+    }
+
+    public Vector3 getTmpVelocity() {
+        return tmpVelocity;
     }
 }
 

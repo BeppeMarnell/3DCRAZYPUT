@@ -32,7 +32,6 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
-    private ForceManager forceManager;
     private MovementManager movementManager;
     
     private Club club;
@@ -81,23 +80,31 @@ public class World {
         bot = new Bot(map);
 
 
-        forceManager = new ForceManager(map);
-        forceManager.setBody(ball);
-        movementManager = new MovementManager(new Euler());
-//        movementManager = new MovementManager(new RungeKutta4());
-//        movementManager = new MovementManager(new Midpoint());
-        movementManager.setForceManager(forceManager);
+        // Initializing the Movement Manager
+        movementManager = new MovementManager(map);
+
+        // Setting the default integration method
+//        movementManager.setOde(new Euler());
+//        movementManager.setOde(new Midpoint());
+        movementManager.setOde(new RungeKutta4());
+
+        // Adding the ball to the database
+        movementManager.addBody(ball);
     }
 
     public void update(float deltaTime){
+        // Checking for collisions
         for (Wall w : walls) {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
-//        forceManager.manage(10);
+        // Moving the ball
         movementManager.manage(deltaTime);
 
-        if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
+        // Winning condition
+        if(map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z))) {
+            System.out.println("Hole");
+        }
     }
 
     public void render(ModelBatch batch, Environment environment){
@@ -173,7 +180,7 @@ public class World {
     }
 
     public void draw(ShapeRenderer shapeRenderer) {
-        forceManager.draw(shapeRenderer);
+        movementManager.draw(shapeRenderer);
     }
 
 }
