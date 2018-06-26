@@ -90,9 +90,9 @@ public class World {
         movementManager = new MovementManager(map);
 
         // Setting the default integration method
-        movementManager.setOde(new Euler());
+//        movementManager.setOde(new Euler());
 //        movementManager.setOde(new Midpoint());
-//        movementManager.setOde(new RungeKutta4());
+        movementManager.setOde(new RungeKutta4());
 
         // Adding the ball to the database
         movementManager.addBody(ball);

@@ -39,15 +39,10 @@ public class RungeKutta4 extends ODE {
         v.scl(0.16666f);
 
 
-//        k = (k1.cpy().add(k2.cpy().scl(2).add(k3.cpy().scl(2).add(k4))).cpy().scl(1/6));
-//        position.add(velocity.cpy().scl(mm.getDt()));
-//        v = (v1.cpy().add(v2.cpy().scl(2).add(v3.cpy().scl(2).add(v4))).cpy().scl(1/6));
         System.out.println("k: " + k + " v: " + v);
 
         velocity = mm.getBody().getVelocity().cpy().add(k.cpy().scl(mm.getDt()));
         position.add(v.cpy().scl(mm.getDt()));
-//        velocity.add(velocity.cpy().scl(mm.getDt()));
-//        position.add(position.cpy().scl(mm.getDt()));
         System.out.println("=============================================================================V: " + velocity + " p: " + position + " a: " + k);
 
         mm.getBody().setVelocity(velocity.cpy());
