@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class ForceManager {
 //    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total(), new Drag(), new KineticFriction()};
-    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction(), new Total(), new Drag()};
+    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction(), new Drag(), new Total()};
     public final static Force[] STATIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total()};
     private ForceCalculator calculator;
     private float time;
@@ -65,7 +65,7 @@ public class ForceManager {
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            calculator.setHitForce(new Vector3(100,0,0));
+            calculator.setHitForce(new Vector3(200,0,0));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {

@@ -10,14 +10,15 @@ import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Map;
 
 public class ForceCalculator implements ForceVisitor {
-    private final static float DRAG1 = 0.47f;
-    private final static float DRAG2 = 0.48f;
+    private final static float DRAG1 = 0.3f;
+    private final static float DRAG2 = 0.01f;
     private RigidBody body;
     private Vector3 gravity;
     private Vector3 normal;
     private Vector3 staticFriction;
     private Vector3 kineticFriction;
     private Vector3 perpendicularForce;
+    private Vector3 dragForce;
     private Vector3 totalForce;
     private Vector3 totalTorque;
     private Vector3 hitForce;
@@ -38,6 +39,7 @@ public class ForceCalculator implements ForceVisitor {
         kineticFriction = new Vector3();
         perpendicularForce = new Vector3();
         totalForce = new Vector3();
+        dragForce = new Vector3();
         hitForce = new Vector3();
         totalTorque = new Vector3();
         theta = 0;
@@ -97,14 +99,13 @@ public class ForceCalculator implements ForceVisitor {
 
     @Override
     public void visit(Drag force) {
-//        if (body.getState() == RigidBody.BodyState.Moving || body.getState() == RigidBody.BodyState.Flying) {
-//            float drag = body.getVelocity().cpy().len();
-//            drag = DRAG1 * drag + DRAG2 * drag * drag;
-//            System.out.println(drag);
-
+        if (body.getState() == RigidBody.BodyState.Moving || body.getState() == RigidBody.BodyState.Flying) {
+            float drag = body.getVelocity().cpy().len();
+            drag = DRAG1 * drag + DRAG2 * drag * drag;
+            dragForce = body.getVelocity().cpy().nor().scl(-drag);
 //            totalForce.add(body.getVelocity().cpy().nor().scl(-drag));
 //            totalForce.add(totalForce.cpy().nor().scl(-drag));
-//        }
+        }
     }
 
     public void visit(Total force) {
@@ -130,7 +131,7 @@ public class ForceCalculator implements ForceVisitor {
 
             totalForce.add(hitForce.cpy().add(perpendicularForce));
 //            System.out.println("[**] Moving acting force: " + totalForce + " - " + totalForce.len());
-            if (totalForce.len() < kineticFriction.len()) {
+            if (totalForce.len() < kineticFriction.len() + dragForce.len()) {
 //                totalForce.y = 0;
 //                System.out.println("Stopping");
                 body.setState(RigidBody.BodyState.Stopped);
@@ -138,6 +139,7 @@ public class ForceCalculator implements ForceVisitor {
                 body.getVelocity().setZero();
             } else {
                 totalForce.add(kineticFriction);
+                totalForce.add(dragForce);
                 body.setTotalForce(totalForce.cpy());
 
                 //TODO:REMOVE
@@ -180,6 +182,7 @@ public class ForceCalculator implements ForceVisitor {
         kineticFriction.setZero();
         perpendicularForce.setZero();
         normal.setZero();
+        dragForce.setZero();
         theta = 0;
     }
 
@@ -201,6 +204,7 @@ public class ForceCalculator implements ForceVisitor {
         System.out.println("+ Perpf: " + perpendicularForce + " - " + perpendicularForce.len() + " sin " + Math.abs(Math.sin(Math.toRadians(theta))));
         System.out.println("+ staticFr: " + staticFriction + " - " + staticFriction.len());
         System.out.println("+ kineticFr: " + kineticFriction + " - " + kineticFriction.len());
+        System.out.println("+ dragFr: " + dragForce + " - " + dragForce.len());
         System.out.println("+ totalF: " + body.getTotalForce() + " - " + body.getTotalForce().len());
     }
 }
