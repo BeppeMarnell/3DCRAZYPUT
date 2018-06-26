@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-public class Helper {
+public final class Helper {
 
     /**
      * CLASS TO HOLD SOME IMPORTANT AND USEFUL MATH METHODS
@@ -62,8 +62,7 @@ public class Helper {
         if (closest > max) { return max; }
         return closest;
     }
-
-
+  
     /**
      * Method to calculate the angle between two points in a 2D environment 
      * @param vec1 1st vector
@@ -94,9 +93,8 @@ public class Helper {
     public static float angleBetweenPoints3D(Vector3 vec1, Vector3 vec2){
         // create a normalized vector and take just the height of the vec1
         Vector2 from = new Vector2(0, vec1.y);
-        
         //translate the distance between the two 3D point as distance in a 2D normalized context
-        Vector2 to = new Vector2(vec1.dst(vec2), vec2.y); // 
+        Vector2 to = new Vector2(vec1.dst(vec2), vec2.y); //
         return  angleBetweenPoints(from, to);
     }
 

@@ -17,9 +17,4 @@ Objectives for Phase 2 :
 - [Getting started with LibGDX](https://github.com/libgdx/libgdx/wiki)		
 - [How to create a custom physic engine](https://gamedevelopment.tutsplus.com/series/how-to-create-a-custom-physics-engine--gamedev-12715)		
 - [LibGDX Examples](https://github.com/libgdx/libgdx/wiki/External-tutorials)		
-- [Physic 2d Java Engine](https://github.com/wilkystyle/java2dphysicsengine)		
- 		
-		
-### Map improvements		
-**Update to version up to 18-May**		
- Warning **incompatibly issue** with older maps  
+- [Physic 2d Java Engine](https://github.com/wilkystyle/java2dphysicsengine)		 
