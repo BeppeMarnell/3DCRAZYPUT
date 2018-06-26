@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class ForceManager {
 //    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total(), new Drag(), new KineticFriction()};
-    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Drag(), new KineticFriction(), new Total()};
+    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new KineticFriction(), new Total(), new Drag()};
     public final static Force[] STATIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total()};
     private ForceCalculator calculator;
     private float time;
@@ -49,6 +49,7 @@ public class ForceManager {
             }
 //            System.out.println("------> Setting new force: " + calculator.getTotalForce());
             db.get(body).set(calculator.getTotalForce().cpy());
+            calculator.printDebug();
             calculator.clear();
         }
         time--;
