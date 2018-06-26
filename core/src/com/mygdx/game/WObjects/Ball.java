@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.BoundingSphere;
 
@@ -25,7 +26,6 @@ public class Ball extends BoundingSphere {
     private Map map;
 
     private boolean debugMode = true;
-
     public static final float RAD = 1f;
     public static final float MASS = 1f; // kg
     public static final float ELASTICITY = 0.4f;
@@ -79,6 +79,7 @@ public class Ball extends BoundingSphere {
     public void dispose(){
         model.dispose();
     }
+
 
     /**
      * Call the method to know if the ball is stopped

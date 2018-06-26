@@ -89,4 +89,8 @@ public class ForceManager {
         this.body = body;
         calculator.setBody(body);
     }
+
+    public void hit(Vector3 force) {
+        calculator.setHitForce(force);
+    }
 }

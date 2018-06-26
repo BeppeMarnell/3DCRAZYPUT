@@ -1,6 +1,7 @@
 package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.State.Motion;
 import com.mygdx.game.Physics.State.State;
@@ -17,6 +18,10 @@ public class RigidBody {
     State idle;
     State flight;
     State trackingState;
+
+    private boolean movedByBot = false;
+    public Vector3 botForce = new Vector3();
+
 
     protected Vector3 position;
     protected Vector3 acceleration;
@@ -190,6 +195,19 @@ public class RigidBody {
 
     public Vector3 getTmpVelocity() {
         return tmpVelocity;
+    }
+
+    public void move(Vector2 vector2) {
+        movedByBot = true;
+        botForce = new Vector3(vector2.x, 0, vector2.y);
+    }
+
+    public boolean isMovedByBot() {
+        return movedByBot;
+    }
+
+    public void setMovedByBot(boolean movedByBot) {
+        this.movedByBot = movedByBot;
     }
 }
 

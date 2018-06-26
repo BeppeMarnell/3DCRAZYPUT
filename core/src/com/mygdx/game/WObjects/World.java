@@ -90,9 +90,9 @@ public class World {
         movementManager = new MovementManager(map);
 
         // Setting the default integration method
-//        movementManager.setOde(new Euler());
+        movementManager.setOde(new Euler());
 //        movementManager.setOde(new Midpoint());
-        movementManager.setOde(new RungeKutta4());
+//        movementManager.setOde(new RungeKutta4());
 
         // Adding the ball to the database
         movementManager.addBody(ball);
@@ -111,7 +111,8 @@ public class World {
 
         // Winning condition
         if(map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z))) {
-            System.out.println("Hole");
+//            System.out.println("Hole");
+
         }
     }
 

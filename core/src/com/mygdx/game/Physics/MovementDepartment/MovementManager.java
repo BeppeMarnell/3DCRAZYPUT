@@ -29,6 +29,10 @@ public class MovementManager {
         for (RigidBody b : db.keySet()) {
             body = b;
             fm.setBody(body);
+            if (body.isMovedByBot()) {
+               fm.hit(body.botForce.cpy());
+               body.setMovedByBot(false);
+            }
             if (!body.isStopped()) {
                 move();
                 ode.solve(this);
