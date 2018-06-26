@@ -17,12 +17,16 @@ public abstract class ODE {
     public abstract void solve(MovementManager mm);
 
     protected Vector3 calculateAcceleration(RigidBody body, float dt, Vector3 newPosition) {
-        System.out.println("[*] Calculating acceleration at new position: " + newPosition + " oldPos: " + body.getPosition());
+//        System.out.println("[*] Calculating acceleration at new position: " + newPosition + " oldPos: " + body.getPosition());
         body.setTmpPosition(newPosition.cpy());
-        fm.manage(dt);
-        body.getTmpPosition().setZero();
+        fm.manage(dt, false);
+//        body.getTmpPosition().setZero();
         body.setAcceleration(body.getTotalForce().cpy().scl(body.getInverseMass()));
         return body.getAcceleration();
+    }
+
+    protected void evaluate() {
+
     }
 
     public void setFm(ForceManager fm) {

@@ -188,7 +188,8 @@ public class Bot {
         // decrease the number of iterations for that solutionIndex
         solutionPath.get(solutionIndex).iter--;
 
-        Rectangle tmpRec = new Rectangle(0,0, 9f,9f);
+//        Rectangle tmpRec = new Rectangle(0,0, 9f,9f);
+        Rectangle tmpRec = new Rectangle(0,0, 20,20);
         tmpRec.setCenter(path.get(solutionIndex+1).x, path.get(solutionIndex+1).y);
 
         //if the ball has arrived near the determined path point, then pass to the next solutionindex

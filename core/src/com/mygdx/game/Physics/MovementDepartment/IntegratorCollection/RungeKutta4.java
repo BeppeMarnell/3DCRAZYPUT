@@ -16,15 +16,15 @@ public class RungeKutta4 extends ODE {
         System.out.println("k1: " + k1 + " v1: " + v1);
 
         k2 = calculateAcceleration(mm.getBody(), DT, position.cpy().add(v1.cpy().scl(mm.getDt()/2)));
-        v2 = mm.getBody().getVelocity().cpy().add(k1.cpy().scl(mm.getDt()/2));
+        v2 = mm.getBody().getVelocity().cpy().add(k2.cpy().scl(mm.getDt()/2));
         System.out.println("k2: " + k2 + " v2: " + v2);
 
         k3 = calculateAcceleration(mm.getBody(), DT, position.cpy().add(v2.cpy().scl(mm.getDt()/2)));
-        v3 = mm.getBody().getVelocity().cpy().add(k2.cpy().scl(mm.getDt()/2));
+        v3 = mm.getBody().getVelocity().cpy().add(k3.cpy().scl(mm.getDt()/2));
         System.out.println("k3: " + k3 + " v3: " + v3);
 
         k4 = calculateAcceleration(mm.getBody(), DT, position.cpy().add(v3.cpy().scl(mm.getDt())));
-        v4 = mm.getBody().getVelocity().cpy().add(k3.cpy().scl(mm.getDt()));
+        v4 = mm.getBody().getVelocity().cpy().add(k4.cpy().scl(mm.getDt()));
         System.out.println("k4: " + k4 + " v4: " + v4);
 
         k = k1.cpy();

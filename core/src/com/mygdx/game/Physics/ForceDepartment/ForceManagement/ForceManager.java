@@ -11,8 +11,9 @@ import com.mygdx.game.WObjects.Map;
 import java.util.HashMap;
 
 public class ForceManager {
-//    public final static Force[] forces = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total(), new Drag(), new KineticFriction()};
-    public final static Force[] forces = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Drag(), new KineticFriction(), new Total()};
+//    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total(), new Drag(), new KineticFriction()};
+    public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Drag(), new KineticFriction(), new Total()};
+    public final static Force[] STATIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total()};
     private ForceCalculator calculator;
     private float time;
     private RigidBody body;
@@ -25,10 +26,10 @@ public class ForceManager {
     }
 
     //TODO: throw exception "No body found")
-    public void manage(float dt) {
+    public void manage(float dt, boolean isIdle) {
         if (time == 0) {
             time = dt;
-            System.out.println("[*] Managing forces - pulling force from db: " + db.get(body));
+//            System.out.println("[*] Managing KINETIC_FORCES - pulling force from db: " + db.get(body));
             if (body.isCollided()) {
 //                calculator.setTotalForce(body.getTmpVelocity().cpy().nor().scl(db.get(body).len()));
                 calculator.setTotalForce(body.getVelocity().cpy().nor().scl(db.get(body).len()));
@@ -36,10 +37,17 @@ public class ForceManager {
             } else {
                 calculator.setTotalForce(db.get(body).cpy());
             }
-            for (Force f : forces) {
-                f.accept(calculator);
+            if (!isIdle) {
+                for (Force f : KINETIC_FORCES) {
+                    f.accept(calculator);
+                }
+            } else {
+                calculator.clear();
+                for (Force f : STATIC_FORCES) {
+                    f.accept(calculator);
+                }
             }
-            System.out.println("------> Setting new force: " + calculator.getTotalForce());
+//            System.out.println("------> Setting new force: " + calculator.getTotalForce());
             db.get(body).set(calculator.getTotalForce().cpy());
             calculator.clear();
         }
@@ -73,12 +81,6 @@ public class ForceManager {
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_2)) {
             calculator.setHitForce(new Vector3(0,-100,0));
         }
-//        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-//            lastVelocity = velocity.cpy();
-//            velocity.setZero();
-//            state = BodyState.Stopped;
-//        }
-
     }
 
     public RigidBody getBody() {
