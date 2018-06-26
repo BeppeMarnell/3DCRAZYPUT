@@ -162,6 +162,7 @@ public class Bot {
         //set true to start moving the ball to the hole
         movingBall = true;
 
+
         setRectanglepoint();
     }
 
@@ -174,11 +175,16 @@ public class Bot {
         if(solutionIndex == solutionPath.size()){
             System.out.println("ARRIVED");
             movingBall = false;
+            ball.setMovedByBot(false);
             return;
         }
+//        ball.setMovedByBot(true);
 
         //move the ball in the direction
-        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),3));
+//        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),3));
+        if (ball.isStopped()) {
+            ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),1));
+        }
         // decrease the number of iterations for that solutionIndex
         solutionPath.get(solutionIndex).iter--;
 
@@ -186,7 +192,10 @@ public class Bot {
         tmpRec.setCenter(path.get(solutionIndex+1).x, path.get(solutionIndex+1).y);
 
         //if the ball has arrived near the determined path point, then pass to the next solutionindex
-        if(tmpRec.contains(new Vector2(ball.getPosition().x, ball.getPosition().z))) solutionIndex++;
+        if(tmpRec.contains(new Vector2(ball.getPosition().x, ball.getPosition().z))) {
+            solutionIndex++;
+            System.out.println("==========================CONTAINS BALL");
+        }
     }
 
     public Vector2 calculateForce(Vector2 distanceTo, float time) {

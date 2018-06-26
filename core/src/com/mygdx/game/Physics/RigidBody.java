@@ -1,211 +1,76 @@
 package com.mygdx.game.Physics;
 
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Physics.Rotation.AMatrix3;
-import com.mygdx.game.Physics.Rotation.AMatrix4;
-import com.mygdx.game.Physics.Rotation.AQuaternion;
+import com.mygdx.game.Physics.State.Motion;
+import com.mygdx.game.Physics.State.State;
 
 public class RigidBody {
     protected static final float G = 9.81f;
 
     //enum to set up the world state
-    public enum BodyState { Moving, Stopped, }
-    public enum Direction { Up, Down, Straight, }
+    public enum BodyState { Moving, Stopped, Flying}
     //Ball state
     protected BodyState state;
-    protected Direction movement;
+    // Starting State pattern implementation
+    State motion;
+    State idle;
+    State flight;
+    State trackingState;
+
+    private boolean movedByBot = false;
+    public Vector3 botForce = new Vector3();
+
 
     protected Vector3 position;
-    protected Vector3 velocity;
-    // Old velocity required for Velocity Verlet Integration
-    protected Vector3 oldVelocity;
     protected Vector3 acceleration;
-    protected Vector3 oldAcceleration;
-    protected Vector3 angularAcceleration;
-    protected Vector3 gravity;
+    protected Vector3 weight;
+    protected Vector3 velocity;
+    protected Vector3 frontPos;
+    protected Vector3 sidePos;
     protected Vector3 totalForce;
-    protected Vector3 totalTorque;
-    protected Vector3 friction;
-    protected Vector3 oldRotation;
-    protected Vector3 rotation;
-    protected AQuaternion orientation;
-    protected AMatrix4 transform;
-    protected AMatrix4 inverseInertiaTensor;
-    protected AMatrix3 inverseInertiaTensorWorld;
-    protected AMatrix4 inertiaTensor;
+    protected Vector3 normal;
+    protected Vector3 tmpPosition;
+    protected Vector3 tmpVelocity;
+    protected Matrix3 inverseInertiaTensor;
     protected float mu;
+    protected float kineticMu;
     protected float inverseMass;
     protected float mass;
-    protected float damping;
     protected float radius;
+    protected float slopeAngle;
+    protected boolean isCollided;
 
 
     public RigidBody(Vector3 position, float mass, float radius) {
+        float tensorSphereData = 2 / 5 * mass * radius * radius;
+        inverseInertiaTensor = new Matrix3(new float[]{1/ tensorSphereData, 0, 0, 0, 1/ tensorSphereData, 0, 0, 0, 1/ tensorSphereData});
+        motion = new Motion(this);
         this.position = position;
         this.mass = mass;
         velocity = new Vector3();
-        oldVelocity = velocity;
         acceleration = new Vector3();
-        oldAcceleration = acceleration;
-        angularAcceleration = new Vector3();
-        rotation = new Vector3();
-        oldRotation = rotation;
         inverseMass = 1 / mass;
-        gravity = new Vector3(0, -G, 0);
-        friction = new Vector3();
-        totalForce = new Vector3();
-        totalTorque = new Vector3();
-        inverseInertiaTensorWorld = new AMatrix3();
-        inverseInertiaTensor = new AMatrix4();
-        orientation = new AQuaternion();
-        transform = new AMatrix4();
         this.radius = radius;
         state = BodyState.Stopped;
-        movement = Direction.Straight;
-
-//        generateInertiaTensorSphere();
+        weight = new Vector3(0, -G * mass, 0); // (Newtons)
+        frontPos = position.cpy().add(10, 0, 0);
+        sidePos = position.cpy().add(0, 0, -10);
+        tmpPosition = new Vector3();
+        totalForce = new Vector3();
+        normal = new Vector3();
+        kineticMu = 0.6f;
+        mu = 0.7f;
+        isCollided = false;
     }
 
-    protected void integrate(float dt) {
-        updateForces();
-        velocityVerletIntegration(dt);
-//        semiImplicitEulerIntegration(dt);
-//        updateMatrices();
-        clearForces();
+    public Vector3 getAcceleration() {
+        return acceleration;
     }
 
-    private void eulerIntegration(float dt) {
-        acceleration.set(totalForce.scl(inverseMass));
-        position.add(velocity.cpy().scl(dt));
-        velocity.add(acceleration.cpy().scl(dt)).scl(mu);
-    }
-
-    private void semiImplicitEulerIntegration(float dt) {
-        acceleration.set(totalForce.scl(inverseMass));
-        velocity.add(acceleration.cpy().scl(dt)).scl(mu);
-        position.add(velocity.cpy().scl(dt));
-    }
-
-    private void velocityVerletIntegration(float dt) {
-//        oldAcceleration.set(acceleration);
-        acceleration.set(totalForce.cpy().scl(inverseMass));
-//        oldAcceleration.add(totalForce.cpy().scl(inverseMass));
-        oldVelocity.set(velocity);
-        Vector3 newVelocity = velocity.cpy().add(acceleration.cpy().scl(dt));
-        velocity.set(newVelocity);
-        position.add((oldVelocity.cpy().add(velocity.cpy())).scl(0.5f * dt));
-
-////        angularAcceleration = inverseInertiaTensorWorld.transform(totalTorque);
-//        angularAcceleration = inertiaTensor.transform(totalTorque);
-////        System.out.println("iitw: " + inertiaTensor + " " + totalTorque);
-//        oldRotation.set(rotation);
-//        rotation.add(angularAcceleration.cpy().scl(dt));
-//        Vector3 newRotation = (oldRotation.cpy().add(rotation.cpy())).scl(0.5f);
-//        orientation.updateByScaledVector(newRotation, dt);
-////        System.out.println("========= " + angularAcceleration + " " + orientation);
-
-    }
-
-    private void updateMatrices() {
-        orientation.nor();
-        generateTransformMatrix();
-//        generateInertiaTensor();
-    }
-
-    private void generateTransformMatrix() {
-        transform.set(position, orientation);
-    }
-
-    private void generateInertiaTensor() {
-        float[] updatedData = new float[9];
-        updatedData[0] = transform.val[0] * inverseInertiaTensor.val[0] + transform.val[1] * inverseInertiaTensor.val[3] + transform.val[2] * inverseInertiaTensor.val[6];
-        updatedData[1] = transform.val[0] * inverseInertiaTensor.val[1] + transform.val[1] * inverseInertiaTensor.val[4] + transform.val[2] * inverseInertiaTensor.val[7];
-        updatedData[2] = transform.val[0] * inverseInertiaTensor.val[2] + transform.val[1] * inverseInertiaTensor.val[5] + transform.val[2] * inverseInertiaTensor.val[8];
-        updatedData[3] = transform.val[4] * inverseInertiaTensor.val[0] + transform.val[5] * inverseInertiaTensor.val[3] + transform.val[6] * inverseInertiaTensor.val[6];
-        updatedData[4] = transform.val[4] * inverseInertiaTensor.val[1] + transform.val[5] * inverseInertiaTensor.val[4] + transform.val[6] * inverseInertiaTensor.val[7];
-        updatedData[5] = transform.val[4] * inverseInertiaTensor.val[2] + transform.val[5] * inverseInertiaTensor.val[5] + transform.val[6] * inverseInertiaTensor.val[8];
-        updatedData[6] = transform.val[8] * inverseInertiaTensor.val[0] + transform.val[9] * inverseInertiaTensor.val[3] + transform.val[10] * inverseInertiaTensor.val[6];
-        updatedData[7] = transform.val[8] * inverseInertiaTensor.val[1] + transform.val[9] * inverseInertiaTensor.val[4] + transform.val[10] * inverseInertiaTensor.val[7];
-        updatedData[8] = transform.val[8] * inverseInertiaTensor.val[2] + transform.val[9] * inverseInertiaTensor.val[5] + transform.val[10] * inverseInertiaTensor.val[8];
-
-        float[] data = new float[9];
-        data[0] = updatedData[0] * transform.val[0] + updatedData[1] * transform.val[1] + updatedData[2] * transform.val[2];
-        data[1] = updatedData[0] * transform.val[4] + updatedData[1] * transform.val[5] + updatedData[2] * transform.val[6];
-        data[2] = updatedData[0] * transform.val[8] + updatedData[1] * transform.val[9] + updatedData[2] * transform.val[10];
-        data[3] = updatedData[3] * transform.val[0] + updatedData[4] * transform.val[1] + updatedData[5] * transform.val[2];
-        data[4] = updatedData[3] * transform.val[4] + updatedData[4] * transform.val[5] + updatedData[5] * transform.val[6];
-        data[5] = updatedData[3] * transform.val[8] + updatedData[4] * transform.val[9] + updatedData[5] * transform.val[10];
-        data[6] = updatedData[6] * transform.val[0] + updatedData[7] * transform.val[1] + updatedData[8] * transform.val[2];
-        data[7] = updatedData[6] * transform.val[4] + updatedData[7] * transform.val[5] + updatedData[8] * transform.val[6];
-        data[8] = updatedData[6] * transform.val[8] + updatedData[7] * transform.val[9] + updatedData[8] * transform.val[10];
-
-        inverseInertiaTensorWorld.set(data).inv();
-    }
-
-    private void generateInertiaTensorSphere() {
-        float data = (2f / 5f) * mass * radius * radius;
-        inertiaTensor = new AMatrix4(new float[]{data, 0, 0, 0, 0, data, 0, 0, 0, 0, data, 0, 0, 0, 0, data});
-//        inverseInertiaTensor.set(inertiaTensor.inv());
-    }
-
-    public void addForce(Vector3 force) {
-        state = BodyState.Moving;
-        totalForce.add(force);
-    }
-
-    protected void addForceAtPoint(Vector3 force, Vector3 point) {
-//        point = transform.getWorldCoordinates(point, false);
-//        point.sub(position);
-//        point.add(position);
-//        System.out.println("post-transform: " + point + " ball pos: " + position);
-        addForce(force);
-        totalTorque.add(point.cpy().crs(force));
-        System.out.println(point.cpy().crs(force) + " Total torque: " + totalTorque);
-    }
-
-    protected void clearForces() {
-        totalForce.setZero();
-        totalTorque.setZero();
-    }
-
-    protected void updateForces() {
-        update2DGravity();
-//        updateGravity();
-        updateDrag(0.5f, 0.3f);
-        updateFriction();
-    }
-
-    private void update2DGravity() {
-        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(G * position.y));
-        else addForce(velocity.cpy().nor().scl(-G * position.y));
-    }
-
-    private void updateGravity() {
-        addForce(gravity);
-    }
-
-    private void updateFriction() {
-//        float f = G * mu * mass * 1 / position.y;
-//        Vector2 fr = new Vector2(position.x, position.z);
-//        fr.nor().scl(G * mu * mass);
-        if (movement == Direction.Down) addForce(velocity.cpy().nor().scl(-G * (1/position.y) * mu * mass));
-        else addForce(velocity.cpy().nor().scl(mass * G * (1/position.y) * mu));
-//        System.out.println("========= " + f + " " + fr);
-//        Vector2 tmpPosition = new Vector2(velocity.x, velocity.y);
-//        tmpPosition.scl(mass * G * (1 / position.y));
-//        friction.set(tmpPosition.x, 0, tmpPosition.y);
-//        System.out.println("============= Friction: " + friction);
-//        totalForce.sub(friction);
-//        velocity.scl(mu);
-    }
-
-    private void updateDrag(float k1, float k2) {
-        Vector3 force = velocity.cpy();
-        float drag = force.len();
-        drag = k1 * drag + k2 * drag * drag;
-        force.nor().scl(-drag);
-        addForce(force);
+    public void setAcceleration(Vector3 acceleration) {
+        this.acceleration = acceleration;
     }
 
     public Vector3 getVelocity() {
@@ -231,8 +96,118 @@ public class RigidBody {
     public void setPosition(Vector3 position) {
         this.position = position;
     }
+    public Vector3 getWeight() {
+        return weight;
+    }
 
-    public Vector3 getAcceleration() {
-        return acceleration;
+    public float getMu() {
+        return mu;
+    }
+
+    public float getKineticMu() {
+        return kineticMu;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getSlopeAngle() {
+        return slopeAngle;
+    }
+
+    public BodyState getState() {
+        return state;
+    }
+
+    public void setState(BodyState state) {
+        this.state = state;
+    }
+
+    public Vector3 getFrontPos() {
+        return frontPos;
+    }
+
+    public Vector3 getSidePos() {
+        return sidePos;
+    }
+
+    public boolean isStopped(){
+        if(state == BodyState.Stopped)return true;
+        else return false;
+    }
+
+    public void setFrontPosition(Vector3 frontPosition) {
+        this.frontPos = frontPosition;
+    }
+
+    public void setSidePosition(Vector3 sidePos) {
+        this.sidePos = sidePos;
+    }
+
+    public void setMu(float mu) {
+        this.mu = mu;
+    }
+
+    public void setKineticMu(float kineticMu) {
+        this.kineticMu = kineticMu;
+    }
+
+    public void setSlopeAngle(float slopeAngle) {
+        this.slopeAngle = slopeAngle;
+    }
+
+    public Vector3 getTotalForce() {
+        return totalForce;
+    }
+
+    public void setTotalForce(Vector3 totalForce) {
+        this.totalForce = totalForce;
+    }
+
+    public Vector3 getNormal() {
+        return normal;
+    }
+
+    public void setNormal(Vector3 normal) {
+        this.normal = normal;
+    }
+
+    public void setTmpPosition(Vector3 tmpPosition) {
+        this.tmpPosition = tmpPosition;
+    }
+
+    public Vector3 getTmpPosition() {
+        return tmpPosition;
+    }
+
+    public void isCollided(boolean b) {
+        isCollided = b;
+    }
+
+    public boolean isCollided() {
+        return isCollided;
+    }
+
+    public void setTmpVelocity(Vector3 tmpVelocity) {
+        this.tmpVelocity = tmpVelocity;
+    }
+
+    public Vector3 getTmpVelocity() {
+        return tmpVelocity;
+    }
+
+    public void move(Vector2 vector2) {
+        movedByBot = true;
+        botForce = new Vector3(vector2.x, 0, vector2.y);
+    }
+
+    public boolean isMovedByBot() {
+        return movedByBot;
+    }
+
+    public void setMovedByBot(boolean movedByBot) {
+        this.movedByBot = movedByBot;
     }
 }
+

@@ -1,7 +1,5 @@
 package com.mygdx.game.WObjects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -22,18 +20,16 @@ public class Ball extends BoundingSphere {
      * z axis = y
      */
 
-
     private Model model;
     private ModelInstance ballInstance;
     //get a copy of the map
     private Map map;
 
-    private boolean debugMode = false;
-
-    //radius
+    private boolean debugMode = true;
     public static final float RAD = 1f;
-    public static final float MASS = 2f;
-    public static final float ELASTICITY = 0.3f;
+    public static final float MASS = 1f; // kg
+    public static final float ELASTICITY = 0.4f;
+
 
     /**
      * Initialize the ball 3d and add the position to it
@@ -41,16 +37,16 @@ public class Ball extends BoundingSphere {
      */
     public Ball(Map map){
         super(new Vector3(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y), MASS, RAD);
+        ModelBuilder modelBuilder = new ModelBuilder();
 
         //create the ball object
-        ModelBuilder modelBuilder = new ModelBuilder();
         if(!debugMode)
-            model = modelBuilder.createSphere(2, 2, 2,15,15,
+            model = modelBuilder.createSphere(RAD * 2, RAD * 2, RAD * 2,15,15,
                     new Material(ColorAttribute.createDiffuse(Color.WHITE)),
                     VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                             VertexAttributes.Usage.TextureCoordinates);
         else
-            model = modelBuilder.createSphere(2, 2, 2,15,15, GL20.GL_LINES,
+            model = modelBuilder.createSphere(RAD * 2, RAD * 2, RAD * 2,15,15, GL20.GL_LINES,
                     new Material(ColorAttribute.createDiffuse(Color.WHITE)),
                     VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal |
                             VertexAttributes.Usage.TextureCoordinates);
@@ -70,99 +66,23 @@ public class Ball extends BoundingSphere {
      */
     public void render(ModelBatch batch, Environment environment){
         //render the ball
+        ballInstance.transform.setTranslation(position);
+        ballInstance.calculateTransforms();
         batch.render(ballInstance, environment);
     }
 
     /**
      * Update the position of the ball
      */
-    public void update(float deltaTime){
-        //move the ball with keys
-        if (state == BodyState.Moving) {
-            move3DBall();
-            integrate(deltaTime);
-        }
-
-        if (Math.abs(velocity.x) < 0.05 && Math.abs(velocity.z) < 0.05) {
-            clearForces();
-            state = BodyState.Stopped;
-        }
-
-        moveByKeys();
-
-    }
-
-    /**
-     * This method moves the position of the 3D instance, do not change it
-     */
-    private void move3DBall(){
-        //Apply the physic to the 3D object
-        float err = 0.005f;
-
-        Vector3 oldPos = ballInstance.transform.getTranslation(new Vector3());
-        position.y = map.getHeight(new Vector2(position.x, position.z), RAD);
-        mu = map.getFriction(new Vector2(position.x, position.y));
-
-        if (oldPos.y - position.y > err) {
-            movement = Direction.Down;
-        } else if (position.y - oldPos.y > err) {
-            movement = Direction.Up;
-        } else {
-            movement = Direction.Straight;
-        }
-
-        //in order to move the ball i've to apply the translation amount
-        ballInstance.transform.setTranslation(position);
-        ballInstance.calculateTransforms();
-    }
-
-    /**
-     * Move the ball by using the keyboards
-     */
-    private void moveByKeys(){
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            addForce(new Vector3(-100,0,0));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            addForce(new Vector3(100,0,0));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            addForce(new Vector3(0,0,100));
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            addForce(new Vector3(0,0,-100));
-        }
-    }
-
-    /**
-     * Move the ball assigning a force
-     */
-    public void move(Vector2 force) {
-        state = BodyState.Moving;
-        addForce(new Vector3(force.x, 0, force.y));
-    }
-
-    public Vector2 calculateForce(Vector2 distance, float time) {
-        float inverseTime = 1 / time;
-        Vector2 oldVelocity = new Vector2(velocity.x, velocity.z);
-        Vector2 updatedVelocity = distance.cpy().scl(inverseTime);
-        Vector2 updatedAcceleration = updatedVelocity.cpy().sub(oldVelocity).scl(inverseTime);
-        return new Vector2(updatedAcceleration.scl(mass));
-    }
+    public void update(float deltaTime){}
 
     public void dispose(){
         model.dispose();
     }
 
+
     /**
      * Call the method to know if the ball is stopped
      * @return boolean value
      */
-    public boolean isStopped(){
-        if(state == BodyState.Stopped)return true;
-        else return false;
-    }
 }

@@ -6,14 +6,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Bott.Bot;
+import com.mygdx.game.Physics.CollisionDepartment.CollisionDetector;
+import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Euler;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.Midpoint;
+import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.RungeKutta4;
+import com.mygdx.game.Physics.MovementDepartment.MovementManager;
 import com.mygdx.game.Bott.GenBot.GenBot;
 import com.mygdx.game.Bott.GenBot.Genetic2D;
-import com.mygdx.game.Physics.CollisionDetector;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class World {
@@ -29,7 +37,8 @@ public class World {
     private ArrayList<Wall> walls;
     private Wall[] borders;
     private CollisionDetector collisionDetector;
-    
+    private MovementManager movementManager;
+
     private Club club;
     private Bot bot;
     //private GenBot bot2;
@@ -76,6 +85,18 @@ public class World {
         //initialize the bot
         bot = new Bot(map);
 
+
+        // Initializing the Movement Manager
+        movementManager = new MovementManager(map);
+
+        // Setting the default integration method
+//        movementManager.setOde(new Euler());
+//        movementManager.setOde(new Midpoint());
+        movementManager.setOde(new RungeKutta4());
+
+        // Adding the ball to the database
+        movementManager.addBody(ball);
+
         //create the genetic bot
         //bot2 = new GenBot(map);
     }
@@ -85,7 +106,14 @@ public class World {
             collisionDetector.collidesWithWall(w, deltaTime);
         }
 
-        if(!map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z)))ball.update(deltaTime);
+        // Moving the ball
+        movementManager.manage(deltaTime);
+
+        // Winning condition
+        if(map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z))) {
+//            System.out.println("Hole");
+
+        }
     }
 
     public void render(ModelBatch batch, Environment environment){
@@ -119,7 +147,7 @@ public class World {
         }
 
         if(bot.movingBall)bot.act(ball);
-      
+
         //genBot.update(walls, batch, environment);
 
         for(ModelInstance mI: bot.rectanglepoints)batch.render(mI,environment);
@@ -160,4 +188,13 @@ public class World {
             walls.add(borders[i]);
         }
     }
+
+    public Ball getBall() {
+        return ball;
+    }
+
+    public void draw(ShapeRenderer shapeRenderer) {
+        movementManager.draw(shapeRenderer);
+    }
+
 }

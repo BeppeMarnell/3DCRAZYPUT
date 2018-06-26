@@ -4,10 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -15,6 +12,11 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.Water;
 import com.mygdx.game.WObjects.World;
@@ -24,6 +26,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	/**
 	 * Main class of the game
 	 */
+
+	private ShapeRenderer shapeRenderer;
 
 	private ModelBatch modelBatch;
 	private Camera cam;
@@ -37,6 +41,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	private String[] paths;
 
 	public boolean tracking = false;
+	public boolean displayWorldForces = true;
 	private int initPos = 0;
 
 	private Map map;
@@ -47,8 +52,24 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private Water water;
 
+	private Stage stage;
+	private Table table;
+
 	@Override
 	public void create () {
+
+
+
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+
+		table = new Table();
+		table.setFillParent(true);
+		stage.addActor(table);
+		table.setDebug(true);
+
+	    shapeRenderer = new ShapeRenderer();
+
 		magnitude = readSettings();
 
 		modelBatch = new ModelBatch();
@@ -89,12 +110,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		water = new Water(environment);
 		water.setDebugMode(false);
 
+
 		//initialize assets
 		//Assets.init();
+
 	}
 
 	@Override
 	public void render () {
+	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	    stage.act(Gdx.graphics.getDeltaTime());
+	    stage.draw();
 
 		//update the camera only if the player is not throwing the ball
 		if(!world.isThrowMode()) {
@@ -125,11 +151,14 @@ public class MyGdxGame extends ApplicationAdapter {
 				initPos++;
 			}
 			cam.update();
+			shapeRenderer.setProjectionMatrix(cam.combined);
 		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(1,1,1,0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
 		//update the world
 		world.update(Gdx.graphics.getDeltaTime());
@@ -143,10 +172,14 @@ public class MyGdxGame extends ApplicationAdapter {
 		//render all the objects in the world
 		world.render(modelBatch, environment);
 
+
 		//render the water
 		water.render(Gdx.graphics.getDeltaTime(), modelBatch);
 
 		modelBatch.end();
+
+		//display world forces
+		if (displayWorldForces) world.draw(shapeRenderer);
 
 		//show the frame rate
 		batch.begin();
@@ -160,12 +193,17 @@ public class MyGdxGame extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) tracking = false;
 		if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) tracking = true;
 	}
+
+	public void resize(int width, int height) {
+//		stage.getViewport().update(width, height, false);
+	}
 	
 	@Override
 	public void dispose () {
 		modelBatch.dispose();
 		map.dispose();
 		world.dispose();
+		stage.dispose();
 	}
 
 	public float readSettings(){

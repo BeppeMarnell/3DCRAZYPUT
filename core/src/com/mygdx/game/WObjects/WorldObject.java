@@ -42,6 +42,9 @@ public class WorldObject {
         if (type == ObjectType.Grass) return 0.99f;
         else if(type == ObjectType.Dirt) return 0.97f;
         else if(type == ObjectType.Sand) return 0.95f;
+//        if (type == ObjectType.Grass) return 0.8f;
+//        else if(type == ObjectType.Dirt) return 0.85f;
+//        else if(type == ObjectType.Sand) return 0.9f;
         else return 1f;
     }
 }
