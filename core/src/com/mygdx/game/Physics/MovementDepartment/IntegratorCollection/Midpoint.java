@@ -13,7 +13,7 @@ public class Midpoint extends ODE {
         mm.getBody().setVelocity(velocity.cpy());
         mm.getBody().setPosition(position.cpy().add(velocity.cpy().scl(mm.getDt())));
 //        System.out.println("V: " + velocity + " p: " + position + " a: " + acceleration);
-        mm.getBody().getTotalForce().setZero();
+//        mm.getBody().getTotalForce().setZero();
     }
 
     private void predict(MovementManager mm) {

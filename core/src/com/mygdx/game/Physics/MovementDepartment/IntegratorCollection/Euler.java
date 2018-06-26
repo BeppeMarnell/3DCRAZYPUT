@@ -13,7 +13,5 @@ public class Euler extends ODE {
         velocity.add(acceleration.cpy().scl(mm.getDt()));
         mm.getBody().setVelocity(velocity.cpy());
         mm.getBody().setPosition(position.cpy().add(velocity.cpy().scl(mm.getDt())));
-        System.out.println("V: " + velocity + " p: " + position + " a: " + acceleration);
-        mm.getBody().getTotalForce().setZero();
     }
 }
