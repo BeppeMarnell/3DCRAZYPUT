@@ -10,9 +10,13 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Bott.GenBot.CromWall;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
+import com.mygdx.game.WObjects.WorldObject;
+import org.lwjgl.Sys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,6 +167,41 @@ public class Bot {
 
 
         setRectanglepoint();
+    }
+
+    public boolean oneShootScore(Ball ball){
+        int obstacles = 0;
+
+        for(int i=1; i<mapO.mapObjects.length-1; i++) {
+            for (int j = 1; j < mapO.mapObjects[0].length-1; j++) {
+                if(mapO.mapObjects[i][j].getType() == WorldObject.ObjectType.Wall || mapO.mapObjects[i][j].getType() == WorldObject.ObjectType.Tree){
+                    //check if there are obstacles inside
+                    obstacles ++;
+                }
+            }
+        }
+
+        if(obstacles== 0){
+
+            //calculate direction
+            Vector2 dir = new Vector2(ball.getPosition().x, ball.getPosition().z).add(mapO.getInitBallPosV2().cpy());
+
+            dir.scl(-1);
+            //calculate force
+
+            float force = forceToPoint(new Vector2(ball.getPosition().x, ball.getPosition().z),mapO.getInitBallPosV2().cpy() );
+
+            //set the force
+            dir.scl(force);
+
+            System.out.println(force + " " + dir.toString());
+
+            //throw the ball
+            ball.setIsHit(true);
+            ball.hitForce.set(new Vector3(dir.x, 0, dir.y));
+
+            return true;
+        }else return false;
     }
 
     /**

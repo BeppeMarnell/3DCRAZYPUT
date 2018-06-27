@@ -138,12 +138,7 @@ public class World {
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              //calculate the path with the selected method and move the ball
              //bot.CalculateAStar(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
-             bot.CalculateBeadthFirst(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
-            try {
-                //bot2.calculateGenetic(new Vector2(ball.getPosition().x, ball.getPosition().z), 5000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if(!bot.oneShootScore(ball))bot.CalculateBeadthFirst(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
 
         if(bot.movingBall)bot.act(ball);
