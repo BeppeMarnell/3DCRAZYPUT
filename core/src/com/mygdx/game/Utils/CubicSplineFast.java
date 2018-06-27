@@ -1,114 +1,132 @@
 package com.mygdx.game.Utils;
 
+
+/**
+ * Inspired from Michael Thomas Flanagan's Java Scientific Library
+ * explanation and pseudo-code found on his website
+ */
+
 public class CubicSplineFast {
-    private int nPoints = 0;
-    private double[] y = null;
-    private double[] x = null;
-    private double[] d2ydx2 = null;
-    private boolean derivCalculated = false;
+    private int nPoints;
+    private double[] y;
+    private double[] x;
+    private double[] d2ydx2;
 
-    public CubicSplineFast(double[] var1, double[] var2) {
-        this.nPoints = var1.length;
-        this.x = new double[this.nPoints];
-        this.y = new double[this.nPoints];
-        this.d2ydx2 = new double[this.nPoints];
+    /**
+     * Creates an instance of the CubicSplineFast object that will hold an array of data points of length n and with all data arrays initialised to zero.
+     * @param nPoints number of points needed for the data
+     */
+    public CubicSplineFast(int nPoints) {
+        this.nPoints = nPoints;
+        this.x = new double[nPoints];
+        this.y = new double[nPoints];
+        this.d2ydx2 = new double[nPoints];
+    }
 
-        for(int var3 = 0; var3 < this.nPoints; ++var3) {
-            this.x[var3] = var1[var3];
-            this.y[var3] = var2[var3];
+    /**
+     * reset data of points
+     * @param x
+     * @param y
+     */
+    public void resetData(double[] x, double[] y) {
+        for(int i = 0; i < this.nPoints; i++) {
+            this.x[i] = x[i];
+            this.y[i] = y[i];
         }
 
-        this.calcDeriv();
+        //then calculate the derivate
+        calcDeriv();
     }
 
-    public CubicSplineFast(int var1) {
-        this.nPoints = var1;
-        this.x = new double[var1];
-        this.y = new double[var1];
-        this.d2ydx2 = new double[var1];
-    }
-
-    public void resetData(double[] var1, double[] var2) {
-        for(int var3 = 0; var3 < this.nPoints; ++var3) {
-            this.x[var3] = var1[var3];
-            this.y[var3] = var2[var3];
-        }
-
-        this.calcDeriv();
-    }
-
-    public static CubicSplineFast zero(int var0) {
-        if (var0 < 3) {
+    /**
+     * Creates and returns a new instance of a cubic spline object with all data array values set at zero.
+     * @param dataPoints data points
+     * @return
+     */
+    public static CubicSplineFast zero(int dataPoints) {
+        if (dataPoints < 3) {
             throw new IllegalArgumentException("A minimum of three data points is needed");
         } else {
-            CubicSplineFast var1 = new CubicSplineFast(var0);
-            return var1;
+            CubicSplineFast splineFast = new CubicSplineFast(dataPoints);
+            return splineFast;
         }
     }
 
-    public static CubicSplineFast[] oneDarray(int var0, int var1) {
-        CubicSplineFast[] var2 = new CubicSplineFast[var0];
+    /**
+     * Creates an array, of length n, of CubicSpline instances with all data array values set at zero.
+     * @param length
+     * @param m indices
+     * @return
+     */
+    public static CubicSplineFast[] oneDarray(int length, int m) {
+        CubicSplineFast[] cubicSplineFasts = new CubicSplineFast[length];
 
-        for(int var3 = 0; var3 < var0; ++var3) {
-            var2[var3] = zero(var1);
+        for(int i = 0; i < length; i++) {
+            cubicSplineFasts[i] = zero(m);
         }
 
-        return var2;
+        return cubicSplineFasts;
     }
 
+    /**
+     * Calculates the array of second derivatives for the data set, y = f(x).
+     */
     public void calcDeriv() {
-        double var1 = 0.0D;
-        double var3 = 0.0D;
-        double var5 = 0.0D;
-        double var7 = 0.0D;
-        double[] var9 = new double[this.nPoints];
-        this.d2ydx2[0] = var9[0] = 0.0D;
 
-        int var10;
-        for(var10 = 1; var10 <= this.nPoints - 2; ++var10) {
-            var5 = (this.x[var10] - this.x[var10 - 1]) / (this.x[var10 + 1] - this.x[var10 - 1]);
-            var1 = var5 * this.d2ydx2[var10 - 1] + 2.0D;
-            this.d2ydx2[var10] = (var5 - 1.0D) / var1;
-            var9[var10] = (this.y[var10 + 1] - this.y[var10]) / (this.x[var10 + 1] - this.x[var10]) - (this.y[var10] - this.y[var10 - 1]) / (this.x[var10] - this.x[var10 - 1]);
-            var9[var10] = (6.0D * var9[var10] / (this.x[var10 + 1] - this.x[var10 - 1]) - var5 * var9[var10 - 1]) / var1;
+        double[] crossDer = new double[this.nPoints];
+        this.d2ydx2[0] = crossDer[0] = 0.0D; // se to zero
+
+        for(int i = 1; i <= this.nPoints - 2; ++i) {
+            double val2 = (this.x[i] - this.x[i - 1]) / (this.x[i + 1] - this.x[i - 1]);
+            double val1 = val2 * this.d2ydx2[i - 1] + 2.0D;
+
+            //main cross derivate
+            this.d2ydx2[i] = (val2 - 1.0D) / val1;
+            crossDer[i] = (this.y[i + 1] - this.y[i]) / (this.x[i + 1] - this.x[i]) - (this.y[i] - this.y[i - 1]) / (this.x[i] - this.x[i - 1]);
+            crossDer[i] = (6.0D * crossDer[i] / (this.x[i + 1] - this.x[i - 1]) - val2 * crossDer[i - 1]) / val1;
         }
 
-        var7 = 0.0D;
-        var3 = 0.0D;
-        this.d2ydx2[this.nPoints - 1] = (var7 - var3 * var9[this.nPoints - 2]) / (var3 * this.d2ydx2[this.nPoints - 2] + 1.0D);
 
-        for(var10 = this.nPoints - 2; var10 >= 0; --var10) {
-            this.d2ydx2[var10] = this.d2ydx2[var10] * this.d2ydx2[var10 + 1] + var9[var10];
+        this.d2ydx2[this.nPoints - 1] = 0.0D;
+
+        for(int i = this.nPoints - 2; i >= 0; --i) {
+            this.d2ydx2[i] = this.d2ydx2[i] * this.d2ydx2[i + 1] + crossDer[i];
         }
-
-        this.derivCalculated = true;
     }
 
-    public double interpolate(double var1) {
-        double var3 = 0.0D;
-        double var5 = 0.0D;
-        double var7 = 0.0D;
-        double var9 = 0.0D;
-        int var12 = 0;
-        int var13 = this.nPoints - 1;
+    /**
+     * Returns the interpolated value of y, y1, for a given value of xx1, using the y = f(x) data stored in aa by the constructor.
+     * This method may be called as often as required.
+     * The second derivatives needed for the interpolation are calculated and stored on instantiation so that they need not be
+     * recalculated on each call to this method. This method throws an IllegalArgumentException if xx1 is outside the range of
+     * the values of x[] supplied to the constructor or if two x values within the y = f(x) data set are identical.
+     * @param xx1
+     * @return
+     */
+    public double interpolate(double xx1) {
 
-        while(var13 - var12 > 1) {
-            int var14 = var13 + var12 >> 1;
-            if (this.x[var14] > var1) {
-                var13 = var14;
+        //two point to compare
+        int ind1 = 0;
+        int ind2 = this.nPoints - 1;
+
+        while(ind2 - ind1 > 1) {
+            int var14 = ind2 + ind1 >> 1;
+            if (this.x[var14] > xx1) {
+                ind2 = var14;
             } else {
-                var12 = var14;
+                ind1 = var14;
             }
         }
 
-        var3 = this.x[var13] - this.x[var12];
-        if (var3 == 0.0D) {
-            throw new IllegalArgumentException("Two values of x are identical: point " + var12 + " (" + this.x[var12] + ") and point " + var13 + " (" + this.x[var13] + ")");
+        double dist = this.x[ind2] - this.x[ind1];
+        if (dist == 0.0D) {
+            throw new IllegalArgumentException("Two values of x are identical: point " + ind1 + " (" + this.x[ind1] + ") and point " + ind2 + " (" + this.x[ind2] + ")");
         } else {
-            var7 = (this.x[var13] - var1) / var3;
-            var5 = (var1 - this.x[var12]) / var3;
-            var9 = var7 * this.y[var12] + var5 * this.y[var13] + ((var7 * var7 * var7 - var7) * this.d2ydx2[var12] + (var5 * var5 * var5 - var5) * this.d2ydx2[var13]) * var3 * var3 / 6.0D;
-            return var9;
+            double val1 = (this.x[ind2] - xx1) / dist;
+            double val2 = (xx1 - this.x[ind1]) / dist;
+            double val3 = val1 * this.y[ind1] + val2 * this.y[ind2] + ((val1 * val1 * val1 - val1) * this.d2ydx2[ind1] +
+                    (val2 * val2 * val2 - val2) * this.d2ydx2[ind2]) * dist * dist / 6.0D;
+            return val3;
         }
     }
 }
