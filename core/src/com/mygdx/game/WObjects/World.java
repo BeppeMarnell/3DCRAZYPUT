@@ -141,16 +141,13 @@ public class World {
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              //calculate the path with the selected method and move the ball
 //             bot.CalculateAStar(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
-//            if(!bot.oneShootScore(ball))
+            //if(!bot.oneShootScore(ball))
                 bot.CalculateBeadthFirst(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
 
         if(bot.movingBall)bot.act(ball);
 
-        //genBot.update(walls, batch, environment);
-
         for(ModelInstance mI: bot.rectanglepoints)batch.render(mI,environment);
-
     }
 
     public void dispose(){

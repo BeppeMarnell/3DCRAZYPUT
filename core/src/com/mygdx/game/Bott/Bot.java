@@ -240,7 +240,7 @@ public class Bot {
             //set the force
             dir.scl(force);
 
-            System.out.println(force + " " + dir.toString());
+            System.out.println(force + " " + dir.cpy().toString());
 
             //throw the ball
             ball.setIsHit(true);
@@ -289,22 +289,33 @@ public class Bot {
     }
 
     public float forceToPoint(Vector2 from, Vector2 to){
-        //first vector starting from the intial position
-        Vector2 ballPos = new Vector2( 0 , mapO.getHeight(new Vector2(from.x, from.y),0));
 
-        //final point is the distance between the two points
-        Vector2 posTo = new Vector2( from.cpy().dst(to), mapO.getHeight(new Vector2(to.x, to.y),0));
+        final int division = 2;
+        final float step = from.cpy().dst(to) / division;
 
-        //calculate the angle
-        float angle = Helper.angleBetweenPoints(ballPos, posTo);
+        float sumForce = 0;
 
-        //remove marginal errors
-        if(angle < 0.1)angle =0;
+        for(int i=0; i<division; i++){
 
-        float force = Ball.MASS*9.81f*(float)Math.sin(angle) +
-                Ball.MASS*9.81f*(float)Math.cos(angle)*mapO.getFriction(new Vector2(from.x, from.y));
+            //first vector starting from the intial position
+            Vector2 ballPos = new Vector2( 0 , mapO.getHeight(new Vector2(from.x + i*step, from.y + i*step),0));
 
-        return Math.abs(force);
+            //final point is the distance between the two points
+            Vector2 posTo = new Vector2( step, mapO.getHeight(new Vector2(from.x + (i +1)*step, from.y + (i +1)*step),0));
+
+            //calculate the angle
+            float angle = Helper.angleBetweenPoints(ballPos, posTo);
+
+            //remove marginal errors
+            if(angle < 0.1)angle =0;
+
+            float force = Ball.MASS*9.81f*(float)Math.sin(angle) +
+                    Ball.MASS*9.81f*(float)Math.cos(angle)*mapO.getFriction(new Vector2(from.x, from.y));
+
+            sumForce += force;
+        }
+
+        return sumForce;
     }
 
     private void setRectanglepoint(){
