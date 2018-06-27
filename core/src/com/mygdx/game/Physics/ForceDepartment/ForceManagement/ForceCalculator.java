@@ -160,7 +160,7 @@ public class ForceCalculator implements ForceVisitor {
         } else if (body.getState() == RigidBody.BodyState.Moving) {
             totalForce.add(hitForce.cpy().add(perpendicularForce));
             // if the kinetic friction is bigger that the force applied, stop
-            if (totalForce.len() < kineticFriction.len()) {
+            if (totalForce.len() < kineticFriction.len() + dragForce.len()) {
                 body.setState(RigidBody.BodyState.Stopped);
                 body.getTotalForce().setZero();
                 body.getVelocity().setZero();
@@ -183,11 +183,11 @@ public class ForceCalculator implements ForceVisitor {
      * @param shapeRenderer
      */
     public void drawForces(ShapeRenderer shapeRenderer) {
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpNorm.cpy().scl(1.5f)), 3, Color.YELLOW, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpForce), 3, Color.CYAN, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpNorm.cpy().scl(1.5f)), 3, Color.YELLOW, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpForce), 3, Color.CYAN, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(perpendicularForce.cpy()), 3, Color.CYAN, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getFrontPos(), 2, Color.RED, shapeRenderer);
-        Helper.DrawDebugLine(body.getPosition(), body.getSidePos(), 2, Color.BLACK, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getFrontPos(), 2, Color.RED, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getSidePos(), 2, Color.BLACK, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(staticFriction), 2, Color.CHARTREUSE, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(kineticFriction), 2, Color.RED, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(hitForce), 2, Color.BLACK, shapeRenderer);
