@@ -102,18 +102,15 @@ public class Club {
             if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
                 orientationSet = true;
                 canDraw = true;
-                direction = orientationVector.cpy().nor().scl(-1);
+//                direction = orientationVector.cpy().nor().scl(-1);
+                direction = rotationVector.cpy().nor();
 
                 if (hitForce.len() > 500) down = true;
                 else if (hitForce.len() < 30) down = false;
 
-                if (!down) hitForce.add(new Vector3(direction.x, 0, direction.y).scl(10));
-                else hitForce.add(new Vector3(direction.x, 0, direction.y).scl(-10));
-                System.out.println("=============: " + hitForce);
-
-
-
-
+                if (!down) hitForce.add(new Vector3(direction.x, 0, direction.z).scl(10));
+                else hitForce.add(new Vector3(direction.x, 0, direction.z).scl(-10));
+                System.out.println("=============: " + hitForce + " " + direction);
 
                 if(Gdx.input.justTouched()) {
                     canDraw = false;
@@ -128,8 +125,8 @@ public class Club {
     }
 
     private void pickOrientation() {
-        System.out.println("ROTATING ============================");
         rotationVector.rotate(new Vector3(0, 1, 0), 5);
+        System.out.println("ROTATING ============================ " + rotationVector);
         orientationVector = ballPos.cpy().add(rotationVector.cpy().scl(10));
     }
 
@@ -145,7 +142,7 @@ public class Club {
         if (!canDraw && throwMode) {
             Helper.DrawDebugLine(ballPos, orientationVector, 4, Color.RED, rectangleRenderer);
         }
-        Helper.DrawDebugLine(ballPos, ballPos.cpy().add(new Vector3(direction.x, 0, direction.y).cpy().scl(3)), rectangleRenderer);
+//        Helper.DrawDebugLine(ballPos, ballPos.cpy().add(new Vector3(direction.x, 0, direction.y).cpy().scl(3)), rectangleRenderer);
 
     }
 
