@@ -1,13 +1,23 @@
 package com.mygdx.game.Utils;
 
+
+/**
+ * Inspired from Michael Thomas Flanagan's Java Scientific Library
+ * explanation and pseudo-code found on his website
+ */
+
 public class BiCubicSplineFast {
-    private int nPoints = 0;
-    private int mPoints = 0;
-    private double[][] y = (double[][])null;
-    private double[] x1 = null;
-    private double[] x2 = null;
-    private CubicSplineFast[] csn = null;
-    private CubicSplineFast csm = null;
+    //amount of indices
+    private int nPoints;
+    private int mPoints;
+
+    private double[][] y;
+    private double[] x1;
+    private double[] x2;
+
+    //cubic spline for the two dimension
+    private CubicSplineFast[] csn;
+    private CubicSplineFast csm;
 
     public BiCubicSplineFast(double[] var1, double[] var2, double[][] var3) {
         this.nPoints = var1.length;
