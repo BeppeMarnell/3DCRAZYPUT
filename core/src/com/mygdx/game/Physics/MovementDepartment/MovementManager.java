@@ -49,9 +49,9 @@ public class MovementManager {
             body = b;
             // give the force manager the body to work on
             fm.setBody(body);
-            if (body.isMovedByBot()) {
-               fm.hit(body.botForce.cpy());
-               body.setMovedByBot(false);
+            if (body.isHit()) {
+               fm.hit(body.hitForce.cpy());
+               body.setIsHit(false);
             }
             // if the body is in motion, keep moving and integrate
             if (!body.isStopped()) {
