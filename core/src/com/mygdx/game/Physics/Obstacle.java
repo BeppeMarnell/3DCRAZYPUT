@@ -3,6 +3,9 @@ package com.mygdx.game.Physics;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * Obstacle class
+ */
 public class Obstacle {
     public final static float ELASTICITY = 0.8f;
     public final static Vector3 VELOCITY = new Vector3(0, 0, 0);

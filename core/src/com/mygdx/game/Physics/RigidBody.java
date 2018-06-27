@@ -6,13 +6,20 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.State.Motion;
 import com.mygdx.game.Physics.State.State;
 
+/**
+ * Rigid Body class, contains all the characteristics of the body in form of variables
+ * as well as all the setters and getters
+ * High Cohesion applied
+ */
 public class RigidBody {
     protected static final float G = 9.81f;
 
     //enum to set up the world state
     public enum BodyState { Moving, Stopped, Flying}
+
     //Ball state
     protected BodyState state;
+
     // Starting State pattern implementation
     State motion;
     State idle;
@@ -21,7 +28,6 @@ public class RigidBody {
 
     private boolean movedByBot = false;
     public Vector3 botForce = new Vector3();
-
 
     protected Vector3 position;
     protected Vector3 acceleration;
@@ -96,6 +102,7 @@ public class RigidBody {
     public void setPosition(Vector3 position) {
         this.position = position;
     }
+
     public Vector3 getWeight() {
         return weight;
     }

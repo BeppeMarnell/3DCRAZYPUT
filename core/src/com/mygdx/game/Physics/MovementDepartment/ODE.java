@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Physics.ForceDepartment.ForceManagement.ForceManager;
 import com.mygdx.game.Physics.RigidBody;
 
+/**
+ * Class responsible for solving differential equations using the Strategy pattern
+ */
 public abstract class ODE {
     protected final static float DT = 10;
     private ForceManager fm;
@@ -16,11 +19,20 @@ public abstract class ODE {
 
     public abstract void solve(MovementManager mm);
 
-    protected Vector3 calculateAcceleration(RigidBody body, float dt, Vector3 newPosition) {
-//        System.out.println("[*] Calculating acceleration at new position: " + newPosition + " oldPos: " + body.getPosition());
-        body.setTmpPosition(newPosition.cpy());
+    /**
+     * Calculates the acceleration of a object at a given position and time
+     * @param body - the required object
+     * @param dt - the given time
+     * @param tmpPosition - the given position
+     * @return - the acceleration of the object
+     */
+    protected Vector3 calculateAcceleration(RigidBody body, float dt, Vector3 tmpPosition) {
+//        System.out.println("[*] Calculating acceleration at new position: " + tmpPosition + " oldPos: " + body.getPosition());
+        body.setTmpPosition(tmpPosition.cpy());
+
+        // Launch the Force Manager to calculates the forces at the given position
         fm.manage(dt, false);
-//        body.getTmpPosition().setZero();
+
         body.setAcceleration(body.getTotalForce().cpy().scl(body.getInverseMass()));
         return body.getAcceleration();
     }
@@ -33,6 +45,9 @@ public abstract class ODE {
         this.fm = fm;
     }
 
+    /**
+     * Clear all the variables
+     */
     protected void clear() {
         position.setZero();
         velocity.setZero();

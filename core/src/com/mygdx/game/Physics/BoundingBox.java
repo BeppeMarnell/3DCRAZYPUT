@@ -2,6 +2,9 @@ package com.mygdx.game.Physics;
 
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * Bounding box used in collision detection, contains basic information
+ */
 public class BoundingBox {
     protected Vector3 position;
     protected Vector3 size;
