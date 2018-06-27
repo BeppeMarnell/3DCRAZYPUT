@@ -19,52 +19,69 @@ public class BiCubicSplineFast {
     private CubicSplineFast[] csn;
     private CubicSplineFast csm;
 
-    public BiCubicSplineFast(double[] var1, double[] var2, double[][] var3) {
-        this.nPoints = var1.length;
-        this.mPoints = var2.length;
+
+    /**
+     *Creates an instance of the BiCubicSpline object with its internal data arrays initialised to copies
+     * of the values in the x1, x2 and y arrays where y is the tabulated function y = f(x1,x2)
+     * @param x1
+     * @param x2
+     * @param y
+     */
+    public BiCubicSplineFast(double[] x1, double[] x2, double[][] y) {
+        //initialize variables
+        this.nPoints = x1.length;
+        this.mPoints = x2.length;
         this.csm = new CubicSplineFast(this.nPoints);
         this.csn = CubicSplineFast.oneDarray(this.nPoints, this.mPoints);
         this.x1 = new double[this.nPoints];
         this.x2 = new double[this.mPoints];
         this.y = new double[this.nPoints][this.mPoints];
 
-        int var4;
-        for(var4 = 0; var4 < this.nPoints; ++var4) {
-            this.x1[var4] = var1[var4];
+
+        //copy values
+        for(int i = 0; i < this.nPoints; i++) {
+            this.x1[i] = x1[i];
         }
 
-        for(var4 = 0; var4 < this.mPoints; ++var4) {
-            this.x2[var4] = var2[var4];
+        //copy values
+        for(int i = 0; i < this.mPoints; i++) {
+            this.x2[i] = x2[i];
         }
 
-        int var5;
-        for(var4 = 0; var4 < this.nPoints; ++var4) {
-            for(var5 = 0; var5 < this.mPoints; ++var5) {
-                this.y[var4][var5] = var3[var4][var5];
+        //copy values
+        for(int i = 0; i < this.nPoints; i++) {
+            for(int j = 0; j < this.mPoints; j++) {
+                this.y[i][j] = y[i][j];
             }
         }
 
-        double[] var7 = new double[this.mPoints];
+        double[] resArray = new double[this.mPoints];
 
-        for(var5 = 0; var5 < this.nPoints; ++var5) {
-            for(int var6 = 0; var6 < this.mPoints; ++var6) {
-                var7[var6] = var3[var5][var6];
-            }
 
-            this.csn[var5].resetData(var2, var7);
-            this.csn[var5].calcDeriv();
+        //interpolate the data and calculate the derivatives for each row
+        for(int j = 0; j < this.mPoints; j++) {
+            for(int f = 0; f < this.mPoints; f++) resArray[f] = y[j][f];
+
+            this.csn[j].resetData(x2, resArray);
+            this.csn[j].calcDeriv();
         }
 
     }
 
-    public double interpolate(double var1, double var3) {
-        double[] var5 = new double[this.nPoints];
+    /**
+     * Returns the interpolated value of y, y1, for given values of xx1 and xx2, using the y = f(x1,x2) data entered via the constructor.
+     * @param xx1
+     * @param xx2
+     * @return
+     */
+    public double interpolate(double xx1, double xx2) {
+        double[] interpArray = new double[this.nPoints];
 
-        for(int var6 = 0; var6 < this.nPoints; ++var6) {
-            var5[var6] = this.csn[var6].interpolate(var3);
+        for(int i = 0; i < this.nPoints; ++i) {
+            interpArray[i] = this.csn[i].interpolate(xx2);
         }
 
-        this.csm.resetData(this.x1, var5);
-        return this.csm.interpolate(var1);
+        this.csm.resetData(this.x1, interpArray);
+        return this.csm.interpolate(xx1);
     }
 }
