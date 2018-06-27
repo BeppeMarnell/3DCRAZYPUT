@@ -59,7 +59,7 @@ public class BiCubicSplineFast {
 
 
         //interpolate the data and calculate the derivatives for each row
-        for(int j = 0; j < this.mPoints; j++) {
+        for(int j = 0; j < this.nPoints; j++) {
             for(int f = 0; f < this.mPoints; f++) resArray[f] = y[j][f];
 
             this.csn[j].resetData(x2, resArray);
@@ -77,7 +77,7 @@ public class BiCubicSplineFast {
     public double interpolate(double xx1, double xx2) {
         double[] interpArray = new double[this.nPoints];
 
-        for(int i = 0; i < this.nPoints; ++i) {
+        for(int i = 0; i < this.nPoints; i++) {
             interpArray[i] = this.csn[i].interpolate(xx2);
         }
 
