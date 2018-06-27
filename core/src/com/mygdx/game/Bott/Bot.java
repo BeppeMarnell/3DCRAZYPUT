@@ -15,7 +15,6 @@ import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -175,10 +174,10 @@ public class Bot {
         if(solutionIndex == solutionPath.size()){
             System.out.println("ARRIVED");
             movingBall = false;
-            ball.setMovedByBot(false);
+            ball.setIsHit(false);
             return;
         }
-//        ball.setMovedByBot(true);
+//        ball.setIsHit(true);
 
         //move the ball in the direction
 //        ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),3));

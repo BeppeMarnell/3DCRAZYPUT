@@ -26,8 +26,8 @@ public class RigidBody {
     State flight;
     State trackingState;
 
-    private boolean movedByBot = false;
-    public Vector3 botForce = new Vector3();
+    private boolean isHit = false;
+    public Vector3 hitForce = new Vector3();
 
     protected Vector3 position;
     protected Vector3 acceleration;
@@ -205,16 +205,16 @@ public class RigidBody {
     }
 
     public void move(Vector2 vector2) {
-        movedByBot = true;
-        botForce = new Vector3(vector2.x, 0, vector2.y);
+        isHit = true;
+        hitForce = new Vector3(vector2.x, 0, vector2.y);
     }
 
-    public boolean isMovedByBot() {
-        return movedByBot;
+    public boolean isHit() {
+        return isHit;
     }
 
-    public void setMovedByBot(boolean movedByBot) {
-        this.movedByBot = movedByBot;
+    public void setIsHit(boolean movedByBot) {
+        this.isHit = movedByBot;
     }
 }
 
