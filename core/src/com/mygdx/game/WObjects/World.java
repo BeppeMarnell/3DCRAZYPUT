@@ -19,6 +19,7 @@ import com.mygdx.game.Physics.MovementDepartment.IntegratorCollection.RungeKutta
 import com.mygdx.game.Physics.MovementDepartment.MovementManager;
 import com.mygdx.game.Bott.GenBot.GenBot;
 import com.mygdx.game.Bott.GenBot.Genetic2D;
+import com.mygdx.game.Physics.RigidBody;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -112,6 +113,7 @@ public class World {
         // Winning condition
         if(map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z))) {
             ball.getVelocity().setZero();
+            ball.setState(RigidBody.BodyState.Stopped);
 //            System.out.println("Hole");
 
         }

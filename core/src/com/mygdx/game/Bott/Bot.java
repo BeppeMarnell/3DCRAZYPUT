@@ -323,8 +323,8 @@ public class Bot {
     }
 
     private boolean haveSameOrientation(Vector2 v1, Vector2 v2) {
-        float dotProduct = (float) Math.ceil(v1.cpy().dot(v2));
-        float magnitudeProduct = (float) Math.ceil(v1.len() * v2.len());
+        float dotProduct = (float) Math.ceil(Math.abs(v1.cpy().dot(v2)));
+        float magnitudeProduct = (float) Math.ceil(Math.abs(v1.len() * v2.len()));
         float angleBetweenVectors = (float) Math.toDegrees(Math.abs(Math.acos(dotProduct / magnitudeProduct)));
         System.out.println("==================== " + angleBetweenVectors + " dp: " + dotProduct + " mp: " + magnitudeProduct);
         if (angleBetweenVectors < 10) {
