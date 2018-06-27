@@ -22,10 +22,8 @@ public class Ball extends BoundingSphere {
 
     private Model model;
     private ModelInstance ballInstance;
-    //get a copy of the map
-    private Map map;
 
-    private boolean debugMode = true;
+    private boolean debugMode = false;
     public static final float RAD = 1f;
     public static final float MASS = 1f; // kg
     public static final float ELASTICITY = 0.4f;
@@ -54,9 +52,6 @@ public class Ball extends BoundingSphere {
         ballInstance = new ModelInstance(model);
 
         ballInstance.transform.translate(map.getInitBallPosV2().x, map.getHeight(map.getInitBallPosV2(), RAD), map.getInitBallPosV2().y);
-
-        //copy the instance of the map
-        this.map = map;
     }
 
     /**
@@ -71,18 +66,7 @@ public class Ball extends BoundingSphere {
         batch.render(ballInstance, environment);
     }
 
-    /**
-     * Update the position of the ball
-     */
-    public void update(float deltaTime){}
-
     public void dispose(){
         model.dispose();
     }
-
-
-    /**
-     * Call the method to know if the ball is stopped
-     * @return boolean value
-     */
 }

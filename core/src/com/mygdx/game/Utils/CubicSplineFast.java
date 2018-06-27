@@ -1,37 +1,31 @@
 package com.mygdx.game.Utils;
 
 public class CubicSplineFast {
-    private int nPoints = 0;
-    private double[] y = null;
-    private double[] x = null;
-    private double[] d2ydx2 = null;
-    private boolean derivCalculated = false;
+    private int nPoints;
+    private double[] y;
+    private double[] x;
+    private double[] d2ydx2;
 
-    public CubicSplineFast(double[] var1, double[] var2) {
-        this.nPoints = var1.length;
-        this.x = new double[this.nPoints];
-        this.y = new double[this.nPoints];
-        this.d2ydx2 = new double[this.nPoints];
-
-        for(int var3 = 0; var3 < this.nPoints; ++var3) {
-            this.x[var3] = var1[var3];
-            this.y[var3] = var2[var3];
-        }
-
-        this.calcDeriv();
+    /**
+     * Constructor for the cubic spline
+     * @param nPoints number of points needed for the data
+     */
+    public CubicSplineFast(int nPoints) {
+        this.nPoints = nPoints;
+        this.x = new double[nPoints];
+        this.y = new double[nPoints];
+        this.d2ydx2 = new double[nPoints];
     }
 
-    public CubicSplineFast(int var1) {
-        this.nPoints = var1;
-        this.x = new double[var1];
-        this.y = new double[var1];
-        this.d2ydx2 = new double[var1];
-    }
-
-    public void resetData(double[] var1, double[] var2) {
-        for(int var3 = 0; var3 < this.nPoints; ++var3) {
-            this.x[var3] = var1[var3];
-            this.y[var3] = var2[var3];
+    /**
+     * reset data of points
+     * @param x
+     * @param y
+     */
+    public void resetData(double[] x, double[] y) {
+        for(int i = 0; i < this.nPoints; i++) {
+            this.x[i] = x[i];
+            this.y[i] = y[i];
         }
 
         this.calcDeriv();
@@ -57,10 +51,10 @@ public class CubicSplineFast {
     }
 
     public void calcDeriv() {
-        double var1 = 0.0D;
-        double var3 = 0.0D;
-        double var5 = 0.0D;
-        double var7 = 0.0D;
+        double var1;
+        double var3;
+        double var5;
+        double var7;
         double[] var9 = new double[this.nPoints];
         this.d2ydx2[0] = var9[0] = 0.0D;
 
@@ -80,15 +74,13 @@ public class CubicSplineFast {
         for(var10 = this.nPoints - 2; var10 >= 0; --var10) {
             this.d2ydx2[var10] = this.d2ydx2[var10] * this.d2ydx2[var10 + 1] + var9[var10];
         }
-
-        this.derivCalculated = true;
     }
 
     public double interpolate(double var1) {
-        double var3 = 0.0D;
-        double var5 = 0.0D;
-        double var7 = 0.0D;
-        double var9 = 0.0D;
+        double var3;
+        double var5;
+        double var7;
+        double var9;
         int var12 = 0;
         int var13 = this.nPoints - 1;
 
