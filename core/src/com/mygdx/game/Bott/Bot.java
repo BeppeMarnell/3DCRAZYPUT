@@ -11,16 +11,15 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mygdx.game.Bott.GenBot.CromWall;
 import com.mygdx.game.Utils.Helper;
 import com.mygdx.game.WObjects.Ball;
 import com.mygdx.game.WObjects.Map;
 import com.mygdx.game.WObjects.WorldObject;
-import org.lwjgl.Sys;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
 public class Bot {
 
@@ -114,6 +113,8 @@ public class Bot {
     }
 
     public void CalculateBeadthFirst(int[][] map){
+        Vector2 direction = new Vector2();
+        Vector2 tmpDirection = new Vector2();
         //reset to initial state of the path
         solutionPath.clear();
         solutionIndex = 1;
@@ -148,18 +149,36 @@ public class Bot {
 
         //calculate the solution vectors
         for(int i=1; i<path.size(); i++){
+            // Get the previous path
+            Vector2 path1 = path.get(i-1);
+            // Get the current path
+            Vector2 path2 = path.get(i);
+            direction = path2.cpy().sub(path1.cpy());
 
-            solutionPath.add(new MoveTo(path.get(i).cpy().sub(path.get(i-1).cpy()), 10));
+//            if (i != 1) {
+//                tmpDirection.set(direction.cpy());
+//            }
+//
+
+//            if (haveSameOrientation(tmpDirection, direction)) {
+//                System.out.println("Trueeee");
+//            }
+
+//            solutionPath.add(new MoveTo(path.get(i).cpy().sub(path.get(i-1).cpy()), 10));
+            solutionPath.add(new MoveTo(direction,1));
 
             //calculate the scalar multiplicand
             float scalarM = forceToPoint(path.get(i-1).cpy(), path.get(i).cpy());
             //System.out.println(scalarM);
+            System.out.println(solutionPath.get(i-1).to.toString());
 
             solutionPath.get(i-1).to.scl(scalarM);
 
             System.out.println(solutionPath.get(i-1).to.toString());
         }
 
+
+        setHitForces();
         //for(Vector2 c: path)System.out.println(c.toString());
 
         //set true to start moving the ball to the hole
@@ -167,6 +186,33 @@ public class Bot {
 
 
         setRectanglepoint();
+    }
+
+    private void setHitForces() {
+        Vector2 indexDir;
+        Vector2 curDir;
+        int index = 1;
+
+        for (int i = 1; i < solutionPath.size(); i++) {
+//            curDir = path.get(i).cpy().sub(path.get(i-1));
+//            indexDir = path.get(index).cpy().sub(path.get(index-1));
+            curDir = solutionPath.get(i).to.cpy().sub(solutionPath.get(i-1).to);
+            indexDir = solutionPath.get(index).to.cpy().sub(solutionPath.get(index-1).to);
+
+            if (haveSameOrientation(indexDir, curDir) && i != 1) {
+                System.out.println(" Direction: " + indexDir + " curDir: " + curDir);
+                System.out.println("Same orientation");
+                solutionPath.get(index).to.add(solutionPath.get(i).to.cpy());
+                solutionPath.get(i).to.nor();
+            } else {
+                index = i;
+            }
+//            System.out.println("====================== " + solutionPath.get(i-1).to.toString());
+
+        }
+        for (MoveTo m : solutionPath) {
+            System.out.println("==================== " + m.to.toString());
+        }
     }
 
     public boolean oneShootScore(Ball ball){
@@ -223,17 +269,17 @@ public class Bot {
         if (ball.isStopped()) {
             ball.move(calculateForce(solutionPath.get(solutionIndex).to.cpy(),1));
         }
-        // decrease the number of iterations for that solutionIndex
-        solutionPath.get(solutionIndex).iter--;
 
-//        Rectangle tmpRec = new Rectangle(0,0, 9f,9f);
-        Rectangle tmpRec = new Rectangle(0,0, 20,20);
+//        solutionPath.get(solutionIndex).iter--;
+        // decrease the number of iterations for that solutionIndex
+
+        Rectangle tmpRec = new Rectangle(0,0, 9f,9f);
+//        Rectangle tmpRec = new Rectangle(0,0, 20,20);
         tmpRec.setCenter(path.get(solutionIndex+1).x, path.get(solutionIndex+1).y);
 
         //if the ball has arrived near the determined path point, then pass to the next solutionindex
         if(tmpRec.contains(new Vector2(ball.getPosition().x, ball.getPosition().z))) {
             solutionIndex++;
-            System.out.println("==========================CONTAINS BALL");
         }
     }
 
@@ -274,5 +320,16 @@ public class Bot {
             instance.transform.translate(path.get(i).x,6 ,path.get(i).y);
             rectanglepoints.add(instance);
         }
+    }
+
+    private boolean haveSameOrientation(Vector2 v1, Vector2 v2) {
+        float dotProduct = (float) Math.ceil(v1.cpy().dot(v2));
+        float magnitudeProduct = (float) Math.ceil(v1.len() * v2.len());
+        float angleBetweenVectors = (float) Math.toDegrees(Math.abs(Math.acos(dotProduct / magnitudeProduct)));
+        System.out.println("==================== " + angleBetweenVectors + " dp: " + dotProduct + " mp: " + magnitudeProduct);
+        if (angleBetweenVectors < 10) {
+            return true;
+        }
+        return false;
     }
 }

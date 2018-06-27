@@ -15,8 +15,8 @@ import com.mygdx.game.WObjects.Map;
  */
 public class ForceCalculator implements ForceVisitor {
     // Drag force coefficients
-    private final static float DRAG1 = 0.2f;
-    private final static float DRAG2 = 0.01f;
+    private final static float DRAG1 = 0.3f;
+    private final static float DRAG2 = 0.001f;
 
     private RigidBody body;
     private Vector3 gravity;

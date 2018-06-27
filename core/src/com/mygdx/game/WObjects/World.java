@@ -111,6 +111,7 @@ public class World {
 
         // Winning condition
         if(map.isInHole(new Vector2(ball.getPosition().x,ball.getPosition().z))) {
+            ball.getVelocity().setZero();
 //            System.out.println("Hole");
 
         }
@@ -137,8 +138,9 @@ public class World {
         
         if(Gdx.input.isKeyJustPressed(Input.Keys.B)){
              //calculate the path with the selected method and move the ball
-             //bot.CalculateAStar(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
-            if(!bot.oneShootScore(ball))bot.CalculateBeadthFirst(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
+//             bot.CalculateAStar(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
+//            if(!bot.oneShootScore(ball))
+                bot.CalculateBeadthFirst(map.getArrayMap( new Vector2(ball.getPosition().x,ball.getPosition().z)));
         }
 
         if(bot.movingBall)bot.act(ball);
