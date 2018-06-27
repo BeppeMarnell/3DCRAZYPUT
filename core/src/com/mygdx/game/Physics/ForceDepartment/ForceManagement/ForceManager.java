@@ -21,7 +21,6 @@ public class ForceManager {
     private RigidBody body;
     // Database holding the body and the current force acting on it
     private HashMap<RigidBody, Vector3> db;
-    private boolean debug = false;
 
     public ForceManager(Map map, HashMap<RigidBody, Vector3> db) {
         calculator = new ForceCalculator(map);
@@ -65,7 +64,7 @@ public class ForceManager {
             // Set the new force in the database
             db.get(body).set(calculator.getTotalForce().cpy());
 
-            if (debug) calculator.printDebug();
+            calculator.printDebug();
 
             // Clear the forces in the calculator
             calculator.clear();
@@ -90,7 +89,7 @@ public class ForceManager {
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            calculator.setHitForce(new Vector3(1000,0,0));
+            calculator.setHitForce(new Vector3(100,0,0));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {

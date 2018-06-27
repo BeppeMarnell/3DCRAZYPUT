@@ -195,7 +195,6 @@ public class World {
 
     public void draw(ShapeRenderer shapeRenderer) {
         movementManager.draw(shapeRenderer);
-        club.drawPowerBar(shapeRenderer);
     }
 
 }

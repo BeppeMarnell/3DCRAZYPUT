@@ -9,8 +9,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-import java.awt.*;
-
 public final class Helper {
 
     /**
@@ -123,15 +121,6 @@ public final class Helper {
         debugRenderer.setColor(Color.BLACK);
         debugRenderer.line(start, end);
         debugRenderer.end();
-        Gdx.gl.glLineWidth(1);
-    }
-
-    public static void DrawRectangle(Color c, ShapeRenderer rectangleRenderer, float x, float y, float z, float width, float height, float depth) {
-        Gdx.gl.glLineWidth(2);
-        rectangleRenderer.begin(ShapeRenderer.ShapeType.Line);
-        rectangleRenderer.setColor(c);
-        rectangleRenderer.box(x, y, z, width, height, depth);
-        rectangleRenderer.end();
         Gdx.gl.glLineWidth(1);
     }
 }
