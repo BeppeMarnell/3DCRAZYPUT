@@ -77,7 +77,7 @@ public class BiCubicSplineFast {
     public double interpolate(double xx1, double xx2) {
         double[] interpArray = new double[this.nPoints];
 
-        for(int i = 0; i < this.nPoints; ++i) {
+        for(int i = 0; i < this.nPoints; i++) {
             interpArray[i] = this.csn[i].interpolate(xx2);
         }
 

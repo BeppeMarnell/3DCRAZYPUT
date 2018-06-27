@@ -76,7 +76,7 @@ public class CubicSplineFast {
         double[] crossDer = new double[this.nPoints];
         this.d2ydx2[0] = crossDer[0] = 0.0D; // se to zero
 
-        for(int i = 1; i <= this.nPoints - 2; ++i) {
+        for(int i = 1; i <= this.nPoints - 2; i++) {
             double val2 = (this.x[i] - this.x[i - 1]) / (this.x[i + 1] - this.x[i - 1]);
             double val1 = val2 * this.d2ydx2[i - 1] + 2.0D;
 
@@ -89,7 +89,7 @@ public class CubicSplineFast {
 
         this.d2ydx2[this.nPoints - 1] = 0.0D;
 
-        for(int i = this.nPoints - 2; i >= 0; --i) {
+        for(int i = this.nPoints - 2; i >= 0; i--) {
             this.d2ydx2[i] = this.d2ydx2[i] * this.d2ydx2[i + 1] + crossDer[i];
         }
     }
