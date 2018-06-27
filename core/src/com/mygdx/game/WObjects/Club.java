@@ -107,8 +107,8 @@ public class Club {
                 if (hitForce.len() > 500) down = true;
                 else if (hitForce.len() < 30) down = false;
 
-                if (!down) hitForce.add(new Vector3(direction.x, 0, direction.y).scl(2));
-                else hitForce.add(new Vector3(direction.x, 0, direction.y).scl(-2));
+                if (!down) hitForce.add(new Vector3(direction.x, 0, direction.y).scl(10));
+                else hitForce.add(new Vector3(direction.x, 0, direction.y).scl(-10));
                 System.out.println("=============: " + hitForce);
 
 
