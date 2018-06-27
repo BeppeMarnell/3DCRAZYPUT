@@ -117,6 +117,7 @@ public class Club {
                     orientationSet = false;
                     ball.setIsHit(true);
                     ball.hitForce.set(hitForce.cpy());
+                    hitForce.setZero();
                 }
 
             }
