@@ -14,6 +14,7 @@ import java.util.HashMap;
  * Class in charge of managing the process of force calculation
  */
 public class ForceManager {
+    public static float HITFORCE = 100; // Newtons
     public final static Force[] KINETIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new KineticFriction(), new Drag(), new Total()};
     public final static Force[] STATIC_FORCES = new Force[]{new Gravity(), new Normal(), new Perpendicular(), new StaticFriction(), new Total()};
     private ForceCalculator calculator;
@@ -86,26 +87,26 @@ public class ForceManager {
      */
     public void inputController() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            calculator.setHitForce(new Vector3(-100,0,0));
+            calculator.setHitForce(new Vector3(-HITFORCE,0,0));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            calculator.setHitForce(new Vector3(100,0,0));
+            calculator.setHitForce(new Vector3(HITFORCE,0,0));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            calculator.setHitForce(new Vector3(0,0,100));
+            calculator.setHitForce(new Vector3(0,0,HITFORCE));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            calculator.setHitForce(new Vector3(0,0,-100));
+            calculator.setHitForce(new Vector3(0,0,-HITFORCE));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_8)) {
-            calculator.setHitForce(new Vector3(0,100,0));
+            HITFORCE += 100;
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_2)) {
-            calculator.setHitForce(new Vector3(0,-100,0));
+            HITFORCE -= 100;
         }
     }
 
@@ -120,5 +121,9 @@ public class ForceManager {
 
     public void hit(Vector3 force) {
         calculator.setHitForce(force);
+    }
+
+    public ForceCalculator getCalculator() {
+        return calculator;
     }
 }
