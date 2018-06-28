@@ -184,6 +184,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		//show the frame rate
 		batch.begin();
 		font.draw(batch, Gdx.graphics.getFramesPerSecond() + " fps", 3, Gdx.graphics.getHeight() - 3);
+		font.draw(batch, "Normal: " + (int) world.getMovementManager().getForceManager().getCalculator().getTmpNorm().len() + " N ", 50, Gdx.graphics.getHeight() - 3);
+		font.draw(batch, "Total: " + (int) world.getMovementManager().getForceManager().getCalculator().getTmpForce().len() + " N ", 170, Gdx.graphics.getHeight() - 3);
+		font.draw(batch, "Parallel: " + (int) world.getMovementManager().getForceManager().getCalculator().getTmpPerpForce().len() + " N ", 300, Gdx.graphics.getHeight() - 3);
+		font.draw(batch, "Friction: " + (int) world.getMovementManager().getForceManager().getCalculator().getTmpStaticFr().len() + " N ", 420, Gdx.graphics.getHeight() - 3);
+		font.draw(batch, "HIT FORCE: " + (int) world.getMovementManager().getForceManager().HITFORCE + " N ", 850, Gdx.graphics.getHeight() - 3);
 		batch.end();
 
 		camSet();
