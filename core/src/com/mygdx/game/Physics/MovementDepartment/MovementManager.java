@@ -20,6 +20,7 @@ public class MovementManager {
     private Map map;
     private RigidBody body;
     private float dt;
+    public boolean isBotMoving = false;
     /**
      * Database, holds the body and it's current force
      */
@@ -51,6 +52,7 @@ public class MovementManager {
             fm.setBody(body);
             if (body.isHit()) {
                fm.hit(body.hitForce.cpy());
+//               body.setTmpPosition(body.getPosition().cpy());
                body.setIsHit(false);
             }
             // if the body is in motion, keep moving and integrate
@@ -58,6 +60,7 @@ public class MovementManager {
                 move();
                 ode.solve(this);
                 ode.clear();
+                System.out.println("pos: " + body.getPosition() + " vel: " + body.getVelocity());
             } else {
                 fm.manage(DT, true);
             }
@@ -65,6 +68,16 @@ public class MovementManager {
     }
 
     private void move() {
+        Double y = new Double(body.getPosition().y);
+        if (y.isNaN() || y > 100){
+            body.setPosition(map.getInitBallPosV3());
+        }
+        if (body.getPosition().y < 1 && !isBotMoving) {
+//            System.out.println("tmpPos: " + body.getTmpPosition() + " actualPos: " + body.getPosition());
+            body.setPosition(map.getInitBallPosV3().cpy());
+            body.setState(RigidBody.BodyState.Stopped);
+            body.getVelocity().setZero();
+        }
         // Get a position in front of the ball and one on the side in order to be able to calculate the slope later
         body.setFrontPosition(body.getPosition().cpy().add(0, 0, 3));
         body.setSidePosition(body.getPosition().cpy().add(3, 0, 0));
@@ -118,5 +131,9 @@ public class MovementManager {
 
     public void draw(ShapeRenderer shapeRenderer) {
         fm.draw(shapeRenderer);
+    }
+
+    public ForceManager getForceManager() {
+        return fm;
     }
 }
