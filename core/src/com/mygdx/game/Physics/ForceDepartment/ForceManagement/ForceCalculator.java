@@ -32,6 +32,9 @@ public class ForceCalculator implements ForceVisitor {
     //TODO: REMOVE
     private Vector3 tmpNorm = new Vector3();
     private Vector3 tmpForce = new Vector3();
+    private Vector3 tmpPerpForce = new Vector3();
+    private Vector3 tmpStaticFr = new Vector3();
+
 
     // slope angle
     private float theta;
@@ -102,6 +105,9 @@ public class ForceCalculator implements ForceVisitor {
         Vector3 projection = normal.cpy().scl(gravity.cpy().dot(normal));
 
         perpendicularForce = gravity.cpy().sub(projection);
+
+        //TODO: REMOVE
+        tmpPerpForce = perpendicularForce.cpy();
     }
 
     /**
@@ -112,6 +118,8 @@ public class ForceCalculator implements ForceVisitor {
     public void visit(StaticFriction force) {
         // acts opposite to the perpendicular force pushing the body, scaled by the friction coefficient of the terrain
         staticFriction = perpendicularForce.cpy().nor().scl(body.getMu() * body.getWeight().y);
+
+        tmpStaticFr = staticFriction.cpy();
     }
 
     /**
@@ -183,14 +191,14 @@ public class ForceCalculator implements ForceVisitor {
      * @param shapeRenderer
      */
     public void drawForces(ShapeRenderer shapeRenderer) {
-//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpNorm.cpy().scl(1.5f)), 3, Color.YELLOW, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpNorm.cpy().scl(2f)), 3, Color.YELLOW, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpForce), 3, Color.CYAN, shapeRenderer);
-//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(perpendicularForce.cpy()), 3, Color.CYAN, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpPerpForce.cpy()), 3, Color.CHARTREUSE, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getFrontPos(), 2, Color.RED, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getSidePos(), 2, Color.BLACK, shapeRenderer);
-//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(staticFriction), 2, Color.CHARTREUSE, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(tmpStaticFr), 2, Color.FIREBRICK, shapeRenderer);
 //        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(kineticFriction), 2, Color.RED, shapeRenderer);
-//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(hitForce), 2, Color.BLACK, shapeRenderer);
+//        Helper.DrawDebugLine(body.getPosition(), body.getPosition().cpy().add(gravity), 2, Color.BLACK, shapeRenderer);
     }
 
     /**
